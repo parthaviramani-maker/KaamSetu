@@ -15,11 +15,14 @@
   grid-template-columns: 1fr 1fr;
   width: 100%;
   height: 100dvh;
+  max-height: 100dvh;
   overflow: hidden;
   background: var(--bg-primary);
+  position: relative;
+  transition: var(--transition-theme);
 
-  @media (max-width: #{$bp-lg}) {
-    grid-template-columns: 1fr;  // left panel hidden, right fills full width
+  @media (max-width: #{$bp-md}) {
+    grid-template-columns: 1fr;
     height: auto;
     min-height: 100dvh;
     overflow: visible;
@@ -27,7 +30,7 @@
 }
 
 // =============================================================================
-// LEFT — IMAGE SLIDESHOW
+// LEFT — IMAGE SLIDESHOW (pure, no overlay/dots)
 // =============================================================================
 
 .auth-page__brand {
@@ -35,12 +38,11 @@
   height: 100dvh;
   overflow: hidden;
 
-  @media (max-width: #{$bp-lg}) {
+  @media (max-width: #{$bp-md}) {
     display: none;
   }
 }
 
-// The sliding image (position absolute, full cover)
 .auth-page__brand-img {
   position: absolute;
   inset: 0;
@@ -49,80 +51,8 @@
   object-fit: cover;
   object-position: center;
   display: block;
+  transform-origin: center center;
   will-change: opacity, transform;
-}
-
-// Gradient overlay — top fade + strong bottom fade for caption
-.auth-page__brand-overlay {
-  position: absolute;
-  inset: 0;
-  // Only bottom fade needed — no text/logo at top anymore
-  background: linear-gradient(
-    to bottom,
-    transparent 60%,
-    rgba(0, 0, 0, 0.45) 100%
-  );
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;  // dots stick to the bottom
-  padding: $space-2xl;
-  z-index: 2;
-}
-
-.auth-page__brand-logo {
-  text-decoration: none;
-
-  img {
-    height: 36px;
-    width: auto;
-    object-fit: contain;
-    display: block;
-  }
-}
-
-.auth-page__brand-caption {
-  display: flex;
-  flex-direction: column;
-  gap: $space-sm;
-
-  h2 {
-    font-size: $font-size-2xl;
-    font-weight: $font-weight-extrabold;
-    color: #fff;
-    line-height: $line-height-tight;
-    margin: 0;
-    text-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
-  }
-
-  p {
-    font-size: $font-size-sm;
-    color: rgba(255, 255, 255, 0.82);
-    margin: 0;
-    line-height: $line-height-relaxed;
-    max-width: 340px;
-  }
-}
-
-.auth-page__brand-dots {
-  display: flex;
-  gap: $space-xs;
-  padding-bottom: $space-sm;
-}
-
-.auth-page__brand-dot {
-  height: 3px;
-  width: 22px;
-  border-radius: 2px;
-  background: rgba(255, 255, 255, 0.38);
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  transition: width 0.3s ease, background 0.3s ease;
-
-  &--active {
-    width: 38px;
-    background: #fff;
-  }
 }
 
 // =============================================================================
@@ -130,6 +60,7 @@
 // =============================================================================
 
 .auth-page__scroll {
+  border-left: 1px solid var(--border-color);
   background: var(--bg-primary);
   overflow-y: auto;
   overflow-x: hidden;
@@ -137,208 +68,156 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: $space-2xl $space-xl;
-  border-left: 1px solid var(--border-color);
-  transition: background $transition-normal, border-color $transition-normal;
+  padding: $space-xl $space-2xl;
+  position: relative;
+  height: 100%;
+  transition: var(--transition-theme);
   scrollbar-width: thin;
   scrollbar-color: var(--scrollbar-thumb) transparent;
 
-  @media (max-width: #{$bp-lg}) {
+  @media (max-width: #{$bp-md}) {
     border-left: none;
-    padding: $space-xl $space-md $space-2xl;
-    justify-content: flex-start;
-    align-items: stretch;    // full-width on mobile
-    overflow-y: visible;     // let the page scroll on mobile
+    padding: 3rem $space-md $space-2xl;
+    align-items: flex-start;
+    overflow-y: visible;
+    height: auto;
     min-height: 100dvh;
   }
 }
 
-// Right-panel logo — shown above the form on all screens
-.auth-page__mobile-logo,
+// Logo above form
 .auth-page__panel-logo {
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;   // left-aligned on desktop
   margin-bottom: $space-xl;
-
-  @media (max-width: #{$bp-lg}) {
-    justify-content: flex-start;
-    margin-bottom: $space-lg;
-  }
+  width: 100%;
+  max-width: 460px;
 
   a { text-decoration: none; }
 
   img {
-    height: 44px;
+    height: 40px;
     width: auto;
     object-fit: contain;
     display: block;
 
-    @media (max-width: #{$bp-lg}) {
-      height: 32px;
-    }
+    @media (max-width: #{$bp-md}) { height: 32px; }
+  }
+
+  @media (max-width: #{$bp-md}) {
+    justify-content: center;       // centered on mobile
+    margin-bottom: $space-lg;
+    max-width: 100%;
   }
 }
 
-// Card — no heavy box, just width constraint
+// Card
 .auth-page__card {
   width: 100%;
-  max-width: 440px;
-  align-self: center;  // re-center when parent uses align-items:stretch
+  max-width: 460px;
+  position: relative;
+  margin: auto 0;
 
-  @media (max-width: #{$bp-lg}) {
-    max-width: 100%;  // full-width on all mobile screens
-    align-self: stretch;
+  @media (max-width: #{$bp-md}) {
+    max-width: 100%;
+    margin: 0;
   }
 }
 
 // =============================================================================
-// FORM TOP — logo + back button
+// HEADER (title + description)
 // =============================================================================
 
-.auth-page__form-logo {
-  display: none; // logo handled by auth-page__mobile-logo in AuthPage
+.auth-page__header {
+  text-align: left;              // left on desktop
+  margin-bottom: $space-lg;
+
+  @media (max-width: #{$bp-md}) {
+    text-align: center;          // centered on mobile
+  }
 }
 
-.auth-page__form-back {
-  display: inline-flex;
-  align-items: center;
-  gap: $space-xs;
+.auth-page__title {
+  font-size: 1.75rem;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0 0 $space-xs;
+  line-height: $line-height-tight;
+
+  @media (max-width: #{$bp-sm}) { font-size: 1.5rem; }
+}
+
+.auth-page__description {
   font-size: $font-size-sm;
   color: var(--text-secondary);
-  background: none;
-  border: none;
-  padding: 0;
-  margin-bottom: $space-lg;
-  cursor: pointer;
-  transition: color $transition-fast;
-
-  &:hover {
-    color: var(--color-accent);
-  }
+  margin: 0;
 }
 
 // =============================================================================
-// STEP PROGRESS DOTS
+// STEP PROGRESS BARS
 // =============================================================================
 
 .auth-page__steps {
   display: flex;
   align-items: center;
   gap: $space-xs;
-  margin-bottom: $space-xl;
+  margin-bottom: $space-md;
   width: 100%;
 }
 
 .auth-page__step-dot {
-  flex: 1;
   height: 3px;
+  flex: 1;
+  background: var(--border-color);
   border-radius: 2px;
-  background: var(--border-color-strong);
   transition: background $transition-normal;
 
   &--active,
   &--done {
     background: var(--color-accent);
   }
-
-  &--done {
-    opacity: 0.55;
-  }
 }
 
 // =============================================================================
-// FORM HEADING
+// GOOGLE BUTTON
 // =============================================================================
 
-.auth-page__title {
-  font-size: $font-size-2xl;
-  font-weight: $font-weight-bold;
-  color: var(--text-primary);
-  margin-bottom: $space-xs;
-}
-
-.auth-page__subtitle {
-  font-size: $font-size-sm;
-  color: var(--text-secondary);
-  margin-bottom: $space-2xl;
-  line-height: $line-height-relaxed;
-}
-
-// =============================================================================
-// ROLE SELECT GRID
-// =============================================================================
-
-.auth-page__role-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: $space-md;
-  margin-bottom: $space-xl;
-}
-
-.auth-page__role-btn {
-  display: flex;
-  flex-direction: column;
+.btn-google {
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: $space-xs;
-  padding: $space-lg $space-sm;
-  background: var(--bg-secondary);
-  border: 2px solid var(--border-color);
-  border-radius: $radius-xl;
+  gap: $space-sm;
+  padding: 0.75rem $space-lg;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color-strong);
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  font-family: inherit;
+  color: var(--text-primary);
   cursor: pointer;
-  transition: all $transition-fast;
-  text-align: center;
+  transition: background $transition-fast, border-color $transition-fast, box-shadow $transition-fast;
+  margin-bottom: $space-md;
+  white-space: nowrap;
 
   &:hover {
+    background: var(--bg-hover);
     border-color: var(--color-accent);
-    background: var(--bg-card);
+    box-shadow: var(--shadow-sm);
   }
 
-  &--selected {
-    border-color: var(--color-accent);
-    background: var(--bg-active);
-
-    .auth-page__role-btn-icon {
-      color: var(--color-accent);
-    }
-
-    .auth-page__role-btn-label {
-      color: var(--color-accent);
-      font-weight: $font-weight-semibold;
-    }
-  }
-
-  &-icon {
-    font-size: 1.75rem;
-    line-height: 1;
-    color: var(--text-secondary);
-    transition: color $transition-fast;
-  }
-
-  &-label {
-    font-size: $font-size-xs;
-    font-weight: $font-weight-medium;
-    color: var(--text-secondary);
-    transition: color $transition-fast;
-    white-space: nowrap;
-  }
-
-  &-sublabel {
-    font-size: 0.65rem;
-    color: var(--text-muted);
-    line-height: 1;
-  }
+  svg { flex-shrink: 0; }
 }
 
 // =============================================================================
 // DIVIDER
 // =============================================================================
 
-.auth-page__divider {
+.divider {
   display: flex;
   align-items: center;
   gap: $space-md;
-  margin: $space-xl 0;
+  margin: $space-sm 0 $space-md;
   color: var(--text-muted);
   font-size: $font-size-xs;
 
@@ -352,229 +231,187 @@
 }
 
 // =============================================================================
-// GOOGLE BUTTON
+// FORM GROUP (label + input + error)
 // =============================================================================
 
-.auth-page__google-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-md;
-  padding: 0.75rem $space-lg;
-  background: var(--bg-card);
-  border: 1.5px solid var(--border-color-strong);
-  border-radius: $radius-lg;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--text-primary);
-  cursor: pointer;
-  transition: all $transition-fast;
-  margin-bottom: $space-lg;
-
-  &:hover {
-    background: var(--bg-hover);
-    border-color: var(--color-accent);
-    box-shadow: var(--shadow-sm);
-  }
-
-  svg {
-    flex-shrink: 0;
-  }
-}
-
-// =============================================================================
-// FORM FIELDS
-// =============================================================================
-
-.auth-page__field {
-  margin-bottom: $space-lg;
+.form-group {
+  margin-bottom: $space-md;
 
   label {
-    display: block;
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
     font-size: $font-size-sm;
     font-weight: $font-weight-medium;
     color: var(--text-primary);
     margin-bottom: $space-xs;
   }
-}
-
-.auth-page__input-wrap {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  &-icon {
-    position: absolute;
-    left: $space-md;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    pointer-events: none;
-  }
 
   input {
+    display: block;
     width: 100%;
     padding: 0.75rem $space-md;
-    padding-left: 2.75rem;
     background: var(--input-bg);
     border: 1.5px solid var(--input-border);
     border-radius: $radius-lg;
     font-size: $font-size-base;
+    font-family: inherit;
     color: var(--text-primary);
     transition: border-color $transition-fast, box-shadow $transition-fast;
     outline: none;
+    box-sizing: border-box;
 
-    &::placeholder {
-      color: var(--text-muted);
-    }
+    &::placeholder { color: var(--text-secondary); opacity: 0.6; }
 
     &:focus {
-      border-color: var(--input-focus-border);
-      box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(0, 171, 179, 0.15);
+    }
+  }
+
+  &--error input {
+    border-color: $color-error;
+    &:focus { box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15); }
+  }
+}
+
+.form-error {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-error;
+  margin-top: $space-xs;
+}
+
+// =============================================================================
+// PASSWORD WRAP (input + eye toggle)
+// =============================================================================
+
+.auth-page__pw-wrap {
+  position: relative;
+  width: 100%;
+
+  input { padding-right: 3rem !important; }
+
+  &-eye {
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: $space-xs;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: color $transition-fast;
+    line-height: 0;
+
+    &:hover { color: var(--color-accent); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+  }
+}
+
+// =============================================================================
+// BACK / NAV ROW
+// =============================================================================
+
+.auth-page__nav-row {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+
+  button {
+    background: none;
+    border: none;
+    padding: $space-xs;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    font-family: inherit;
+    border-radius: $radius-sm;
+    transition: color $transition-fast;
+
+    &:hover { color: var(--color-accent); }
+  }
+}
+
+// =============================================================================
+// SINGLE-FIELD ANIMATED WRAPPER
+// =============================================================================
+
+.auth-page__single-field {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+
+  form { display: flex; flex-direction: column; }
+}
+
+// =============================================================================
+// FORGOT PASSWORD
+// =============================================================================
+
+.auth-page__forgot {
+  text-align: right;
+  margin: -$space-xs 0 $space-md;
+
+  a {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    transition: color $transition-fast;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-accent);
+      text-decoration: underline;
     }
   }
 }
 
-// Prefix (+91)
-.auth-page__prefix {
-  padding: 0.75rem $space-md;
-  background: var(--bg-primary);
-  border: 1.5px solid var(--input-border);
-  border-right: none;
-  border-radius: $radius-lg 0 0 $radius-lg;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--text-secondary);
-  flex-shrink: 0;
-
-  & + .auth-page__input-wrap input {
-    border-radius: 0 $radius-lg $radius-lg 0;
-    padding-left: $space-md;
-  }
-}
-
-.auth-page__mobile-row {
-  display: flex;
-}
-
 // =============================================================================
-// OTP INPUTS
+// FOOTER (switch between login/signup)
 // =============================================================================
 
-.auth-page__otp-row {
-  display: flex;
-  gap: $space-sm;
-  justify-content: center;
-  margin-bottom: $space-lg;
-}
-
-.auth-page__otp-input {
-  width: 52px;
-  height: 56px;
+.auth-page__footer {
   text-align: center;
-  font-size: $font-size-xl;
-  font-weight: $font-weight-semibold;
-  background: var(--input-bg);
-  border: 2px solid var(--input-border);
+  margin-top: $space-lg;
+  padding-top: $space-md;
+  border-top: 1px solid var(--border-color);
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+}
+
+// =============================================================================
+// ALERTS
+// =============================================================================
+
+.alert {
+  padding: $space-md;
   border-radius: $radius-lg;
-  color: var(--text-primary);
-  transition: border-color $transition-fast, box-shadow $transition-fast;
-  outline: none;
-
-  &:focus {
-    border-color: var(--color-accent);
-    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.18);
-  }
-
-  &--filled {
-    border-color: var(--color-accent);
-  }
-
-  @media (max-width: #{$bp-sm}) {
-    width: 44px;
-    height: 50px;
-    font-size: $font-size-lg;
-  }
-}
-
-// Resend OTP
-.auth-page__resend {
-  text-align: center;
   font-size: $font-size-sm;
-  color: var(--text-secondary);
-  margin-bottom: $space-xl;
+  line-height: $line-height-relaxed;
 
-  button {
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: inherit;
-    font-weight: $font-weight-semibold;
-    color: var(--color-accent);
-    cursor: pointer;
-    transition: opacity $transition-fast;
+  strong { display: block; font-weight: $font-weight-semibold; margin-bottom: 2px; }
+  p { margin: 0; }
 
-    &:hover { opacity: 0.8; }
-    &:disabled { opacity: 0.4; cursor: not-allowed; }
-  }
-}
-
-// =============================================================================
-// SUBMIT BUTTON
-// =============================================================================
-
-.auth-page__submit {
-  width: 100%;
-  padding: 0.875rem $space-xl;
-  background: var(--color-accent);
-  border: none;
-  border-radius: $radius-lg;
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: #ffffff;
-  cursor: pointer;
-  transition: background $transition-fast, box-shadow $transition-fast, transform $transition-fast;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $space-sm;
-
-  &:hover {
-    background: var(--color-accent-dark);
-    box-shadow: 0 4px 16px rgba(var(--color-accent-rgb), 0.35);
+  &--success {
+    background: rgba(39, 174, 96, 0.1);
+    border: 1px solid rgba(39, 174, 96, 0.25);
+    color: #27AE60;
   }
 
-  &:active { transform: scale(0.98); }
-
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    &:hover { background: var(--color-accent); box-shadow: none; }
-  }
-}
-
-// =============================================================================
-// TOGGLE (Login ↔ Signup)
-// =============================================================================
-
-.auth-page__toggle {
-  text-align: center;
-  font-size: $font-size-sm;
-  color: var(--text-secondary);
-  margin-top: $space-xl;
-
-  button {
-    background: none;
-    border: none;
-    padding: 0;
-    font-size: inherit;
-    font-weight: $font-weight-semibold;
-    color: var(--color-accent);
-    cursor: pointer;
-    transition: opacity $transition-fast;
-
-    &:hover { opacity: 0.8; }
+  &--error {
+    background: rgba(229, 62, 62, 0.08);
+    border: 1px solid rgba(229, 62, 62, 0.2);
+    color: $color-error;
   }
 }
 
@@ -601,4 +438,44 @@
   display: flex;
   align-items: center;
   gap: $space-xs;
+}
+
+// =============================================================================
+// DEMO ACCESS
+// =============================================================================
+
+.auth-page__demo {
+  margin-top: $space-lg;
+  padding-top: $space-md;
+  border-top: 1px solid var(--border-color);
+}
+
+.auth-page__demo-label {
+  text-align: center;
+  font-size: $font-size-xs;
+  color: var(--text-muted);
+  margin: 0 0 $space-sm;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.auth-page__demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+}
+
+.btn-demo {
+  padding: 0.55rem $space-sm;
+  background: transparent;
+  border: 1.5px solid currentColor;
+  border-radius: $radius-lg;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background $transition-fast, opacity $transition-fast;
+  letter-spacing: 0.02em;
+
+  &:hover { background: rgba(0, 0, 0, 0.04); opacity: 0.85; }
 }

@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+﻿@use '../../styles/variables' as *;
 @use '../../styles/mixins' as *;
 
 // =============================================================================
@@ -11,7 +11,7 @@
   min-height: 100dvh;
 }
 
-// ── Shared container ─────────────────────────────────────────────────────────
+// â”€â”€ Shared container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__container {
   width: 100%;
   max-width: 1200px;
@@ -21,7 +21,7 @@
   @include md { padding: 0 $space-md; }
 }
 
-// ── Shared section styles ─────────────────────────────────────────────────────
+// â”€â”€ Shared section styles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__section {
   padding: $space-4xl 0;
 
@@ -58,7 +58,7 @@
   }
 }
 
-// ── Badge pill ────────────────────────────────────────────────────────────────
+// â”€â”€ Badge pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__badge {
   display: inline-flex;
   align-items: center;
@@ -75,7 +75,7 @@
   margin-bottom: $space-md;
 }
 
-// ── Accent text ───────────────────────────────────────────────────────────────
+// â”€â”€ Accent text â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__accent {
   color: var(--color-accent);
 }
@@ -114,7 +114,7 @@
   @include md { padding: 0 $space-md; }
 }
 
-// ── Brand logo ────────────────────────────────────────────────────────────────
+// â”€â”€ Brand logo â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__brand {
   display: inline-flex;
   align-items: center;
@@ -140,7 +140,7 @@
   &--footer  { height: 24px; }
 }
 
-// Text fallback — hidden when image is present, shown if image errors
+// Text fallback â€” hidden when image is present, shown if image errors
 .lp__brand-text-fallback {
   display: none;
 }
@@ -169,7 +169,7 @@
   color: var(--color-accent);
 }
 
-// ── Nav links ─────────────────────────────────────────────────────────────────
+// â”€â”€ Nav links â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__nav-links {
   display: flex;
   align-items: center;
@@ -188,7 +188,7 @@
   }
 }
 
-// ── Nav actions ───────────────────────────────────────────────────────────────
+// â”€â”€ Nav actions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__nav-actions {
   display: flex;
   align-items: center;
@@ -222,7 +222,7 @@
   @include lg { display: none; }
 }
 
-// ── Theme toggle pill ─────────────────────────────────────────────────────────
+// â”€â”€ Theme toggle pill â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__theme-pill {
   position: relative;
   width: 52px;
@@ -270,7 +270,7 @@
   }
 }
 
-// ── Hamburger ─────────────────────────────────────────────────────────────────
+// â”€â”€ Hamburger â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__nav-hamburger {
   display: none;
   background: none;
@@ -462,7 +462,7 @@
   strong { color: var(--text-primary); }
 }
 
-// ── Hero image grid ───────────────────────────────────────────────────────────
+// â”€â”€ Hero image grid â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__hero-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -915,7 +915,7 @@
   svg { color: var(--color-accent); }
 }
 
-// ── Phone mockup ──────────────────────────────────────────────────────────────
+// â”€â”€ Phone mockup â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__pwa-visual {
   display: flex;
   justify-content: center;
@@ -1149,3 +1149,231 @@
   color: $color-grey;
   text-align: center;
 }
+
+
+// --- Demo Floating Pill --------------------------------------------------------
+.lp__demo-pill {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  background: #252830;
+  color: #fff;
+  border: 1.5px solid rgba(255,255,255,0.12);
+  border-radius: 999px;
+  padding: 7px 18px 7px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 1px rgba(0,171,179,0.18);
+  transition: box-shadow 0.2s, transform 0.2s;
+  user-select: none;
+
+  svg {
+    color: #00ABB3;
+    filter: drop-shadow(0 0 4px #00ABB3aa);
+  }
+
+  // Blinking dot
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #00ABB3;
+    box-shadow: 0 0 6px #00ABB3;
+    animation: lp-blink 1.4s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+
+  &:hover {
+    box-shadow: 0 6px 28px rgba(0,171,179,0.35), 0 0 0 1px #00ABB3;
+    transform: translateX(-50%) translateY(-2px);
+  }
+}
+
+@keyframes lp-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.25; }
+}
+
+// --- Demo Backdrop -------------------------------------------------------------
+.lp__demo-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(0,0,0,0.55);
+  backdrop-filter: blur(3px);
+}
+
+// --- Demo Modal ----------------------------------------------------------------
+.lp__demo-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  margin: auto;
+  width: min(560px, calc(100vw - 32px));
+  height: fit-content;
+  background: #1a1d23;
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 20px;
+  padding: 28px 28px 20px;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.55);
+  overflow: hidden;
+
+
+  .dark-mode & {
+    background: #161a1f;
+    border-color: rgba(255,255,255,0.06);
+  }
+}
+
+// Modal header
+.lp__demo-modal-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+
+  h3 {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin: 0;
+    line-height: 1.2;
+  }
+}
+
+.lp__demo-modal-eyebrow {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #00ABB3;
+  margin: 0 0 5px;
+}
+
+.lp__demo-modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.06);
+  border: none;
+  color: rgba(255,255,255,0.6);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: rgba(255,255,255,0.12);
+    color: #fff;
+  }
+}
+
+// 2×2 grid of role cards
+.lp__demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+
+  @media (max-width: 440px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Individual role card
+.lp__demo-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 12px;
+  border-radius: 14px;
+  background: var(--demo-bg);
+  border: 1.5px solid rgba(255,255,255,0.06);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s, background 0.2s;
+  position: relative;
+  will-change: transform;
+
+  &:hover {
+    border-color: var(--demo-color);
+    background: var(--demo-bg);
+
+    .lp__demo-card-arrow {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+}
+
+.lp__demo-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--demo-bg);
+  border: 1.5px solid var(--demo-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--demo-color);
+  flex-shrink: 0;
+  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--demo-color) 30%, transparent));
+}
+
+.lp__demo-card-text {
+  flex: 1;
+  min-width: 0;
+
+  strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 1px;
+  }
+}
+
+.lp__demo-card-sub {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--demo-color);
+  display: block;
+  margin-bottom: 4px;
+}
+
+.lp__demo-card-desc {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.52);
+  margin: 0;
+  line-height: 1.45;
+}
+
+.lp__demo-card-arrow {
+  color: var(--demo-color);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.2s, transform 0.2s;
+  flex-shrink: 0;
+}
+
+// Footer note
+.lp__demo-modal-note {
+  margin: 18px 0 0;
+  text-align: center;
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.3);
+}
+

@@ -29,7 +29,7 @@ const formVariants = {
 function AuthPage() {
   const isDark = useSelector(selectIsDark);
 
-  const [mode,    setMode]    = useState('login');
+  const [isLogin, setIsLogin] = useState(true);
   const [dir,     setDir]     = useState(1);
   const [current, setCurrent] = useState(0);
 
@@ -39,13 +39,13 @@ function AuthPage() {
     return () => clearInterval(t);
   }, []);
 
-  const goLogin  = () => { setDir(-1); setMode('login');  };
-  const goSignup = () => { setDir(1);  setMode('signup'); };
+  const goLogin  = () => { setDir(-1); setIsLogin(true);  };
+  const goSignup = () => { setDir(1);  setIsLogin(false); };
 
   return (
     <div className="auth-page">
 
-      {/* LEFT — image slideshow only, no text/logo */}
+      {/* LEFT — pure image slideshow, no overlay/dots */}
       <div className="auth-page__brand">
         <AnimatePresence mode="wait">
           <motion.img
@@ -59,20 +59,6 @@ function AuthPage() {
             exit="exit"
           />
         </AnimatePresence>
-
-        {/* Slide indicator dots only */}
-        <div className="auth-page__brand-overlay">
-          <div className="auth-page__brand-dots">
-            {SLIDES.map((_, i) => (
-              <button
-                key={i}
-                className={`auth-page__brand-dot${i === current ? ' auth-page__brand-dot--active' : ''}`}
-                onClick={() => setCurrent(i)}
-                aria-label={`Slide ${i + 1}`}
-              />
-            ))}
-          </div>
-        </div>
       </div>
 
       {/* RIGHT — logo + form */}
@@ -87,7 +73,7 @@ function AuthPage() {
 
         <AnimatePresence mode="wait" custom={dir}>
           <motion.div
-            key={mode}
+            key={isLogin ? 'login' : 'signup'}
             className="auth-page__card"
             custom={dir}
             variants={formVariants}
@@ -95,7 +81,7 @@ function AuthPage() {
             animate="center"
             exit="exit"
           >
-            {mode === 'login'
+            {isLogin
               ? <Login  onGoSignup={goSignup} isDark={isDark} />
               : <Signup onGoLogin={goLogin}   isDark={isDark} />
             }

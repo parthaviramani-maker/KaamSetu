@@ -4,13 +4,15 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Favicon -->
+    <!-- Favicon — light/dark aware -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png" media="(prefers-color-scheme: dark)" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-light.png" media="(prefers-color-scheme: light)" />
     <link rel="icon" type="image/png" href="/favicon.png" />
 
     <!-- PWA -->
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="KaamSetu" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="KaamSetu" />
@@ -23,12 +25,24 @@
     <meta name="author" content="KaamSetu" />
     <meta name="theme-color" content="#00ABB3" />
 
-    <!-- Open Graph -->
+    <!-- Open Graph (WhatsApp / Facebook / LinkedIn preview) -->
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://kaamsetu.app/" />
+    <meta property="og:site_name" content="KaamSetu" />
     <meta property="og:title" content="KaamSetu — Where Work Meets Workers" />
     <meta property="og:description" content="Smart Village Identity — connecting employers with workers through trusted local agents." />
-    <meta property="og:image" content="/logo-light.png" />
+    <meta property="og:image" content="https://kaamsetu.app/favicon.png" />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1080" />
+    <meta property="og:image:height" content="1080" />
+    <meta property="og:image:alt" content="KaamSetu — Labour Marketplace" />
+
+    <!-- Twitter / X Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@kaamsetu" />
+    <meta name="twitter:title" content="KaamSetu — Where Work Meets Workers" />
+    <meta name="twitter:description" content="Smart Village Identity — connecting employers with workers through trusted local agents." />
+    <meta name="twitter:image" content="https://kaamsetu.app/favicon.png" />
 
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />

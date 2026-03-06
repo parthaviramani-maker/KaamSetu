@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import slide1 from '../../assets/illustrations/slide1.webp';
 import slide2 from '../../assets/illustrations/slide2.webp';
 import slide3 from '../../assets/illustrations/slide3.webp';
@@ -10,13 +10,15 @@ import {
   FiArrowRight, FiMenu, FiX,
   FiCheckCircle, FiBriefcase, FiUsers, FiMapPin,
   FiShield, FiBell, FiDollarSign, FiZap,
-  FiSmartphone, FiWifi, FiDownload,
+  FiSmartphone, FiWifi, FiDownload, FiPlay,
 } from 'react-icons/fi';
 import {
   HiOutlineUserGroup, HiOutlineShieldCheck,
   HiOutlineCurrencyRupee, HiOutlineMapPin,
 } from 'react-icons/hi2';
+import { MdAdminPanelSettings } from 'react-icons/md';
 import { selectIsDark } from '../../store/themeSlice';
+import { loginSuccess } from '../../store/authSlice';
 import './LandingPage.scss';
 
 // ── Data ────────────────────────────────────────────────────────────────────
@@ -143,12 +145,53 @@ const fadeIn = (delay = 0) => ({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const DEMO_ROLES = [
+  {
+    role:    'employer',
+    label:   'Kaam Saheb',
+    sub:     'Employer',
+    name:    'Rajesh Shah',
+    icon:    <FiBriefcase size={28} />,
+    color:   '#00ABB3',
+    bg:      'rgba(0,171,179,0.10)',
+  },
+  {
+    role:    'worker',
+    label:   'Kaam Saathi',
+    sub:     'Worker',
+    name:    'Ramesh Patel',
+    icon:    <FiUsers size={28} />,
+    color:   '#27AE60',
+    bg:      'rgba(39,174,96,0.10)',
+  },
+  {
+    role:    'agent',
+    label:   'Kaam Setu',
+    sub:     'Local Agent',
+    name:    'Bhavesh Patel',
+    icon:    <HiOutlineUserGroup size={28} />,
+    color:   '#3182CE',
+    bg:      'rgba(49,130,206,0.10)',
+  },
+  {
+    role:    'admin',
+    label:   'Super Admin',
+    sub:     'Platform Admin',
+    name:    'Admin User',
+    icon:    <MdAdminPanelSettings size={28} />,
+    color:   '#805AD5',
+    bg:      'rgba(128,90,213,0.10)',
+  },
+];
+
 function LandingPage() {
   const navigate   = useNavigate();
+  const dispatch   = useDispatch();
   const isDark     = useSelector(selectIsDark);
 
   const [scrolled,   setScrolled]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [demoOpen,   setDemoOpen]   = useState(false);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -162,6 +205,16 @@ function LandingPage() {
   }, [mobileOpen]);
 
   const closeMobile = () => setMobileOpen(false);
+
+  const handleDemoLogin = (r) => {
+    setDemoOpen(false);
+    dispatch(loginSuccess({
+      user:  { name: r.name, email: `${r.role}@demo.com` },
+      token: 'demo-token',
+      role:  r.role,
+    }));
+    navigate('/dashboard');
+  };
 
   return (
     <div className="lp">
@@ -615,6 +668,83 @@ function LandingPage() {
           </p>
         </div>
       </footer>
+
+      {/* ── Demo Floating Pill ───────────────────────────────────────────── */}
+      <div className="lp__demo-pill" onClick={() => setDemoOpen(true)}>
+        <FiPlay size={12} fill="currentColor" />
+        <span>Demo</span>
+      </div>
+
+      {/* ── Demo Modal ──────────────────────────────────────────────────── */}
+      <AnimatePresence>
+        {demoOpen && (
+          <>
+            {/* backdrop */}
+            <motion.div
+              className="lp__demo-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              onClick={() => setDemoOpen(false)}
+            />
+
+            {/* modal */}
+            <motion.div
+              className="lp__demo-modal"
+              initial={{ opacity: 0, scale: 0.88, y: 32 }}
+              animate={{ opacity: 1, scale: 1,    y: 0 }}
+              exit={{    opacity: 0, scale: 0.92,  y: 16 }}
+              transition={{ duration: 0.28, ease: [0.4, 0, 0.2, 1] }}
+            >
+              {/* header */}
+              <div className="lp__demo-modal-head">
+                <div>
+                  <p className="lp__demo-modal-eyebrow">No login needed</p>
+                  <h3>Try a Live Demo</h3>
+                </div>
+                <button
+                  className="lp__demo-modal-close"
+                  onClick={() => setDemoOpen(false)}
+                  aria-label="Close"
+                >
+                  <FiX size={18} />
+                </button>
+              </div>
+
+              {/* role cards */}
+              <div className="lp__demo-grid">
+                {DEMO_ROLES.map((r, i) => (
+                  <motion.button
+                    key={r.role}
+                    className="lp__demo-card"
+                    initial={{ opacity: 0, y: 16 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: i * 0.06, duration: 0.25 }}
+                    whileHover={{ y: -4, boxShadow: `0 8px 28px ${r.color}30` }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => handleDemoLogin(r)}
+                    style={{ '--demo-color': r.color, '--demo-bg': r.bg }}
+                  >
+                    <div className="lp__demo-card-icon">
+                      {r.icon}
+                    </div>
+                    <div className="lp__demo-card-text">
+                      <strong>{r.label}</strong>
+                      <span className="lp__demo-card-sub">{r.sub}</span>
+                    </div>
+                    <FiArrowRight size={16} className="lp__demo-card-arrow" />
+                  </motion.button>
+                ))}
+              </div>
+
+              <p className="lp__demo-modal-note">
+                Demo uses pre-filled dummy data — no real account needed.
+              </p>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </div>
   );
