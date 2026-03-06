@@ -1,0 +1,481 @@
+// =============================================================================
+// AUTH PAGE STYLES — KaamSetu
+// Split screen: left brand panel (hidden on mobile) + right scrollable form
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// =============================================================================
+// PAGE WRAPPER
+// =============================================================================
+
+.auth-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
+  overflow: hidden;
+  background: var(--bg-primary);
+  position: relative;
+  transition: var(--transition-theme);
+
+  @media (max-width: #{$bp-md}) {
+    grid-template-columns: 1fr;
+    height: auto;
+    min-height: 100dvh;
+    overflow: visible;
+  }
+}
+
+// =============================================================================
+// LEFT — IMAGE SLIDESHOW (pure, no overlay/dots)
+// =============================================================================
+
+.auth-page__brand {
+  position: relative;
+  height: 100dvh;
+  overflow: hidden;
+
+  @media (max-width: #{$bp-md}) {
+    display: none;
+  }
+}
+
+.auth-page__brand-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transform-origin: center center;
+  will-change: opacity, transform;
+}
+
+// =============================================================================
+// RIGHT — FORM PANEL
+// =============================================================================
+
+.auth-page__scroll {
+  border-left: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  overflow-y: auto;
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-xl $space-2xl;
+  position: relative;
+  height: 100%;
+  transition: var(--transition-theme);
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) transparent;
+
+  @media (max-width: #{$bp-md}) {
+    border-left: none;
+    padding: 3rem $space-md $space-2xl;
+    align-items: flex-start;
+    overflow-y: visible;
+    height: auto;
+    min-height: 100dvh;
+  }
+}
+
+// Logo above form
+.auth-page__panel-logo {
+  display: flex;
+  justify-content: flex-start;   // left-aligned on desktop
+  margin-bottom: $space-xl;
+  width: 100%;
+  max-width: 460px;
+
+  a { text-decoration: none; }
+
+  img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+
+    @media (max-width: #{$bp-md}) { height: 32px; }
+  }
+
+  @media (max-width: #{$bp-md}) {
+    justify-content: center;       // centered on mobile
+    margin-bottom: $space-lg;
+    max-width: 100%;
+  }
+}
+
+// Card
+.auth-page__card {
+  width: 100%;
+  max-width: 460px;
+  position: relative;
+  margin: auto 0;
+
+  @media (max-width: #{$bp-md}) {
+    max-width: 100%;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// HEADER (title + description)
+// =============================================================================
+
+.auth-page__header {
+  text-align: left;              // left on desktop
+  margin-bottom: $space-lg;
+
+  @media (max-width: #{$bp-md}) {
+    text-align: center;          // centered on mobile
+  }
+}
+
+.auth-page__title {
+  font-size: 1.75rem;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0 0 $space-xs;
+  line-height: $line-height-tight;
+
+  @media (max-width: #{$bp-sm}) { font-size: 1.5rem; }
+}
+
+.auth-page__description {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+// =============================================================================
+// STEP PROGRESS BARS
+// =============================================================================
+
+.auth-page__steps {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  margin-bottom: $space-md;
+  width: 100%;
+}
+
+.auth-page__step-dot {
+  height: 3px;
+  flex: 1;
+  background: var(--border-color);
+  border-radius: 2px;
+  transition: background $transition-normal;
+
+  &--active,
+  &--done {
+    background: var(--color-accent);
+  }
+}
+
+// =============================================================================
+// GOOGLE BUTTON
+// =============================================================================
+
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+  padding: 0.75rem $space-lg;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color-strong);
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  font-family: inherit;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: background $transition-fast, border-color $transition-fast, box-shadow $transition-fast;
+  margin-bottom: $space-md;
+  white-space: nowrap;
+
+  &:hover {
+    background: var(--bg-hover);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  svg { flex-shrink: 0; }
+}
+
+// =============================================================================
+// DIVIDER
+// =============================================================================
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin: $space-sm 0 $space-md;
+  color: var(--text-muted);
+  font-size: $font-size-xs;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+  }
+}
+
+// =============================================================================
+// FORM GROUP (label + input + error)
+// =============================================================================
+
+.form-group {
+  margin-bottom: $space-md;
+
+  label {
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--text-primary);
+    margin-bottom: $space-xs;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    padding: 0.75rem $space-md;
+    background: var(--input-bg);
+    border: 1.5px solid var(--input-border);
+    border-radius: $radius-lg;
+    font-size: $font-size-base;
+    font-family: inherit;
+    color: var(--text-primary);
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+    outline: none;
+    box-sizing: border-box;
+
+    &::placeholder { color: var(--text-secondary); opacity: 0.6; }
+
+    &:focus {
+      border-color: var(--color-accent);
+      box-shadow: 0 0 0 3px rgba(0, 171, 179, 0.15);
+    }
+  }
+
+  &--error input {
+    border-color: $color-error;
+    &:focus { box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15); }
+  }
+}
+
+.form-error {
+  display: block;
+  font-size: $font-size-xs;
+  color: $color-error;
+  margin-top: $space-xs;
+}
+
+// =============================================================================
+// PASSWORD WRAP (input + eye toggle)
+// =============================================================================
+
+.auth-page__pw-wrap {
+  position: relative;
+  width: 100%;
+
+  input { padding-right: 3rem !important; }
+
+  &-eye {
+    position: absolute;
+    right: 0.875rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: $space-xs;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $radius-sm;
+    transition: color $transition-fast;
+    line-height: 0;
+
+    &:hover { color: var(--color-accent); }
+    &:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
+  }
+}
+
+// =============================================================================
+// BACK / NAV ROW
+// =============================================================================
+
+.auth-page__nav-row {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  margin-bottom: $space-md;
+
+  button {
+    background: none;
+    border: none;
+    padding: $space-xs;
+    color: var(--text-secondary);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $space-xs;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    font-family: inherit;
+    border-radius: $radius-sm;
+    transition: color $transition-fast;
+
+    &:hover { color: var(--color-accent); }
+  }
+}
+
+// =============================================================================
+// SINGLE-FIELD ANIMATED WRAPPER
+// =============================================================================
+
+.auth-page__single-field {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+
+  form { display: flex; flex-direction: column; }
+}
+
+// =============================================================================
+// FORGOT PASSWORD
+// =============================================================================
+
+.auth-page__forgot {
+  text-align: right;
+  margin: -$space-xs 0 $space-md;
+
+  a {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    transition: color $transition-fast;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--color-accent);
+      text-decoration: underline;
+    }
+  }
+}
+
+// =============================================================================
+// FOOTER (switch between login/signup)
+// =============================================================================
+
+.auth-page__footer {
+  text-align: center;
+  margin-top: $space-lg;
+  padding-top: $space-md;
+  border-top: 1px solid var(--border-color);
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+}
+
+// =============================================================================
+// ALERTS
+// =============================================================================
+
+.alert {
+  padding: $space-md;
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  line-height: $line-height-relaxed;
+
+  strong { display: block; font-weight: $font-weight-semibold; margin-bottom: 2px; }
+  p { margin: 0; }
+
+  &--success {
+    background: rgba(39, 174, 96, 0.1);
+    border: 1px solid rgba(39, 174, 96, 0.25);
+    color: #27AE60;
+  }
+
+  &--error {
+    background: rgba(229, 62, 62, 0.08);
+    border: 1px solid rgba(229, 62, 62, 0.2);
+    color: $color-error;
+  }
+}
+
+// =============================================================================
+// HINT TEXT
+// =============================================================================
+
+.auth-page__hint {
+  font-size: $font-size-xs;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: $space-sm;
+  line-height: $line-height-relaxed;
+}
+
+// =============================================================================
+// ERROR
+// =============================================================================
+
+.auth-page__error {
+  font-size: $font-size-sm;
+  color: $color-error;
+  margin-top: $space-sm;
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+}
+
+// =============================================================================
+// DEMO ACCESS
+// =============================================================================
+
+.auth-page__demo {
+  margin-top: $space-lg;
+  padding-top: $space-md;
+  border-top: 1px solid var(--border-color);
+}
+
+.auth-page__demo-label {
+  text-align: center;
+  font-size: $font-size-xs;
+  color: var(--text-muted);
+  margin: 0 0 $space-sm;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.auth-page__demo-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+}
+
+.btn-demo {
+  padding: 0.55rem $space-sm;
+  background: transparent;
+  border: 1.5px solid currentColor;
+  border-radius: $radius-lg;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background $transition-fast, opacity $transition-fast;
+  letter-spacing: 0.02em;
+
+  &:hover { background: rgba(0, 0, 0, 0.04); opacity: 0.85; }
+}
