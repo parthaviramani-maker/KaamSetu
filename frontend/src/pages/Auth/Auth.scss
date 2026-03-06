@@ -1,0 +1,650 @@
+// =============================================================================
+// AUTH PAGE STYLES — KaamSetu
+// Split screen: left brand panel (hidden on mobile) + right scrollable form
+// =============================================================================
+
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// =============================================================================
+// PAGE WRAPPER
+// =============================================================================
+
+.auth-page {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100dvh;
+  background: var(--bg-primary);
+  overflow-x: hidden;
+
+  @media (max-width: #{$bp-lg}) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// =============================================================================
+// LEFT — BRAND PANEL
+// =============================================================================
+
+.auth-page__brand {
+  position: sticky;
+  top: 0;
+  height: 100dvh;
+  background: linear-gradient(145deg, #{$color-charcoal} 0%, #2a2d35 60%, #1a1d24 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: $space-4xl $space-3xl;
+  overflow: hidden;
+
+  // Hide on mobile/tablet
+  @media (max-width: #{$bp-lg}) {
+    display: none;
+  }
+
+  // Decorative background blob
+  &::before {
+    content: '';
+    position: absolute;
+    top: -120px;
+    right: -80px;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(0, 171, 179, 0.18) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -80px;
+    left: -60px;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0, 171, 179, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+}
+
+.auth-page__brand-logo {
+  margin-bottom: $space-xl;
+
+  img {
+    height: 48px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+.auth-page__brand-tagline {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: #ffffff;
+  line-height: $line-height-tight;
+  margin-bottom: $space-md;
+
+  span {
+    color: $color-teal;
+  }
+}
+
+.auth-page__brand-sub {
+  font-size: $font-size-base;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: $line-height-relaxed;
+  max-width: 340px;
+  margin-bottom: $space-3xl;
+}
+
+// Role chips
+.auth-page__brand-roles {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  width: 100%;
+  max-width: 340px;
+}
+
+.auth-page__brand-role {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md $space-lg;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: $radius-xl;
+  backdrop-filter: blur(8px);
+  transition: background $transition-fast, border-color $transition-fast;
+
+  &:hover {
+    background: rgba(0, 171, 179, 0.12);
+    border-color: rgba(0, 171, 179, 0.3);
+  }
+
+  &-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(0, 171, 179, 0.15);
+    border-radius: $radius-lg;
+    @include flex-center;
+    color: $color-teal;
+    flex-shrink: 0;
+  }
+
+  &-info {
+    display: flex;
+    flex-direction: column;
+
+    strong {
+      font-size: $font-size-sm;
+      font-weight: $font-weight-semibold;
+      color: #ffffff;
+    }
+
+    span {
+      font-size: $font-size-xs;
+      color: rgba(255, 255, 255, 0.5);
+    }
+  }
+}
+
+.auth-page__brand-footer {
+  margin-top: auto;
+  padding-top: $space-xl;
+  font-size: $font-size-xs;
+  color: rgba(255, 255, 255, 0.3);
+  position: relative;
+  z-index: 1;
+}
+
+// =============================================================================
+// RIGHT — FORM PANEL
+// =============================================================================
+
+.auth-page__form-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: $space-3xl $space-xl;
+  background: var(--bg-primary);
+
+  @media (max-width: #{$bp-sm}) {
+    padding: $space-2xl $space-md;
+    justify-content: flex-start;
+  }
+}
+
+// Mobile top bar (shown only on mobile, replaces the brand panel)
+.auth-page__mobile-top {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 460px;
+  margin-bottom: $space-2xl;
+
+  @media (max-width: #{$bp-lg}) {
+    display: flex;
+  }
+}
+
+.auth-page__mobile-brand {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+
+  img {
+    height: 36px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+// The card that wraps the form
+.auth-page__card {
+  width: 100%;
+  max-width: 460px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-2xl;
+  padding: $space-3xl;
+  box-shadow: var(--shadow-lg);
+
+  // Dark mode — give card a slightly lighter bg so it lifts off the page
+  html.dark-mode & {
+    background: #2d3140;
+    border-color: rgba(178, 178, 178, 0.14);
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.5);
+  }
+
+  @media (max-width: #{$bp-sm}) {
+    padding: $space-xl $space-lg;
+    border-radius: $radius-xl;
+    box-shadow: none;
+    border: none;
+  }
+}
+
+// =============================================================================
+// FORM TOP — logo + back button
+// =============================================================================
+
+.auth-page__form-logo {
+  display: flex;
+  justify-content: center;
+  margin-bottom: $space-lg;
+
+  img {
+    height: 28px;
+    width: auto;
+    object-fit: contain;
+  }
+}
+
+.auth-page__form-back {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  margin-bottom: $space-lg;
+  cursor: pointer;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--color-accent);
+  }
+}
+
+// =============================================================================
+// STEP PROGRESS DOTS
+// =============================================================================
+
+.auth-page__steps {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  margin-bottom: $space-xl;
+}
+
+.auth-page__step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: $radius-full;
+  background: var(--border-color-strong);
+  transition: width $transition-normal, background $transition-normal;
+
+  &--active {
+    width: 24px;
+    background: var(--color-accent);
+  }
+
+  &--done {
+    background: var(--color-accent);
+    opacity: 0.5;
+  }
+}
+
+// =============================================================================
+// FORM HEADING
+// =============================================================================
+
+.auth-page__title {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin-bottom: $space-xs;
+}
+
+.auth-page__subtitle {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  margin-bottom: $space-2xl;
+  line-height: $line-height-relaxed;
+}
+
+// =============================================================================
+// ROLE SELECT GRID
+// =============================================================================
+
+.auth-page__role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-md;
+  margin-bottom: $space-xl;
+}
+
+.auth-page__role-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xs;
+  padding: $space-lg $space-sm;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: $radius-xl;
+  cursor: pointer;
+  transition: all $transition-fast;
+  text-align: center;
+
+  &:hover {
+    border-color: var(--color-accent);
+    background: var(--bg-hover);
+  }
+
+  &--selected {
+    border-color: var(--color-accent);
+    background: var(--bg-active);
+
+    .auth-page__role-btn-icon {
+      color: var(--color-accent);
+    }
+
+    .auth-page__role-btn-label {
+      color: var(--color-accent);
+      font-weight: $font-weight-semibold;
+    }
+  }
+
+  &-icon {
+    font-size: 1.75rem;
+    line-height: 1;
+    color: var(--text-secondary);
+    transition: color $transition-fast;
+  }
+
+  &-label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    transition: color $transition-fast;
+    white-space: nowrap;
+  }
+
+  &-sublabel {
+    font-size: 0.65rem;
+    color: var(--text-muted);
+    line-height: 1;
+  }
+}
+
+// =============================================================================
+// DIVIDER
+// =============================================================================
+
+.auth-page__divider {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  margin: $space-xl 0;
+  color: var(--text-muted);
+  font-size: $font-size-xs;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-color);
+  }
+}
+
+// =============================================================================
+// GOOGLE BUTTON
+// =============================================================================
+
+.auth-page__google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-md;
+  padding: 0.75rem $space-lg;
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color-strong);
+  border-radius: $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all $transition-fast;
+  margin-bottom: $space-lg;
+
+  &:hover {
+    background: var(--bg-hover);
+    border-color: var(--color-accent);
+    box-shadow: var(--shadow-sm);
+  }
+
+  svg {
+    flex-shrink: 0;
+  }
+}
+
+// =============================================================================
+// FORM FIELDS
+// =============================================================================
+
+.auth-page__field {
+  margin-bottom: $space-lg;
+
+  label {
+    display: block;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--text-primary);
+    margin-bottom: $space-xs;
+  }
+}
+
+.auth-page__input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &-icon {
+    position: absolute;
+    left: $space-md;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  input {
+    width: 100%;
+    padding: 0.75rem $space-md;
+    padding-left: 2.75rem;
+    background: var(--input-bg);
+    border: 1.5px solid var(--input-border);
+    border-radius: $radius-lg;
+    font-size: $font-size-base;
+    color: var(--text-primary);
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+    outline: none;
+
+    &::placeholder {
+      color: var(--text-muted);
+    }
+
+    &:focus {
+      border-color: var(--input-focus-border);
+      box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.15);
+    }
+  }
+}
+
+// Prefix (+91)
+.auth-page__prefix {
+  padding: 0.75rem $space-md;
+  background: var(--bg-primary);
+  border: 1.5px solid var(--input-border);
+  border-right: none;
+  border-radius: $radius-lg 0 0 $radius-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+
+  & + .auth-page__input-wrap input {
+    border-radius: 0 $radius-lg $radius-lg 0;
+    padding-left: $space-md;
+  }
+}
+
+.auth-page__mobile-row {
+  display: flex;
+}
+
+// =============================================================================
+// OTP INPUTS
+// =============================================================================
+
+.auth-page__otp-row {
+  display: flex;
+  gap: $space-sm;
+  justify-content: center;
+  margin-bottom: $space-lg;
+}
+
+.auth-page__otp-input {
+  width: 52px;
+  height: 56px;
+  text-align: center;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  background: var(--input-bg);
+  border: 2px solid var(--input-border);
+  border-radius: $radius-lg;
+  color: var(--text-primary);
+  transition: border-color $transition-fast, box-shadow $transition-fast;
+  outline: none;
+
+  &:focus {
+    border-color: var(--color-accent);
+    box-shadow: 0 0 0 3px rgba(var(--color-accent-rgb), 0.18);
+  }
+
+  &--filled {
+    border-color: var(--color-accent);
+  }
+
+  @media (max-width: #{$bp-sm}) {
+    width: 44px;
+    height: 50px;
+    font-size: $font-size-lg;
+  }
+}
+
+// Resend OTP
+.auth-page__resend {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  margin-bottom: $space-xl;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    font-weight: $font-weight-semibold;
+    color: var(--color-accent);
+    cursor: pointer;
+    transition: opacity $transition-fast;
+
+    &:hover { opacity: 0.8; }
+    &:disabled { opacity: 0.4; cursor: not-allowed; }
+  }
+}
+
+// =============================================================================
+// SUBMIT BUTTON
+// =============================================================================
+
+.auth-page__submit {
+  width: 100%;
+  padding: 0.875rem $space-xl;
+  background: var(--color-accent);
+  border: none;
+  border-radius: $radius-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: #ffffff;
+  cursor: pointer;
+  transition: background $transition-fast, box-shadow $transition-fast, transform $transition-fast;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-sm;
+
+  &:hover {
+    background: var(--color-accent-dark);
+    box-shadow: 0 4px 16px rgba(var(--color-accent-rgb), 0.35);
+  }
+
+  &:active { transform: scale(0.98); }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    &:hover { background: var(--color-accent); box-shadow: none; }
+  }
+}
+
+// =============================================================================
+// TOGGLE (Login ↔ Signup)
+// =============================================================================
+
+.auth-page__toggle {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  margin-top: $space-xl;
+
+  button {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    font-weight: $font-weight-semibold;
+    color: var(--color-accent);
+    cursor: pointer;
+    transition: opacity $transition-fast;
+
+    &:hover { opacity: 0.8; }
+  }
+}
+
+// =============================================================================
+// HINT TEXT
+// =============================================================================
+
+.auth-page__hint {
+  font-size: $font-size-xs;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: $space-sm;
+  line-height: $line-height-relaxed;
+}
+
+// =============================================================================
+// ERROR
+// =============================================================================
+
+.auth-page__error {
+  font-size: $font-size-sm;
+  color: $color-error;
+  margin-top: $space-sm;
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+}

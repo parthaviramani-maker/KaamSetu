@@ -1,0 +1,1147 @@
+@use '../../styles/variables' as *;
+@use '../../styles/mixins' as *;
+
+// =============================================================================
+// KAAMSETU LANDING PAGE
+// =============================================================================
+
+.lp {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}
+
+// ── Shared container ─────────────────────────────────────────────────────────
+.lp__container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-xl;
+
+  @include md { padding: 0 $space-md; }
+}
+
+// ── Shared section styles ─────────────────────────────────────────────────────
+.lp__section {
+  padding: $space-4xl 0;
+
+  @include md { padding: $space-2xl 0; }
+
+  &--alt {
+    background: var(--bg-secondary);
+  }
+}
+
+.lp__section-header {
+  text-align: center;
+  margin-bottom: $space-3xl;
+
+  @include md { margin-bottom: $space-2xl; }
+
+  h2 {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-extrabold;
+    color: var(--text-primary);
+    line-height: $line-height-tight;
+    margin: $space-sm 0;
+
+    @include md { font-size: $font-size-2xl; }
+  }
+
+  p {
+    font-size: $font-size-md;
+    color: var(--text-secondary);
+    max-width: 560px;
+    margin: 0 auto;
+
+    @include md { font-size: $font-size-base; }
+  }
+}
+
+// ── Badge pill ────────────────────────────────────────────────────────────────
+.lp__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  padding: 0.35rem $space-md;
+  background: rgba(0, 171, 179, 0.12);
+  color: var(--color-accent);
+  border-radius: $radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: 1px solid rgba(0, 171, 179, 0.25);
+  margin-bottom: $space-md;
+}
+
+// ── Accent text ───────────────────────────────────────────────────────────────
+.lp__accent {
+  color: var(--color-accent);
+}
+
+// =============================================================================
+// NAVBAR
+// =============================================================================
+
+.lp__nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: $space-md 0;
+  background: transparent;
+  transition: background 0.25s ease, box-shadow 0.25s ease, padding 0.25s ease;
+
+  &--scrolled {
+    background: var(--bg-card);
+    box-shadow: var(--shadow-md);
+    padding: 0.65rem 0;
+
+    html.dark-mode & {
+      background: $color-charcoal;
+    }
+  }
+}
+
+.lp__nav-inner {
+  @include flex-between;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 $space-xl;
+
+  @include md { padding: 0 $space-md; }
+}
+
+// ── Brand logo ────────────────────────────────────────────────────────────────
+.lp__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 1px;
+  text-decoration: none;
+  line-height: 1;
+  cursor: pointer;
+  font-weight: $font-weight-extrabold;
+
+  &--lg {
+    font-size: $font-size-xl;
+  }
+}
+
+// Real logo image (primary)
+.lp__brand-logo-img {
+  height: 26px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+
+  &--sidebar { height: 22px; }
+  &--footer  { height: 24px; }
+}
+
+// Text fallback — hidden when image is present, shown if image errors
+.lp__brand-text-fallback {
+  display: none;
+}
+
+.lp__brand-logo-img.lp__brand-logo-img--error + .lp__brand-text-fallback,
+.lp__brand:not(:has(.lp__brand-logo-img)) .lp__brand-text-fallback {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 1px;
+}
+
+.lp__brand-k {
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--color-accent);
+  line-height: 1;
+}
+
+.lp__brand-rest {
+  font-size: 1.3rem;
+  font-weight: $font-weight-extrabold;
+  color: var(--text-primary);
+}
+
+.lp__brand-accent {
+  color: var(--color-accent);
+}
+
+// ── Nav links ─────────────────────────────────────────────────────────────────
+.lp__nav-links {
+  display: flex;
+  align-items: center;
+  gap: $space-xl;
+
+  @include lg { display: none; }
+
+  a {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: color $transition-fast;
+
+    &:hover { color: var(--color-accent); }
+  }
+}
+
+// ── Nav actions ───────────────────────────────────────────────────────────────
+.lp__nav-actions {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.lp__nav-login {
+  background: none;
+  border: none;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.625rem $space-md;
+  border-radius: $radius-md;
+  transition: color $transition-fast;
+  line-height: 1;
+
+  &:hover { color: var(--text-primary); }
+
+  @include lg { display: none; }
+}
+
+// Override btn-sm height specifically in the navbar
+.lp__nav-cta.btn-sm {
+  padding: 0.625rem $space-lg;
+  font-size: $font-size-sm;
+}
+
+.lp__nav-cta {
+  @include lg { display: none; }
+}
+
+// ── Theme toggle pill ─────────────────────────────────────────────────────────
+.lp__theme-pill {
+  position: relative;
+  width: 52px;
+  height: 28px;
+  border-radius: $radius-full;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color $transition-normal, background $transition-normal;
+
+  &--dark {
+    border-color: var(--color-accent);
+    background: rgba(0, 171, 179, 0.1);
+
+    .lp__theme-pill__knob {
+      transform: translateX(24px);
+      background: var(--color-accent);
+    }
+  }
+
+  &__knob {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: $color-grey;
+    transition: transform 0.25s $transition-bounce, background 0.2s ease;
+    z-index: 1;
+  }
+
+  &__icon {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+    pointer-events: none;
+
+    &--sun  { left: 5px; }
+    &--moon { right: 5px; }
+  }
+}
+
+// ── Hamburger ─────────────────────────────────────────────────────────────────
+.lp__nav-hamburger {
+  display: none;
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  padding: $space-xs;
+  color: var(--text-primary);
+  cursor: pointer;
+
+  @include lg { display: flex; align-items: center; justify-content: center; }
+}
+
+// =============================================================================
+// MOBILE SIDEBAR
+// =============================================================================
+
+.lp__overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 199;
+  backdrop-filter: blur(2px);
+}
+
+.lp__sidebar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(320px, 85vw);
+  background: var(--bg-card);
+  z-index: 200;
+  padding: $space-xl;
+  display: flex;
+  flex-direction: column;
+  gap: $space-xl;
+  box-shadow: var(--shadow-xl);
+}
+
+.lp__sidebar-head {
+  @include flex-between;
+}
+
+.lp__sidebar-close {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  padding: $space-xs;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+
+  &:hover { color: var(--color-accent); border-color: var(--color-accent); }
+}
+
+.lp__sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+
+  a {
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    text-decoration: none;
+    padding: $space-sm 0;
+    border-bottom: 1px solid var(--border-color-light);
+    transition: color $transition-fast;
+
+    &:hover { color: var(--color-accent); }
+  }
+}
+
+.lp__sidebar-ctas {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin-top: auto;
+}
+
+.lp__sidebar-btn {
+  justify-content: center;
+}
+
+// =============================================================================
+// HERO
+// =============================================================================
+
+.lp__hero {
+  position: relative;
+  padding: calc(80px + $space-4xl) 0 $space-4xl;
+  overflow: hidden;
+  background: var(--bg-primary);
+
+  @include md { padding: calc(70px + $space-2xl) 0 $space-2xl; }
+}
+
+// Decorative blobs
+.lp__hero-blob {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  opacity: 0.35;
+
+  &--1 {
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(0,171,179,0.4) 0%, transparent 70%);
+    top: -100px;
+    right: -100px;
+  }
+
+  &--2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(60,64,72,0.2) 0%, transparent 70%);
+    bottom: 0;
+    left: -80px;
+  }
+
+  html.dark-mode & {
+    opacity: 0.2;
+  }
+}
+
+.lp__hero-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3xl;
+  align-items: center;
+
+  @include lg {
+    grid-template-columns: 1fr;
+    gap: $space-2xl;
+  }
+}
+
+.lp__hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  @include lg { align-items: center; text-align: center; }
+}
+
+.lp__hero-title {
+  font-size: $font-size-5xl;
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--text-primary);
+  margin-bottom: $space-lg;
+
+  @include lg  { font-size: $font-size-4xl; }
+  @include md  { font-size: $font-size-3xl; }
+  @include sm  { font-size: $font-size-2xl; }
+}
+
+.lp__hero-sub {
+  font-size: $font-size-md;
+  color: var(--text-secondary);
+  line-height: $line-height-relaxed;
+  max-width: 520px;
+  margin-bottom: $space-xl;
+
+  strong { color: var(--text-primary); font-weight: $font-weight-semibold; }
+
+  @include md { font-size: $font-size-base; }
+}
+
+.lp__hero-ctas {
+  display: flex;
+  gap: $space-md;
+  flex-wrap: wrap;
+  margin-bottom: $space-lg;
+
+  @include md { flex-direction: column; width: 100%; }
+}
+
+.lp__hero-trust {
+  display: flex;
+  align-items: center;
+  gap: $space-xs;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+
+  svg { color: var(--color-accent); flex-shrink: 0; }
+  strong { color: var(--text-primary); }
+}
+
+// ── Hero image grid ───────────────────────────────────────────────────────────
+.lp__hero-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-md;
+
+  @include lg {
+    max-width: 520px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  @include sm { gap: $space-sm; }
+}
+
+.lp__hero-img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  border-radius: $radius-2xl;
+
+  &--1 { border-radius: $radius-2xl $radius-2xl $radius-sm  $radius-2xl; }
+  &--2 {
+    border-radius: $radius-2xl $radius-2xl $radius-2xl $radius-sm;
+    margin-top: $space-xl;
+    @include sm { margin-top: $space-sm; }
+  }
+  &--3 {
+    border-radius: $radius-2xl $radius-sm  $radius-2xl $radius-2xl;
+    margin-top: -$space-xl;
+    @include sm { margin-top: -$space-sm; }
+  }
+  &--4 { border-radius: $radius-sm  $radius-2xl $radius-2xl $radius-2xl; }
+}
+
+// =============================================================================
+// STATS BAR
+// =============================================================================
+
+.lp__stats {
+  background: var(--bg-secondary);
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.lp__stats-inner {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0;
+  text-align: center;
+
+  @include md { grid-template-columns: repeat(2, 1fr); }
+}
+
+.lp__stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xs;
+  padding: $space-xl $space-md;
+  border-right: 1px solid var(--border-color);
+
+  &:last-child { border-right: none; }
+
+  @include md {
+    &:nth-child(2) { border-right: none; }
+    &:nth-child(3) { border-right: 1px solid var(--border-color); }
+    padding: $space-lg $space-md;
+  }
+}
+
+.lp__stat-value {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-extrabold;
+  color: var(--color-accent);
+  line-height: 1;
+  letter-spacing: -0.03em;
+
+  @include md { font-size: $font-size-2xl; }
+}
+
+.lp__stat-label {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  font-weight: $font-weight-medium;
+}
+
+// =============================================================================
+// HOW IT WORKS
+// =============================================================================
+
+.lp__steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-xl;
+  position: relative;
+
+  // Dashed connector line between steps
+  &::before {
+    content: '';
+    position: absolute;
+    top: 52px;
+    left: calc(50% / 3 + #{$space-xl});
+    right: calc(50% / 3 + #{$space-xl});
+    height: 1px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--border-color) 0,
+      var(--border-color) 6px,
+      transparent 6px,
+      transparent 14px
+    );
+    pointer-events: none;
+  }
+
+  @include md {
+    grid-template-columns: 1fr;
+    gap: $space-lg;
+    &::before { display: none; }
+  }
+}
+
+.lp__step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: $space-md;
+  position: relative;
+  z-index: 1;
+
+  h3 {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    line-height: $line-height-relaxed;
+    margin: 0;
+    max-width: 260px;
+  }
+}
+
+.lp__step-num {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-extrabold;
+  letter-spacing: 0.1em;
+  color: var(--color-accent);
+  text-transform: uppercase;
+}
+
+.lp__step-icon {
+  @include flex-center;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-xl;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  color: var(--color-accent);
+  font-size: 1.35rem;
+  box-shadow: var(--shadow-sm);
+  flex-shrink: 0;
+}
+
+// =============================================================================
+// USER ROLES
+// =============================================================================
+
+.lp__roles-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-xl;
+
+  @include lg { grid-template-columns: 1fr; }
+}
+
+.lp__role-card {
+  @include card($space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  transition: transform $transition-normal, box-shadow $transition-normal;
+
+  &--teal {
+    border-top: 3px solid $color-teal;
+    .lp__role-icon { background: rgba(0, 171, 179, 0.12); color: $color-teal; }
+  }
+
+  &--charcoal {
+    border-top: 3px solid $color-charcoal;
+    .lp__role-icon { background: rgba(60, 64, 72, 0.1); color: $color-charcoal; }
+  }
+}
+
+.lp__role-icon {
+  @include flex-center;
+  width: 56px;
+  height: 56px;
+  border-radius: $radius-lg;
+  font-size: $font-size-xl;
+}
+
+.lp__role-titles {
+  h3 {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  span {
+    font-size: $font-size-sm;
+    color: var(--color-accent);
+    font-weight: $font-weight-medium;
+  }
+}
+
+.lp__role-desc {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  line-height: $line-height-relaxed;
+}
+
+.lp__role-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  flex: 1;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+
+    svg { color: var(--color-accent); flex-shrink: 0; }
+  }
+}
+
+.lp__role-cta {
+  align-self: flex-start;
+  margin-top: auto;
+
+  &.btn-sm {
+    padding: 0.625rem $space-lg;
+    font-size: $font-size-sm;
+  }
+}
+
+// =============================================================================
+// FEATURES GRID
+// =============================================================================
+
+.lp__feat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: $space-xl;
+
+  @include lg { grid-template-columns: repeat(2, 1fr); }
+  @include sm { grid-template-columns: 1fr; }
+}
+
+.lp__feat-card {
+  @include card($space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+  transition: transform $transition-normal, box-shadow $transition-normal;
+
+  h3 {
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    line-height: $line-height-relaxed;
+  }
+}
+
+.lp__feat-icon {
+  @include flex-center;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-md;
+  background: rgba(0, 171, 179, 0.1);
+  color: var(--color-accent);
+}
+
+// =============================================================================
+// PAYMENT FLOW
+// =============================================================================
+
+.lp__pay-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xl;
+  flex-wrap: wrap;
+  margin-bottom: $space-xl;
+
+  @include md { gap: $space-md; }
+}
+
+.lp__pay-node {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-sm;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-2xl;
+  padding: $space-xl $space-2xl;
+  box-shadow: var(--shadow-md);
+  min-width: 160px;
+  text-align: center;
+  transition: transform $transition-normal, box-shadow $transition-normal;
+
+  &:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+
+  strong {
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+  }
+
+  small {
+    font-size: $font-size-xs;
+    color: var(--text-secondary);
+  }
+
+  &--employer .lp__pay-node-icon { background: rgba(0,171,179,0.1);  color: $color-teal;     border-color: rgba(0,171,179,0.25); }
+  &--agent    .lp__pay-node-icon { background: rgba(60,64,72,0.1);   color: $color-charcoal; border-color: var(--border-color); }
+  &--workers  .lp__pay-node-icon { background: rgba(0,171,179,0.1);  color: $color-teal;     border-color: rgba(0,171,179,0.25); }
+}
+
+.lp__pay-node-icon {
+  @include flex-center;
+  width: 52px;
+  height: 52px;
+  border-radius: $radius-full;
+  border: 2px solid var(--border-color);
+}
+
+.lp__pay-node-amount {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--color-accent);
+  background: rgba(0, 171, 179, 0.1);
+  padding: 0.2rem 0.6rem;
+  border-radius: $radius-full;
+}
+
+.lp__pay-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-xs;
+  color: var(--text-muted);
+
+  svg { color: var(--color-accent); }
+
+  span {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-medium;
+    color: var(--text-secondary);
+    text-align: center;
+    line-height: 1.3;
+  }
+
+  @include sm { display: none; }
+}
+
+.lp__pay-note {
+  text-align: center;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+
+  strong { color: var(--text-primary); }
+}
+
+// =============================================================================
+// PWA SECTION
+// =============================================================================
+
+.lp__pwa-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-3xl;
+  align-items: center;
+
+  @include lg { grid-template-columns: 1fr; gap: $space-2xl; }
+}
+
+.lp__pwa-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: $space-lg;
+
+  @include lg { align-items: center; text-align: center; }
+
+  h2 {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-extrabold;
+    color: var(--text-primary);
+    line-height: $line-height-tight;
+
+    @include md { font-size: $font-size-2xl; }
+  }
+
+  p {
+    font-size: $font-size-md;
+    color: var(--text-secondary);
+    line-height: $line-height-relaxed;
+    max-width: 420px;
+
+    @include md { font-size: $font-size-base; }
+  }
+}
+
+.lp__pwa-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-sm;
+}
+
+.lp__pwa-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-xs;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-full;
+  padding: $space-xs $space-md;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  box-shadow: var(--shadow-sm);
+
+  svg { color: var(--color-accent); }
+}
+
+// ── Phone mockup ──────────────────────────────────────────────────────────────
+.lp__pwa-visual {
+  display: flex;
+  justify-content: center;
+}
+
+.lp__phone {
+  width: 260px;
+  background: $color-charcoal;
+  border-radius: 32px;
+  padding: 12px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35), 0 8px 20px rgba(0,0,0,0.2);
+  position: relative;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 6px;
+    background: $color-grey;
+    border-radius: 3px;
+    margin: 0 auto 10px;
+    opacity: 0.3;
+  }
+}
+
+.lp__phone-screen {
+  background: $color-charcoal;
+  border: 1px solid rgba(178,178,178,0.15);
+  border-radius: 22px;
+  overflow: hidden;
+  padding: $space-md;
+  display: flex;
+  flex-direction: column;
+  gap: $space-md;
+}
+
+.lp__phone-header {
+  @include flex-between;
+
+  .lp__phone-brand {
+    font-size: $font-size-md;
+    font-weight: $font-weight-bold;
+    color: $color-light;
+  }
+
+  .lp__phone-add {
+    font-size: $font-size-xs;
+    color: $color-teal;
+    font-weight: $font-weight-semibold;
+    background: rgba(0, 171, 179, 0.12);
+    padding: 0.2rem 0.5rem;
+    border-radius: $radius-full;
+  }
+}
+
+.lp__phone-body {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+}
+
+.lp__phone-stat-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-sm;
+}
+
+.lp__phone-stat {
+  background: rgba(178,178,178,0.08);
+  border-radius: $radius-lg;
+  padding: $space-sm;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  strong {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: $color-teal;
+  }
+
+  span {
+    font-size: $font-size-xs;
+    color: $color-grey;
+  }
+}
+
+.lp__phone-job {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  background: rgba(178,178,178,0.06);
+  border-radius: $radius-md;
+  padding: $space-sm;
+  font-size: $font-size-xs;
+  color: $color-light;
+
+  svg { color: $color-teal; flex-shrink: 0; }
+
+  span:nth-child(2) { flex: 1; }
+}
+
+.lp__phone-job-badge {
+  font-size: 10px;
+  font-weight: $font-weight-bold;
+  padding: 2px 6px;
+  border-radius: $radius-full;
+  background: rgba(0,171,179,0.2);
+  color: $color-teal;
+
+  &--grey {
+    background: rgba(178,178,178,0.15);
+    color: $color-grey;
+  }
+}
+
+// =============================================================================
+// CTA BANNER
+// =============================================================================
+
+.lp__cta-banner {
+  background: linear-gradient(135deg, $color-teal 0%, $color-teal-dark 100%);
+  padding: $space-4xl 0;
+
+  @include md { padding: $space-2xl 0; }
+}
+
+.lp__cta-inner {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $space-lg;
+
+  h2 {
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-extrabold;
+    color: $color-light;
+    line-height: $line-height-tight;
+
+    @include md { font-size: $font-size-2xl; }
+  }
+
+  p {
+    font-size: $font-size-md;
+    color: $color-light;
+    max-width: 500px;
+  }
+}
+
+.lp__cta-btns {
+  display: flex;
+  gap: $space-md;
+  flex-wrap: wrap;
+  justify-content: center;
+
+  // Override primary button colors inside teal banner
+  .btn-primary {
+    background: $color-light;
+    color: $color-teal;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+
+    &:hover:not(:disabled) {
+      background: $color-light;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+    }
+  }
+}
+
+// =============================================================================
+// FOOTER
+// =============================================================================
+
+.lp__footer {
+  background: $color-charcoal;
+  padding: $space-3xl 0 $space-xl;
+}
+
+.lp__footer-inner {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: $space-2xl;
+  align-items: start;
+  margin-bottom: $space-2xl;
+  padding-bottom: $space-2xl;
+  border-bottom: 1px solid $color-grey;
+
+  @include lg { grid-template-columns: 1fr; gap: $space-xl; }
+
+}
+
+.lp__footer-brand {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+
+  .lp__brand-rest { color: $color-light; }
+  .lp__brand-k    { color: $color-teal; }
+
+  p {
+    font-size: $font-size-sm;
+    color: $color-grey;
+  }
+}
+
+.lp__footer-links,
+.lp__footer-roles {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+
+  a, button {
+    font-size: $font-size-sm;
+    color: $color-grey !important;
+    text-decoration: none !important;
+    transition: color $transition-fast;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    padding: 0;
+    font-family: $font-primary;
+    font-weight: $font-weight-normal;
+
+    &:hover { color: $color-teal !important; }
+  }
+}
+
+.lp__footer-

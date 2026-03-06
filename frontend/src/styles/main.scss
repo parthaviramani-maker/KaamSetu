@@ -1,0 +1,257 @@
+// =============================================================================
+// KAAMSETU MAIN STYLES
+// Order: variables → mixins → theme → reset → buttons → utilities
+// =============================================================================
+
+@use 'variables' as *;
+@use 'mixins' as *;
+@use 'buttons';
+
+// =============================================================================
+// THEME CSS CUSTOM PROPERTIES
+// =============================================================================
+
+:root {
+  --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  --transition-theme: background-color 0.18s ease-out, color 0.18s ease-out, border-color 0.18s ease-out;
+}
+
+// ---------------------------------------------------------------------------
+// LIGHT MODE (default)
+// ---------------------------------------------------------------------------
+html,
+html.light-mode {
+  --bg-primary:   #{$color-light};
+  --bg-secondary: #{$color-light};
+  --bg-card:      #FFFFFF;
+  --bg-hover:     #{$color-light};
+  --bg-active:    #{$color-light};
+
+  --text-primary:   #{$color-charcoal};
+  --text-secondary: #{$color-grey};
+  --text-tertiary:  #{$color-grey};
+  --text-muted:     #{$color-grey};
+
+  --color-accent:       #{$color-teal};
+  --color-accent-dark:  #{$color-teal-dark};
+  --color-accent-light: #{$color-teal-light};
+  --color-accent-rgb: 0, 171, 179;
+
+  --border-color:        rgba(178, 178, 178, 0.25);
+  --border-color-light:  rgba(178, 178, 178, 0.12);
+  --border-color-strong: rgba(178, 178, 178, 0.45);
+
+  --shadow-sm: 0 1px 3px rgba(37, 40, 48, 0.08);
+  --shadow-md: 0 4px 12px rgba(37, 40, 48, 0.12);
+  --shadow-lg: 0 10px 24px rgba(37, 40, 48, 0.16);
+  --shadow-xl: 0 20px 40px rgba(37, 40, 48, 0.20);
+
+  --input-bg:           #FFFFFF;
+  --input-border:       rgba(178, 178, 178, 0.35);
+  --input-focus-border: #{$color-teal};
+
+  --scrollbar-thumb:       rgba(178, 178, 178, 0.4);
+  --scrollbar-thumb-hover: #{$color-teal};
+}
+
+// ---------------------------------------------------------------------------
+// DARK MODE
+// ---------------------------------------------------------------------------
+html.dark-mode {
+  --bg-primary:   #1a1d24;              // deep dark — page bg
+  --bg-secondary: #1e2128;              // slightly lighter — alt sections
+  --bg-card:      #{$color-charcoal};   // #252830 — cards sit on top
+  --bg-hover:     #2d3140;
+  --bg-active:    #2d3140;
+
+  --text-primary:   #{$color-light};
+  --text-secondary: #{$color-grey};
+  --text-tertiary:  #{$color-grey};
+  --text-muted:     #{$color-grey};
+
+  --color-accent:       #{$color-teal};
+  --color-accent-dark:  #{$color-teal-dark};
+  --color-accent-light: #{$color-teal-light};
+  --color-accent-rgb: 0, 171, 179;
+
+  --border-color:        rgba(178, 178, 178, 0.18);
+  --border-color-light:  rgba(178, 178, 178, 0.08);
+  --border-color-strong: rgba(178, 178, 178, 0.32);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 24px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+
+  --input-bg:           #{$color-charcoal};
+  --input-border:       rgba(178, 178, 178, 0.2);
+  --input-focus-border: #{$color-teal};
+
+  --scrollbar-thumb:       rgba(178, 178, 178, 0.2);
+  --scrollbar-thumb-hover: #{$color-teal};
+}
+
+// =============================================================================
+// CSS RESET
+// =============================================================================
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+  height: 100%;
+
+  @media (max-width: #{$bp-lg}) { font-size: 15px; }
+  @media (max-width: #{$bp-md}) { font-size: 14px; }
+}
+
+body {
+  margin: 0;
+  font-family: $font-primary;
+  font-size: $font-size-base;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  min-height: 100dvh;
+  overflow-x: hidden;
+  transition: var(--transition-theme);
+}
+
+#root {
+  height: 100%;
+  min-height: 100dvh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; height: auto; display: block; }
+button, input, textarea, select { font-family: inherit; }
+button { cursor: pointer; }
+
+// =============================================================================
+// SELECTION
+// =============================================================================
+
+::selection {
+  background: rgba(0, 171, 179, 0.3);
+  color: #{$color-charcoal};
+}
+
+html.dark-mode ::selection {
+  background: rgba(0, 171, 179, 0.35);
+  color: #{$color-light};  // #EAEAEA
+}
+
+// =============================================================================
+// SCROLLBAR
+// =============================================================================
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+  &:hover { background: var(--scrollbar-thumb-hover); }
+}
+* { scrollbar-width: thin; scrollbar-color: var(--scrollbar-thumb) transparent; }
+
+// =============================================================================
+// FOCUS
+// =============================================================================
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+// =============================================================================
+// REDUCED MOTION
+// =============================================================================
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// =============================================================================
+// THEME FAB — Floating round theme toggle (bottom-right)
+// =============================================================================
+
+.theme-fab {
+  position: fixed;
+  bottom: 1.5rem;
+  right: 1.5rem;
+  z-index: 9999;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: $color-teal;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 171, 179, 0.45);
+  transition: transform 0.22s ease, box-shadow 0.22s ease, background 0.22s ease;
+  flex-shrink: 0;
+
+  svg { display: block; flex-shrink: 0; }
+
+  &:hover {
+    transform: scale(1.12);
+    box-shadow: 0 6px 24px rgba(0, 171, 179, 0.6);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &--dark {
+    background: #2d3139;
+    color: $color-teal;
+    border: 1.5px solid rgba(178, 178, 178, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.45);
+
+    &:hover {
+      background: rgba(0, 171, 179, 0.15);
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.55);
+    }
+  }
+}
+
+// =============================================================================
+// UTILITIES
+// =============================================================================
+
+.text-accent   { color: var(--color-accent); }
+.text-primary  { color: var(--text-primary); }
+.text-secondary{ color: var(--text-secondary); }
+.text-muted    { color: var(--text-muted); }
+.text-center   { text-align: center; }
+.bg-primary    { background: var(--bg-primary); }
+.bg-card       { background: var(--bg-card); }
+.w-full        { width: 100%; }
+.h-full        { height: 100%; }
+.flex-center   { @include flex-center; }
+.flex-between  { @include flex-between; }
+.sr-only       { @include visually-hidden; }
