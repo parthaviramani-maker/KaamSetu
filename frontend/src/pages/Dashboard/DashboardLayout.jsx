@@ -186,9 +186,14 @@ const DashboardLayout = () => {
               src={avatarUrl}
               alt={user?.name || 'User'}
               className="user-avatar-small"
+<<<<<<< HEAD
               referrerPolicy="no-referrer"
               onError={(e) => {
                 e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=00ABB3&color=fff`;
+=======
+              onError={(e) => {
+                e.target.src = `https://ui-avatars.com/api/?name=U&background=00ABB3&color=fff`;
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
               }}
             />
             <div className="user-info">
@@ -236,8 +241,12 @@ const DashboardLayout = () => {
               src={avatarUrl}
               alt={user?.name || 'User'}
               style={{ width: 34, height: 34, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--border-strong)', flexShrink: 0, cursor: 'pointer' }}
+<<<<<<< HEAD
               referrerPolicy="no-referrer"
               onError={e => { e.target.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.name || 'U')}&background=00ABB3&color=fff`; }}
+=======
+              onError={e => { e.target.src = `https://ui-avatars.com/api/?name=U&background=00ABB3&color=fff`; }}
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
             />
           </div>
         </header>

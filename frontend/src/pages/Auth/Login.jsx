@@ -3,9 +3,14 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
+<<<<<<< HEAD
 import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiArrowRight, FiMail as FiMailIcon } from 'react-icons/fi';
 import { loginSuccess } from '../../store/authSlice';
 import toast from '../../components/Toast/toast';
+=======
+import { FiMail, FiLock, FiEye, FiEyeOff, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
+import { loginSuccess } from '../../store/authSlice';
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
 const stepVariants = {
   enter:  (dir) => ({ opacity: 0, x: dir > 0 ? 30 : -30 }),
@@ -13,12 +18,17 @@ const stepVariants = {
   exit:   (dir) => ({ opacity: 0, x: dir > 0 ? -30 : 30 }),
 };
 
+<<<<<<< HEAD
 const TOTAL_STEPS = 3;
+=======
+const TOTAL_STEPS = 2;
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
 function Login({ onGoSignup }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+<<<<<<< HEAD
   const [step,      setStep]      = useState(1);
   const [dir,        setDir]       = useState(1);
   const [formData,   setFormData]  = useState({ email: '', password: '' });
@@ -27,6 +37,15 @@ function Login({ onGoSignup }) {
   const [loading,    setLoading]   = useState(false);
   const [showPw,     setShowPw]    = useState(false);
   const [verifyData, setVerifyData]= useState(null); // { sessionId, numbers }
+=======
+  const [step,     setStep]    = useState(1);
+  const [dir,      setDir]     = useState(1);
+  const [formData, setFormData]= useState({ email: '', password: '' });
+  const [errors,   setErrors]  = useState({});
+  const [response, setResponse]= useState(null);
+  const [loading,  setLoading] = useState(false);
+  const [showPw,   setShowPw]  = useState(false);
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,6 +69,7 @@ function Login({ onGoSignup }) {
 
   const goBack = () => {
     setDir(-1);
+<<<<<<< HEAD
     setStep(step === 3 ? 2 : 1);
     setErrors({});
     if (step === 3) setVerifyData(null);
@@ -57,12 +77,23 @@ function Login({ onGoSignup }) {
 
   const handleGoogleLogin = () => {
     window.location.href = `${import.meta.env.VITE_API_URL}/api/v1/auth/google`;
+=======
+    setStep(1);
+    setErrors({});
+    setResponse(null);
+  };
+
+  const handleGoogleLogin = () => {
+    // TODO: integrate Google OAuth
+    alert('Google OAuth — coming soon!');
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.password) { setErrors({ password: 'Password is required' }); return; }
     setLoading(true);
+<<<<<<< HEAD
     try {
       const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/login`, {
         method: 'POST',
@@ -116,6 +147,15 @@ function Login({ onGoSignup }) {
       navigate('/dashboard', { replace: true });
     } catch (err) {
       toast.error(err.message || 'Something went wrong');
+=======
+    setResponse(null);
+    try {
+      // TODO: call login API
+      dispatch(loginSuccess({ user: { email: formData.email }, token: 'stub-token', role: null }));
+      navigate('/dashboard', { replace: true });
+    } catch (err) {
+      setResponse({ success: false, message: err.message });
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     } finally {
       setLoading(false);
     }
@@ -123,6 +163,7 @@ function Login({ onGoSignup }) {
 
   return (
     <>
+<<<<<<< HEAD
       {/* Header — always visible, content changes per step */}
       <div className="auth-page__header">
         <h1 className="auth-page__title">
@@ -138,6 +179,17 @@ function Login({ onGoSignup }) {
       {/* Step progress bars — always visible */}
       <div className="auth-page__steps" aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
         {Array.from({ length: TOTAL_STEPS - 1 }).map((_, i) => (
+=======
+      {/* Header */}
+      <div className="auth-page__header">
+        <h1 className="auth-page__title">Welcome back</h1>
+        <p className="auth-page__description">Sign in to continue to KaamSetu</p>
+      </div>
+
+      {/* Step progress bars */}
+      <div className="auth-page__steps" aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
+        {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
           <span
             key={i}
             className={
@@ -152,17 +204,29 @@ function Login({ onGoSignup }) {
       {/* Google — only on step 1 */}
       {step === 1 && (
         <>
+<<<<<<< HEAD
           <motion.button className="btn-google btn-full" onClick={handleGoogleLogin} type="button"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
             <FcGoogle size={20} />
             Continue with Google
           </motion.button>
+=======
+          <button className="btn-google btn-full" onClick={handleGoogleLogin} type="button">
+            <FcGoogle size={20} />
+            Continue with Google
+          </button>
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
           <div className="divider"><span>or</span></div>
         </>
       )}
 
+<<<<<<< HEAD
       {/* Back button — step 2 & 3 */}
       {(step === 2 || step === 3) && (
+=======
+      {/* Back button for step 2 */}
+      {step === 2 && (
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
         <div className="auth-page__nav-row">
           <button type="button" onClick={goBack}>
             <FiArrowLeft size={16} /> Back
@@ -200,8 +264,17 @@ function Login({ onGoSignup }) {
                 />
                 {errors.email && <span className="form-error">{errors.email}</span>}
               </div>
+<<<<<<< HEAD
               <motion.button type="submit" className="btn-primary btn-full"
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
+=======
+              <motion.button
+                type="submit"
+                className="btn-primary btn-full"
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+              >
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
                 Continue <FiArrowRight size={15} />
               </motion.button>
             </motion.form>
@@ -247,6 +320,7 @@ function Login({ onGoSignup }) {
               </div>
 
               <div className="auth-page__forgot">
+<<<<<<< HEAD
                 <a href={`/auth/forgot-password${formData.email ? `?email=${encodeURIComponent(formData.email)}` : ''}`}>
                   Forgot password?
                 </a>
@@ -315,6 +389,45 @@ function Login({ onGoSignup }) {
         </div>
       )}
 
+=======
+                <a href="#">Forgot password?</a>
+              </div>
+
+              <motion.button
+                type="submit"
+                className="btn-primary btn-full"
+                disabled={loading}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                {loading ? 'Signing in…' : 'Sign In'}
+              </motion.button>
+
+              {response && (
+                <motion.div
+                  className={`alert alert--${response.success ? 'success' : 'error'}`}
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  style={{ marginTop: '1rem' }}
+                >
+                  <strong>{response.success ? '✓ Success' : '✗ Error'}</strong>
+                  <p>{response.message}</p>
+                </motion.div>
+              )}
+            </motion.form>
+          )}
+
+        </AnimatePresence>
+      </div>
+
+      {/* Footer */}
+      <div className="auth-page__footer">
+        Don&apos;t have an account?{' '}
+        <button className="btn-link" onClick={onGoSignup} type="button">
+          Sign up free
+        </button>
+      </div>
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
     </>
   );

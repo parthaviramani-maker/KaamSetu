@@ -2,7 +2,10 @@ import { useState } from 'react';
 import { useSelector } from 'react-redux';
 import { MdPerson, MdEmail, MdPhone, MdLocationOn, MdWork, MdSave, MdCheck, MdEdit } from 'react-icons/md';
 import { selectUser, selectRole } from '../../../store/authSlice';
+<<<<<<< HEAD
 import Avatar from '../../../components/Avatar';
+=======
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
 const ROLE_LABELS = {
   employer: 'Kaam Saheb · Employer',
@@ -52,8 +55,12 @@ const ProfilePage = () => {
     setTimeout(() => setSaved(false), 3000);
   };
 
+<<<<<<< HEAD
   const avatarUrl = user?.avatar ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name || 'User')}&background=00ABB3&color=fff&size=128`;
+=======
+  const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name || 'User')}&background=00ABB3&color=fff&size=128`;
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   const completion = [form.name, form.email, form.phone, form.city, form.skill, form.bio].filter(Boolean).length;
   const completionPct = Math.round((completion / 6) * 100);
 
@@ -63,7 +70,11 @@ const ProfilePage = () => {
         {/* Left: Avatar + Role */}
         <div className="section-card">
           <div className="section-card-body" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1.5rem', textAlign: 'center' }}>
+<<<<<<< HEAD
             <Avatar
+=======
+            <img
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
               src={avatarUrl}
               alt={form.name}
               style={{ width: '96px', height: '96px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--color-accent)', marginBottom: '1rem' }}

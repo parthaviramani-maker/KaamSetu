@@ -1,5 +1,9 @@
 import { useState, useEffect } from 'react';
+<<<<<<< HEAD
 import { useSelector } from 'react-redux';
+=======
+import { useSelector, useDispatch } from 'react-redux';
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import slide1 from '../../assets/illustrations/slide1.webp';
@@ -18,6 +22,10 @@ import {
 } from 'react-icons/hi2';
 import { MdAdminPanelSettings } from 'react-icons/md';
 import { selectIsDark } from '../../store/themeSlice';
+<<<<<<< HEAD
+=======
+import { loginSuccess } from '../../store/authSlice';
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 import './LandingPage.scss';
 
 // ── Data ────────────────────────────────────────────────────────────────────
@@ -185,6 +193,10 @@ const DEMO_ROLES = [
 
 function LandingPage() {
   const navigate   = useNavigate();
+<<<<<<< HEAD
+=======
+  const dispatch   = useDispatch();
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   const isDark     = useSelector(selectIsDark);
 
   const [scrolled,   setScrolled]   = useState(false);
@@ -206,7 +218,16 @@ function LandingPage() {
 
   const handleDemoLogin = (r) => {
     setDemoOpen(false);
+<<<<<<< HEAD
     navigate(`/demo/${r.role}`);
+=======
+    dispatch(loginSuccess({
+      user:  { name: r.name, email: `${r.role}@demo.com` },
+      token: 'demo-token',
+      role:  r.role,
+    }));
+    navigate('/dashboard');
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   };
 
   return (
@@ -311,6 +332,7 @@ function LandingPage() {
           <a href="#pwa"      onClick={closeMobile}>PWA</a>
         </nav>
         <div className="lp__sidebar-ctas">
+<<<<<<< HEAD
           <motion.button className="btn-secondary btn-full lp__sidebar-btn"
             onClick={() => { closeMobile(); navigate('/auth'); }}
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
@@ -321,6 +343,14 @@ function LandingPage() {
             whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             Get started free
           </motion.button>
+=======
+          <button className="btn-secondary btn-full lp__sidebar-btn" onClick={() => { closeMobile(); navigate('/auth'); }}>
+            Login
+          </button>
+          <button className="btn-primary btn-full lp__sidebar-btn" onClick={() => { closeMobile(); navigate('/auth'); }}>
+            Get started free
+          </button>
+>>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
         </div>
       </motion.aside>
 
