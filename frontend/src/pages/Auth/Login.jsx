@@ -26,7 +26,8 @@ function Login({ onGoSignup }) {
   // response state removed — using toast instead
   const [loading,    setLoading]   = useState(false);
   const [showPw,     setShowPw]    = useState(false);
-  const [verifyData, setVerifyData]= useState(null); // { sessionId, numbers }
+  const [verifyData,      setVerifyData]      = useState(null); // { sessionId, numbers, sentTo? }
+  const [emailSelectData, setEmailSelectData] = useState(null); // { sessionId, emails: string[] } — admin only
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,9 +51,14 @@ function Login({ onGoSignup }) {
 
   const goBack = () => {
     setDir(-1);
-    setStep(step === 3 ? 2 : 1);
+    if (step === 3) {
+      setStep(2);
+      setVerifyData(null);
+      setEmailSelectData(null);
+    } else {
+      setStep(1);
+    }
     setErrors({});
-    if (step === 3) setVerifyData(null);
   };
 
   const handleGoogleLogin = () => {
@@ -74,6 +80,13 @@ function Login({ onGoSignup }) {
         setErrors({ password: data.message || 'Invalid email or password' });
         return;
       }
+      // Admin: choose which email to send code to
+      if (data.data.requiresEmailSelection) {
+        setEmailSelectData({ sessionId: data.data.sessionId, emails: data.data.emails });
+        setDir(1);
+        setStep(3);
+        return;
+      }
       // 2FA required — go to step 3
       if (data.data.requiresVerification) {
         setVerifyData({ sessionId: data.data.sessionId, numbers: data.data.numbers });
@@ -89,6 +102,28 @@ function Login({ onGoSignup }) {
         role:  userRole,
       }));
       navigate(`/dashboard/${userRole}`, { replace: true });
+    } catch (err) {
+      toast.error(err.message || 'Something went wrong');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSelectEmail = async (emailIndex) => {
+    setLoading(true);
+    try {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/auth/admin-select-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ sessionId: emailSelectData.sessionId, emailIndex }),
+      });
+      const data = await res.json();
+      if (!data.success) {
+        toast.error(data.message || 'Failed to send code');
+        return;
+      }
+      setEmailSelectData(null);
+      setVerifyData({ sessionId: data.data.sessionId, numbers: data.data.numbers, sentTo: data.data.sentTo });
     } catch (err) {
       toast.error(err.message || 'Something went wrong');
     } finally {
@@ -128,11 +163,13 @@ function Login({ onGoSignup }) {
       {/* Header — always visible, content changes per step */}
       <div className="auth-page__header">
         <h1 className="auth-page__title">
-          {step === 3 ? 'Check your email' : 'Welcome back'}
+          {step === 3 && emailSelectData ? 'Choose verification email'
+            : step === 3 ? 'Check your email'
+            : 'Welcome back'}
         </h1>
         <p className="auth-page__description">
-          {step === 3
-            ? 'Tap the number that matches your verification code'
+          {step === 3 && emailSelectData ? 'Select where to send your login code'
+            : step === 3 ? 'Tap the number that matches your verification code'
             : 'Sign in to continue to KaamSetu'}
         </p>
       </div>
@@ -261,7 +298,49 @@ function Login({ onGoSignup }) {
             </motion.form>
           )}
 
-          {/* Step 3: Number verification */}
+          {/* Step 3a: Admin email selection */}
+          {step === 3 && emailSelectData && (
+            <motion.div
+              key="s3a"
+              custom={dir}
+              variants={stepVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+            >
+              <div className="login-verify">
+                <p className="login-verify__sub" style={{ marginBottom: '1rem' }}>
+                  A verification code will be sent to the email you select.
+                </p>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+                  {emailSelectData.emails.map((email, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleSelectEmail(idx)}
+                      disabled={loading}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: '10px',
+                        padding: '0.75rem 1rem', borderRadius: '10px',
+                        border: '1.5px solid var(--color-accent)',
+                        background: 'var(--bg-hover)', color: 'var(--text-primary)',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        fontSize: '0.9rem', fontFamily: 'inherit', fontWeight: 500,
+                        opacity: loading ? 0.6 : 1, textAlign: 'left',
+                      }}
+                    >
+                      <FiMailIcon size={16} style={{ color: 'var(--color-accent)', flexShrink: 0 }} />
+                      {email}
+                    </button>
+                  ))}
+                </div>
+                {loading && <p className="login-verify__loading">Sending code…</p>}
+              </div>
+            </motion.div>
+          )}
+
+          {/* Step 3b: Number verification */}
           {step === 3 && verifyData && (
             <motion.div
               key="s3"
@@ -276,7 +355,7 @@ function Login({ onGoSignup }) {
                 {/* Email badge */}
                 <div className="login-verify__email-badge">
                   <FiMailIcon size={15} />
-                  <span>{formData.email}</span>
+                  <span>{verifyData.sentTo || formData.email}</span>
                 </div>
 
                 <p className="login-verify__sub">

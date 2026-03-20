@@ -1,0 +1,40 @@
+import User from '../../models/userModel.js';
+import responseHandler from '../../utils/responseHandler.js';
+
+/**
+ * PUT /api/v1/users/me/authorized-emails
+ * Admin only — update their list of trusted 2FA emails (max 5)
+ */
+export default {
+    handler: async (req, res) => {
+        try {
+            const { emails } = req.body;
+
+            if (!Array.isArray(emails)) {
+                return responseHandler.badRequest(res, 'emails must be an array');
+            }
+            if (emails.length > 5) {
+                return responseHandler.badRequest(res, 'Maximum 5 authorized emails allowed');
+            }
+
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const invalid = emails.filter(e => !emailRegex.test(String(e).trim()));
+            if (invalid.length > 0) {
+                return responseHandler.badRequest(res, `Invalid email(s): ${invalid.join(', ')}`);
+            }
+
+            const user = await User.findById(req.user.id);
+            if (!user) return responseHandler.notFound(res, 'User not found');
+
+            user.authorizedEmails = [...new Set(emails.map(e => String(e).toLowerCase().trim()))];
+            user.markModified('authorizedEmails'); // force Mongoose to detect array change
+            await user.save();
+
+            return responseHandler.success(res, 'Authorized emails updated', {
+                emails: user.authorizedEmails,
+            });
+        } catch (error) {
+            return responseHandler.internalServerError(res, error);
+        }
+    },
+};

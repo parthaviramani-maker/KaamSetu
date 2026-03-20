@@ -4,8 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { selectUser, selectRole, selectIsLogin, logout } from '../../store/authSlice';
 import { persistor } from '../../store/store';
 import {
+  useGetAuthorizedEmailsQuery,
+  useUpdateAuthorizedEmailsMutation,
+} from '../../services/userApi';
+import {
   MdLogout, MdDeleteForever, MdEmail, MdPhone,
-  MdVerifiedUser, MdCalendarToday,
+  MdVerifiedUser, MdCalendarToday, MdAdd, MdClose, MdSave, MdSecurity,
 } from 'react-icons/md';
 
 const ROLE_LABELS = {
@@ -34,6 +38,53 @@ function RealDashboard() {
   const [deleting,  setDeleting]  = useState(false);
   const [confirmDel,setConfirmDel]= useState(false);
   const [error,     setError]     = useState('');
+
+  // Admin 2FA emails
+  const isAdmin = role === 'admin';
+  const { data: emailsData, isLoading: emailsLoading } = useGetAuthorizedEmailsQuery(undefined, { skip: !isAdmin });
+  const [updateAuthorizedEmails, { isLoading: saving }] = useUpdateAuthorizedEmailsMutation();
+  const [emailList,    setEmailList]    = useState([]);
+  const [newEmail,     setNewEmail]     = useState('');
+  const [emailError,   setEmailError]   = useState('');
+  const [emailSuccess, setEmailSuccess] = useState('');
+
+  // Sync fetched emails into local state
+  useEffect(() => {
+    if (emailsData?.data?.emails) {
+      setEmailList(emailsData.data.emails);
+    }
+  }, [emailsData]);
+
+  const handleAddEmail = () => {
+    const val = newEmail.trim().toLowerCase();
+    if (!val) return;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(val)) { setEmailError('Invalid email address'); return; }
+    if (emailList.includes(val)) { setEmailError('Email already added'); return; }
+    if (emailList.length >= 5) { setEmailError('Maximum 5 emails allowed'); return; }
+    setEmailList(prev => [...prev, val]);
+    setNewEmail('');
+    setEmailError('');
+  };
+
+  const handleRemoveEmail = (email) => {
+    setEmailList(prev => prev.filter(e => e !== email));
+    setEmailSuccess('');
+  };
+
+  const handleSaveEmails = async () => {
+    setEmailError('');
+    setEmailSuccess('');
+    try {
+      const res = await updateAuthorizedEmails(emailList).unwrap();
+      if (res.success) {
+        setEmailSuccess('Saved successfully!');
+        setTimeout(() => setEmailSuccess(''), 3000);
+      }
+    } catch (err) {
+      setEmailError(err?.data?.message || 'Failed to save emails');
+    }
+  };
 
   // Fetch fresh profile from API
   // If token is expired / account deleted → auto-logout and go home
@@ -225,6 +276,101 @@ function RealDashboard() {
 
           {/* Divider */}
           <div style={{ height: '1px', background: '#f0f0f0', margin: '0 0 1.25rem' }} />
+
+          {/* ── Admin 2FA: Authorized Emails ── */}
+          {isAdmin && (
+            <div style={{ textAlign: 'left', marginBottom: '1.25rem' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '7px', marginBottom: '10px' }}>
+                <MdSecurity size={18} color="#00ABB3" />
+                <span style={{ fontWeight: 700, fontSize: '0.88rem', color: '#252830' }}>
+                  2FA Security Emails
+                </span>
+                <span style={{ fontSize: '0.75rem', color: '#999', marginLeft: 'auto' }}>
+                  {emailList.length}/5
+                </span>
+              </div>
+
+              {emailsLoading ? (
+                <p style={{ fontSize: '0.8rem', color: '#999', margin: '0 0 8px' }}>Loading…</p>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', marginBottom: '10px' }}>
+                  {emailList.length === 0 && (
+                    <p style={{ fontSize: '0.8rem', color: '#bbb', margin: 0 }}>No authorized emails added yet.</p>
+                  )}
+                  {emailList.map((em) => (
+                    <div key={em} style={{
+                      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                      background: '#f0fbfc', border: '1px solid #d0eff1',
+                      borderRadius: '8px', padding: '6px 10px',
+                      fontSize: '0.82rem', color: '#333',
+                    }}>
+                      <span style={{ wordBreak: 'break-all', flex: 1 }}>{em}</span>
+                      <button
+                        onClick={() => handleRemoveEmail(em)}
+                        style={{
+                          background: 'none', border: 'none', cursor: 'pointer',
+                          color: '#e74c3c', padding: '0 0 0 8px', display: 'flex',
+                        }}
+                        title="Remove"
+                      >
+                        <MdClose size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {/* Add email input */}
+              {emailList.length < 5 && (
+                <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
+                  <input
+                    type="email"
+                    placeholder="Add email…"
+                    value={newEmail}
+                    onChange={(e) => { setNewEmail(e.target.value); setEmailError(''); }}
+                    onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
+                    style={{
+                      flex: 1, padding: '7px 10px', borderRadius: '8px',
+                      border: '1.5px solid #ddd', fontSize: '0.83rem',
+                      outline: 'none',
+                    }}
+                  />
+                  <button
+                    onClick={handleAddEmail}
+                    style={{
+                      background: '#00ABB3', border: 'none', borderRadius: '8px',
+                      color: '#fff', padding: '7px 10px', cursor: 'pointer',
+                      display: 'flex', alignItems: 'center',
+                    }}
+                    title="Add"
+                  >
+                    <MdAdd size={18} />
+                  </button>
+                </div>
+              )}
+
+              {emailError   && <p style={{ color: '#e74c3c', fontSize: '0.78rem', margin: '0 0 6px' }}>{emailError}</p>}
+              {emailSuccess && <p style={{ color: '#27AE60', fontSize: '0.78rem', margin: '0 0 6px' }}>{emailSuccess}</p>}
+
+              <button
+                onClick={handleSaveEmails}
+                disabled={saving}
+                style={{
+                  width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
+                  background: saving ? '#b2e0e2' : '#00ABB3',
+                  border: 'none', borderRadius: '10px',
+                  color: '#fff', padding: '9px 0',
+                  fontSize: '0.85rem', fontWeight: 600,
+                  cursor: saving ? 'not-allowed' : 'pointer',
+                  transition: 'background 0.15s',
+                }}
+              >
+                <MdSave size={16} /> {saving ? 'Saving…' : 'Save Emails'}
+              </button>
+
+              <div style={{ height: '1px', background: '#f0f0f0', margin: '1.25rem 0' }} />
+            </div>
+          )}
 
           {/* Action buttons */}
           <div style={{ display: 'flex', gap: '10px' }}>

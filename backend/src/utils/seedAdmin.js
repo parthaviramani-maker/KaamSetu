@@ -4,27 +4,36 @@ import { ADMIN_EMAIL, ADMIN_PASSWORD } from '../config/config.js';
 
 const seedAdmin = async () => {
     try {
-        // Check if any admin already exists
-        const existing = await User.findOne({ role: 'admin' });
-        if (existing) {
-            console.log(`✅ Admin already exists: ${existing.email}`);
+        const targetEmail = ADMIN_EMAIL.toLowerCase().trim();
+
+        // Check if admin with the correct email already exists
+        const correct = await User.findOne({ role: 'admin', email: targetEmail });
+        if (correct) {
+            console.log(`✅ Admin already exists: ${correct.email}`);
             return;
         }
 
-        // No admin found — create default one from .env
+        // Delete any old admin with a different email
+        const old = await User.findOne({ role: 'admin' });
+        if (old) {
+            await User.findByIdAndDelete(old._id);
+            console.log(`🗑️  Old admin deleted: ${old.email}`);
+        }
+
+        // Create new admin from .env
         const hashedPassword = await bcrypt.hash(ADMIN_PASSWORD, 10);
 
         await User.create({
             name:        'Super Admin',
-            email:       ADMIN_EMAIL.toLowerCase().trim(),
+            email:       targetEmail,
             password:    hashedPassword,
             role:        'admin',
             isActive:    true,
             isOnboarded: true,
         });
 
-        console.log('🚀 Default admin account created!');
-        console.log(`   Email    : ${ADMIN_EMAIL}`);
+        console.log('🚀 Admin account created!');
+        console.log(`   Email    : ${targetEmail}`);
         console.log(`   Password : ${ADMIN_PASSWORD}`);
         console.log('   ⚠️  Please change the password after first login.');
     } catch (error) {

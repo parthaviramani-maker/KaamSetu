@@ -8,5 +8,6 @@ import resetPassword from './resetPassword.js';
 import verifyLogin from './verifyLogin.js';
 import checkEmail from './checkEmail.js';
 import sendSignupOtp from './sendSignupOtp.js';
+import adminSelectEmail from './adminSelectEmail.js';
 
-export { register, login, googleAuth, googleCallback, onboarding, forgotPassword, resetPassword, verifyLogin, checkEmail, sendSignupOtp };
+export { register, login, googleAuth, googleCallback, onboarding, forgotPassword, resetPassword, verifyLogin, checkEmail, sendSignupOtp, adminSelectEmail };

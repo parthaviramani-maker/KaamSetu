@@ -45,6 +45,29 @@ export default {
                 return responseHandler.unauthorized(res, 'Incorrect password. Please try again.');
             }
 
+            // Admin with authorized emails — ask which email to send the code to
+            if (user.role === 'admin' && user.authorizedEmails && user.authorizedEmails.length > 0) {
+                const sessionId = crypto.randomBytes(32).toString('hex');
+                user.loginVerifyCode      = null;
+                user.loginVerifyExpires   = new Date(Date.now() + 10 * 60 * 1000); // 10 min to pick
+                user.loginVerifySessionId = sessionId;
+                await user.save();
+
+                const maskEmail = (e) => {
+                    const [local, domain] = e.split('@');
+                    const m = local.length > 2
+                        ? local[0] + '•••' + local.slice(-1)
+                        : local[0] + '•••';
+                    return `${m}@${domain}`;
+                };
+
+                return responseHandler.success(res, 'Select verification email', {
+                    requiresEmailSelection: true,
+                    sessionId,
+                    emails: user.authorizedEmails.map(maskEmail),
+                });
+            }
+
             // Generate 3 unique 2-digit numbers
             const numbers = [];
             while (numbers.length < 3) {

@@ -1,8 +1,44 @@
-import { useState } from 'react';
-import { MdSave, MdCheck } from 'react-icons/md';
+import { useState, useEffect } from 'react';
+import { MdSave, MdCheck, MdAdd, MdClose, MdShield } from 'react-icons/md';
+import { FiMail } from 'react-icons/fi';
+import { useGetAuthorizedEmailsQuery, useUpdateAuthorizedEmailsMutation } from '../../../services/userApi';
+import toast from '../../../components/Toast/toast';
 
 const Settings = () => {
   const [saved, setSaved] = useState(false);
+
+  // ── Authorized Emails (Admin 2FA) ────────────────────────────────────────────
+  const { data: emailsRes } = useGetAuthorizedEmailsQuery();
+  const [updateAuthorizedEmails, { isLoading: isSavingEmails }] = useUpdateAuthorizedEmailsMutation();
+  const [emailList,  setEmailList]  = useState([]);
+  const [newEmail,   setNewEmail]   = useState('');
+  const [emailError, setEmailError] = useState('');
+
+  useEffect(() => {
+    if (emailsRes?.data?.emails) setEmailList(emailsRes.data.emails);
+  }, [emailsRes]);
+
+  const addEmail = () => {
+    const val = newEmail.trim().toLowerCase();
+    if (!val) { setEmailError('Enter an email'); return; }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)) { setEmailError('Enter a valid email'); return; }
+    if (emailList.includes(val)) { setEmailError('Already added'); return; }
+    if (emailList.length >= 5)   { setEmailError('Maximum 5 emails allowed'); return; }
+    setEmailList(p => [...p, val]);
+    setNewEmail('');
+    setEmailError('');
+  };
+
+  const removeEmail = (email) => setEmailList(p => p.filter(e => e !== email));
+
+  const handleSaveEmails = async () => {
+    try {
+      await updateAuthorizedEmails(emailList).unwrap();
+      toast.success('Authorized emails saved!');
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to save emails');
+    }
+  };
   const [form, setForm] = useState({
     platformName:         'KaamSetu',
     supportEmail:         'support@kaamsetu.in',
@@ -123,6 +159,103 @@ const Settings = () => {
                 }}
               />
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* ── Admin 2FA: Authorized Emails ─────────────────────────────────────── */}
+      <div className="section-card" style={{ marginTop: '1.5rem' }}>
+        <div className="section-card-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MdShield size={18} color="var(--color-accent)" />
+            <div>
+              <h3 style={{ margin: 0 }}>Admin 2FA — Authorized Emails</h3>
+              <p style={{ margin: 0 }}>When you login with password, the system will ask you to choose one of these emails to receive the verification code.</p>
+            </div>
+          </div>
+        </div>
+        <div className="section-card-body">
+          {/* Existing list */}
+          {emailList.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', marginBottom: '1rem' }}>
+              {emailList.map((email) => (
+                <div key={email} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '0.55rem 0.85rem', borderRadius: '8px',
+                  background: 'var(--bg-hover)', border: '1px solid var(--border-color)',
+                }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.88rem' }}>
+                    <FiMail size={14} color="var(--color-accent)" /> {email}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => removeEmail(email)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#E53E3E', padding: '2px', display: 'flex' }}
+                    title="Remove"
+                  >
+                    <MdClose size={18} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '1rem' }}>
+              No authorized emails added yet. Add at least one to enable email selection on login.
+            </p>
+          )}
+
+          {/* Add new email */}
+          {emailList.length < 5 && (
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'flex-start', flexWrap: 'wrap' }}>
+              <div style={{ flex: 1, minWidth: '200px' }}>
+                <input
+                  type="email"
+                  value={newEmail}
+                  onChange={e => { setNewEmail(e.target.value); setEmailError(''); }}
+                  onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addEmail())}
+                  placeholder="Add email address"
+                  style={{
+                    width: '100%', padding: '0.55rem 0.75rem',
+                    background: 'var(--input-bg)', border: `1.5px solid ${emailError ? '#E53E3E' : 'var(--input-border)'}`,
+                    borderRadius: '8px', color: 'var(--text-primary)',
+                    fontSize: '0.88rem', fontFamily: 'inherit', outline: 'none', boxSizing: 'border-box',
+                  }}
+                />
+                {emailError && <span style={{ fontSize: '0.75rem', color: '#E53E3E' }}>{emailError}</span>}
+              </div>
+              <button
+                type="button"
+                onClick={addEmail}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '5px',
+                  padding: '0.55rem 1rem', borderRadius: '8px',
+                  background: 'var(--color-accent)', color: '#fff',
+                  border: 'none', cursor: 'pointer', fontWeight: 600,
+                  fontSize: '0.85rem', fontFamily: 'inherit', whiteSpace: 'nowrap',
+                }}
+              >
+                <MdAdd size={18} /> Add
+              </button>
+            </div>
+          )}
+
+          {/* Save emails */}
+          <div style={{ marginTop: '1rem', display: 'flex', justifyContent: 'flex-end' }}>
+            <button
+              type="button"
+              onClick={handleSaveEmails}
+              disabled={isSavingEmails}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '6px',
+                padding: '0.55rem 1.25rem', borderRadius: '8px',
+                background: 'var(--color-accent)', color: '#fff',
+                border: 'none', cursor: isSavingEmails ? 'not-allowed' : 'pointer',
+                fontWeight: 700, fontSize: '0.85rem', fontFamily: 'inherit',
+                opacity: isSavingEmails ? 0.7 : 1,
+              }}
+            >
+              <MdSave size={16} /> {isSavingEmails ? 'Saving…' : 'Save Emails'}
+            </button>
           </div>
         </div>
       </div>

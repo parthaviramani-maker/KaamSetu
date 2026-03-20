@@ -66,6 +66,11 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: null,
         },
+        // Admin 2FA: list of trusted emails to send verification code to
+        authorizedEmails: {
+            type: [String],
+            default: [],
+        },
     },
     { timestamps: true }
 );

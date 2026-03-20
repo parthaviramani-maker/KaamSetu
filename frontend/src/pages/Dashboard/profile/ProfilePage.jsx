@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
-import { MdPerson, MdEmail, MdPhone, MdLocationOn, MdWork, MdSave, MdCheck, MdEdit } from 'react-icons/md';
-import { selectUser, selectRole } from '../../../store/authSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { MdPerson, MdEmail, MdPhone, MdLocationOn, MdWork, MdSave, MdCheck, MdEdit, MdDeleteForever, MdWarning } from 'react-icons/md';
+import { selectUser, selectRole, logout } from '../../../store/authSlice';
 import Avatar from '../../../components/Avatar';
-import { useGetMeQuery, useUpdateMeMutation } from '../../../services/userApi';
+import { useGetMeQuery, useUpdateMeMutation, useDeleteMeMutation } from '../../../services/userApi';
 import toast from '../../../components/Toast/toast';
 
 const ROLE_LABELS = {
@@ -14,16 +15,20 @@ const ROLE_LABELS = {
 };
 
 const ProfilePage = () => {
+  const dispatch   = useDispatch();
+  const navigate   = useNavigate();
   const user = useSelector(selectUser);
   const role = useSelector(selectRole);
 
   const { data: meRes } = useGetMeQuery();
   const meUser = meRes?.data || user || {};
 
-  const [editing, setEditing] = useState(false);
-  const [errors,  setErrors]  = useState({});
-  const [saved,   setSaved]   = useState(false);
-  const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation();
+  const [editing,           setEditing]           = useState(false);
+  const [errors,            setErrors]            = useState({});
+  const [saved,             setSaved]             = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteMe, { isLoading: isDeleting }] = useDeleteMeMutation();
+  const [updateMe, { isLoading: isSaving }]   = useUpdateMeMutation();
 
   const [form, setForm] = useState({
     name:     '',
@@ -59,6 +64,18 @@ const ProfilePage = () => {
     else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email)) errs.email = 'Enter a valid email';
     if (form.phone && !/^\d{10}$/.test(form.phone.replace(/\s/g, ''))) errs.phone = 'Enter a valid 10-digit number';
     return errs;
+  };
+
+  const handleDeleteAccount = async () => {
+    try {
+      await deleteMe().unwrap();
+      toast.success('Account deleted successfully');
+      dispatch(logout());
+      navigate('/', { replace: true });
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to delete account');
+      setShowDeleteConfirm(false);
+    }
   };
 
   const handleSave = async (e) => {
@@ -206,6 +223,80 @@ const ProfilePage = () => {
                 </div>
               )}
             </form>
+          </div>
+        </div>
+      </div>
+      {/* ── Danger Zone ──────────────────────────────────────────────────────── */}
+      <div className="section-card" style={{ marginTop: '1.5rem', border: '1.5px solid #E53E3E22' }}>
+        <div className="section-card-header" style={{ borderBottom: '1px solid #E53E3E22' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <MdWarning size={18} color="#E53E3E" />
+            <div>
+              <h3 style={{ color: '#E53E3E', margin: 0 }}>Danger Zone</h3>
+              <p style={{ margin: 0 }}>Permanent and irreversible actions</p>
+            </div>
+          </div>
+        </div>
+        <div className="section-card-body">
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <p style={{ fontWeight: 600, margin: '0 0 2px', fontSize: '0.9rem' }}>Delete My Account</p>
+              <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                Once deleted, your account and all data will be permanently removed.
+              </p>
+            </div>
+
+            {!showDeleteConfirm ? (
+              <button
+                type="button"
+                onClick={() => setShowDeleteConfirm(true)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '6px',
+                  padding: '0.55rem 1.25rem', borderRadius: '8px',
+                  background: 'transparent', color: '#E53E3E',
+                  border: '1.5px solid #E53E3E', cursor: 'pointer',
+                  fontWeight: 600, fontSize: '0.85rem', fontFamily: 'inherit',
+                  whiteSpace: 'nowrap',
+                }}
+              >
+                <MdDeleteForever size={18} /> Delete Account
+              </button>
+            ) : (
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', flexWrap: 'wrap' }}>
+                <span style={{ fontSize: '0.82rem', color: '#E53E3E', fontWeight: 600 }}>
+                  Are you sure? This cannot be undone.
+                </span>
+                <button
+                  type="button"
+                  onClick={handleDeleteAccount}
+                  disabled={isDeleting}
+                  style={{
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                    padding: '0.5rem 1.1rem', borderRadius: '8px',
+                    background: '#E53E3E', color: '#fff',
+                    border: 'none', cursor: isDeleting ? 'not-allowed' : 'pointer',
+                    fontWeight: 700, fontSize: '0.85rem', fontFamily: 'inherit',
+                    opacity: isDeleting ? 0.7 : 1,
+                  }}
+                >
+                  <MdDeleteForever size={16} />
+                  {isDeleting ? 'Deleting…' : 'Yes, Delete'}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDeleteConfirm(false)}
+                  disabled={isDeleting}
+                  style={{
+                    padding: '0.5rem 1.1rem', borderRadius: '8px',
+                    background: 'var(--bg-hover)', color: 'var(--text-primary)',
+                    border: '1.5px solid var(--border-color)', cursor: 'pointer',
+                    fontWeight: 600, fontSize: '0.85rem', fontFamily: 'inherit',
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
