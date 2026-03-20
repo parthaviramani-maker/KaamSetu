@@ -23,15 +23,17 @@ export default {
                 return responseHandler.badRequest(res, `Invalid email(s): ${invalid.join(', ')}`);
             }
 
-            const user = await User.findById(req.user.id);
-            if (!user) return responseHandler.notFound(res, 'User not found');
+            const cleanEmails = [...new Set(emails.map(e => String(e).toLowerCase().trim()))];
 
-            user.authorizedEmails = [...new Set(emails.map(e => String(e).toLowerCase().trim()))];
-            user.markModified('authorizedEmails'); // force Mongoose to detect array change
-            await user.save();
+            const updated = await User.findByIdAndUpdate(
+                req.user.id,
+                { $set: { authorizedEmails: cleanEmails } },
+                { new: true, select: 'authorizedEmails', runValidators: false }
+            );
+            if (!updated) return responseHandler.notFound(res, 'User not found');
 
             return responseHandler.success(res, 'Authorized emails updated', {
-                emails: user.authorizedEmails,
+                emails: updated.authorizedEmails,
             });
         } catch (error) {
             return responseHandler.internalServerError(res, error);

@@ -4,7 +4,7 @@ import baseQueryWithLogout from '../store/baseQuery';
 export const userApi = createApi({
     reducerPath: 'userApi',
     baseQuery: baseQueryWithLogout,
-    tagTypes: ['User'],
+    tagTypes: ['User', 'AuthorizedEmails'],
     endpoints: (builder) => ({
 
         // Get my full profile
@@ -27,13 +27,13 @@ export const userApi = createApi({
         // Admin 2FA — get authorized emails list
         getAuthorizedEmails: builder.query({
             query: () => '/users/me/authorized-emails',
-            providesTags: ['User'],
+            providesTags: ['AuthorizedEmails'],
         }),
 
         // Admin 2FA — update authorized emails list
         updateAuthorizedEmails: builder.mutation({
             query: (emails) => ({ url: '/users/me/authorized-emails', method: 'PUT', body: { emails } }),
-            invalidatesTags: ['User'],
+            invalidatesTags: ['AuthorizedEmails'],
         }),
     }),
 });

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { selectUser, selectRole, selectIsLogin, logout } from '../../store/authSlice';
@@ -47,11 +47,13 @@ function RealDashboard() {
   const [newEmail,     setNewEmail]     = useState('');
   const [emailError,   setEmailError]   = useState('');
   const [emailSuccess, setEmailSuccess] = useState('');
+  const emailsInitialized = useRef(false);
 
-  // Sync fetched emails into local state
+  // Initialize email list from server ONCE on first load only
   useEffect(() => {
-    if (emailsData?.data?.emails) {
-      setEmailList(emailsData.data.emails);
+    if (!emailsInitialized.current && emailsData !== undefined) {
+      setEmailList(emailsData?.data?.emails || []);
+      emailsInitialized.current = true;
     }
   }, [emailsData]);
 
@@ -75,9 +77,29 @@ function RealDashboard() {
   const handleSaveEmails = async () => {
     setEmailError('');
     setEmailSuccess('');
+
+    // Auto-add whatever is still typed in the input field
+    let listToSave = emailList;
+    const pending = newEmail.trim().toLowerCase();
+    if (pending) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(pending)) {
+        setEmailError('Invalid email address in input field');
+        return;
+      }
+      if (!listToSave.includes(pending) && listToSave.length < 5) {
+        listToSave = [...listToSave, pending];
+        setEmailList(listToSave);
+        setNewEmail('');
+      }
+    }
+
     try {
-      const res = await updateAuthorizedEmails(emailList).unwrap();
+      const res = await updateAuthorizedEmails(listToSave).unwrap();
       if (res.success) {
+        // Update list directly from server's confirmed response
+        const saved = res.data?.emails;
+        if (saved) setEmailList(saved);
         setEmailSuccess('Saved successfully!');
         setTimeout(() => setEmailSuccess(''), 3000);
       }
@@ -324,11 +346,11 @@ function RealDashboard() {
               {emailList.length < 5 && (
                 <div style={{ display: 'flex', gap: '6px', marginBottom: '8px' }}>
                   <input
-                    type="email"
+                    type="text"
                     placeholder="Add email…"
                     value={newEmail}
                     onChange={(e) => { setNewEmail(e.target.value); setEmailError(''); }}
-                    onKeyDown={(e) => e.key === 'Enter' && handleAddEmail()}
+                    onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddEmail(); } }}
                     style={{
                       flex: 1, padding: '7px 10px', borderRadius: '8px',
                       border: '1.5px solid #ddd', fontSize: '0.83rem',
@@ -336,6 +358,7 @@ function RealDashboard() {
                     }}
                   />
                   <button
+                    type="button"
                     onClick={handleAddEmail}
                     style={{
                       background: '#00ABB3', border: 'none', borderRadius: '8px',
@@ -353,6 +376,7 @@ function RealDashboard() {
               {emailSuccess && <p style={{ color: '#27AE60', fontSize: '0.78rem', margin: '0 0 6px' }}>{emailSuccess}</p>}
 
               <button
+                type="button"
                 onClick={handleSaveEmails}
                 disabled={saving}
                 style={{

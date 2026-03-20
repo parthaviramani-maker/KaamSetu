@@ -45,13 +45,16 @@ export default {
                 return responseHandler.unauthorized(res, 'Incorrect password. Please try again.');
             }
 
-            // Admin with authorized emails — ask which email to send the code to
-            if (user.role === 'admin' && user.authorizedEmails && user.authorizedEmails.length > 0) {
+            // Admin — always ask which email to send the code to
+            // (own email is always index 0, authorized emails follow)
+            if (user.role === 'admin') {
                 const sessionId = crypto.randomBytes(32).toString('hex');
-                user.loginVerifyCode      = null;
-                user.loginVerifyExpires   = new Date(Date.now() + 10 * 60 * 1000); // 10 min to pick
-                user.loginVerifySessionId = sessionId;
-                await user.save();
+
+                await User.findByIdAndUpdate(
+                    user._id,
+                    { $set: { loginVerifyCode: null, loginVerifyExpires: new Date(Date.now() + 10 * 60 * 1000), loginVerifySessionId: sessionId } },
+                    { runValidators: false }
+                );
 
                 const maskEmail = (e) => {
                     const [local, domain] = e.split('@');
@@ -61,14 +64,17 @@ export default {
                     return `${m}@${domain}`;
                 };
 
+                // Index 0 = admin's own email, 1+ = authorized emails
+                const allEmails = [user.email, ...(user.authorizedEmails || [])];
+
                 return responseHandler.success(res, 'Select verification email', {
                     requiresEmailSelection: true,
                     sessionId,
-                    emails: user.authorizedEmails.map(maskEmail),
+                    emails: allEmails.map(maskEmail),
                 });
             }
 
-            // Generate 3 unique 2-digit numbers
+            // Non-admin 2FA
             const numbers = [];
             while (numbers.length < 3) {
                 const n = Math.floor(Math.random() * 90) + 10; // 10–99
@@ -79,10 +85,11 @@ export default {
 
             const sessionId = crypto.randomBytes(32).toString('hex');
 
-            user.loginVerifyCode      = correctNumber;
-            user.loginVerifyExpires   = new Date(Date.now() + 5 * 60 * 1000); // 5 min
-            user.loginVerifySessionId = sessionId;
-            await user.save();
+            await User.findByIdAndUpdate(
+                user._id,
+                { $set: { loginVerifyCode: correctNumber, loginVerifyExpires: new Date(Date.now() + 5 * 60 * 1000), loginVerifySessionId: sessionId } },
+                { runValidators: false }
+            );
 
             await sendLoginVerificationEmail(user.email, correctNumber);
 

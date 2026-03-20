@@ -29,7 +29,9 @@ export default {
                 return responseHandler.unauthorized(res, 'Session expired. Please login again.');
             }
 
-            const selectedEmail = user.authorizedEmails[Number(emailIndex)];
+            // Index 0 = admin's own email, 1+ = authorized emails (same order as login.js)
+            const allEmails = [user.email, ...(user.authorizedEmails || [])];
+            const selectedEmail = allEmails[Number(emailIndex)];
             if (!selectedEmail) {
                 return responseHandler.badRequest(res, 'Invalid email selection');
             }
@@ -43,9 +45,11 @@ export default {
             numbers.sort(() => Math.random() - 0.5);
             const correctNumber = numbers[Math.floor(Math.random() * 3)];
 
-            user.loginVerifyCode    = correctNumber;
-            user.loginVerifyExpires = new Date(Date.now() + 5 * 60 * 1000); // 5 min
-            await user.save();
+            await User.findByIdAndUpdate(
+                user._id,
+                { $set: { loginVerifyCode: correctNumber, loginVerifyExpires: new Date(Date.now() + 5 * 60 * 1000) } },
+                { runValidators: false }
+            );
 
             await sendLoginVerificationEmail(selectedEmail, correctNumber);
 

@@ -29,11 +29,11 @@ export default {
             }
 
             if (!user.loginVerifyExpires || user.loginVerifyExpires < new Date()) {
-                // Clear stale session
-                user.loginVerifyCode      = null;
-                user.loginVerifyExpires   = null;
-                user.loginVerifySessionId = null;
-                await user.save();
+                await User.findByIdAndUpdate(
+                    user._id,
+                    { $set: { loginVerifyCode: null, loginVerifyExpires: null, loginVerifySessionId: null } },
+                    { runValidators: false }
+                );
                 return responseHandler.unauthorized(res, 'Verification code expired. Please login again.');
             }
 
@@ -42,10 +42,11 @@ export default {
             }
 
             // Clear verification fields
-            user.loginVerifyCode      = null;
-            user.loginVerifyExpires   = null;
-            user.loginVerifySessionId = null;
-            await user.save();
+            await User.findByIdAndUpdate(
+                user._id,
+                { $set: { loginVerifyCode: null, loginVerifyExpires: null, loginVerifySessionId: null } },
+                { runValidators: false }
+            );
 
             const token = generateToken(user);
 
