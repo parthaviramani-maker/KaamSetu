@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MdCheckCircle, MdArrowBack } from 'react-icons/md';
+import { useCreateJobMutation } from '../../../services/jobApi';
+import toast from '../../../components/Toast/toast';
 
 const initialForm = {
   title: '', company: '', area: '', city: '',
@@ -14,6 +16,7 @@ const PostJob = () => {
   const [form, setForm] = useState(initialForm);
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [createJob, { isLoading: isPosting }] = useCreateJobMutation();
 
   const validate = () => {
     const e = {};
@@ -43,14 +46,45 @@ const PostJob = () => {
     if (errors[name]) setErrors(er => ({ ...er, [name]: '' }));
   };
 
-  const handleSubmit = (e) => {
+  // Map payPeriod UI value → backend payType
+  const toPayType = (period) => {
+    if (period === 'day')   return 'daily';
+    if (period === 'month') return 'monthly';
+    return 'daily'; // week/job treated as daily
+  };
+
+  // Map workType UI value → backend enum
+  const toWorkType = (wt) => {
+    if (wt === 'Daily Wage') return 'Daily-wage';
+    return wt; // Full-time, Part-time, Contract stay the same
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) {
       setErrors(errs);
       return;
     }
-    setSubmitted(true);
+    try {
+      await createJob({
+        title:         form.title.trim(),
+        company:       form.company.trim(),
+        city:          form.city,
+        area:          form.area.trim(),
+        workType:      toWorkType(form.workType),
+        pay:           Number(form.pay),
+        payType:       toPayType(form.payPeriod),
+        workersNeeded: Number(form.workers),
+        deadline:      form.deadline || null,
+        skills:        form.skills.split(',').map(s => s.trim()).filter(Boolean),
+        description:   form.description.trim(),
+        contactInfo:   `${form.contactName.trim()} — ${form.contactPhone.trim()}`,
+      }).unwrap();
+      setSubmitted(true);
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to post job. Please try again.');
+    }
   };
 
   if (submitted) {
@@ -213,11 +247,12 @@ const PostJob = () => {
 
             <div className="form-actions">
               <button type="button" className="btn btn-ghost"
-                onClick={() => { setForm(initialForm); setErrors({}); }}>
+                onClick={() => { setForm(initialForm); setErrors({}); }}
+                disabled={isPosting}>
                 Reset
               </button>
-              <button type="submit" className="btn btn-primary">
-                🚀 Post Job
+              <button type="submit" className="btn btn-primary" disabled={isPosting}>
+                {isPosting ? 'Posting…' : '🚀 Post Job'}
               </button>
             </div>
           </form>

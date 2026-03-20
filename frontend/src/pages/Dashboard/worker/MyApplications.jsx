@@ -1,31 +1,36 @@
-import { applicants } from '../data/dummyData';
+import { useGetMyApplicationsQuery } from '../../../services/applicationApi';
 
-const myApps = applicants.slice(0, 6).map(a => ({
-  ...a,
-  employer: a.job.includes('Construction') ? 'Shah Constructions'
-          : a.job.includes('Electri')      ? 'Mehta Infra Projects'
-          : a.job.includes('Plumb')        ? 'Joshi Developers'
-          : a.job.includes('Paint')        ? 'Color Homes'
-          : a.job.includes('Mason')        ? 'Gujarat Roads Ltd'
-          : 'Patel Industries',
-}));
-
+// Backend statuses: pending / approved / rejected
 const STATUS_CLASS = {
-  applied:   'badge-applied',
-  reviewing: 'badge-reviewing',
-  interview: 'badge-interview',
-  hired:     'badge-hired',
-  rejected:  'badge-rejected',
+  pending:  'badge-reviewing',
+  approved: 'badge-hired',
+  rejected: 'badge-rejected',
+};
+const STATUS_LABEL = {
+  pending:  'Pending',
+  approved: 'Approved',
+  rejected: 'Rejected',
 };
 
-const MyApplications = () => (
+const MyApplications = () => {
+  const { data: res, isLoading, isError } = useGetMyApplicationsQuery();
+  const myApps = res?.data || [];
+
+  const counts = {
+    total:    myApps.length,
+    pending:  myApps.filter(a => a.status === 'pending').length,
+    approved: myApps.filter(a => a.status === 'approved').length,
+    rejected: myApps.filter(a => a.status === 'rejected').length,
+  };
+
+  return (
   <div>
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '1.5rem' }}>
       {[
-        { label: 'Total Applied',  val: myApps.length,                                           color: 'teal' },
-        { label: 'In Review',      val: myApps.filter(a => a.status === 'reviewing').length,      color: 'blue' },
-        { label: 'Interviews',     val: myApps.filter(a => a.status === 'interview').length,      color: 'green' },
-        { label: 'Offers',         val: myApps.filter(a => a.status === 'hired').length,          color: 'amber' },
+        { label: 'Total Applied', val: counts.total,    color: 'teal' },
+        { label: 'Pending',       val: counts.pending,  color: 'blue' },
+        { label: 'Approved',      val: counts.approved, color: 'green' },
+        { label: 'Rejected',      val: counts.rejected, color: 'amber' },
       ].map(c => (
         <div key={c.label} className={`stat-card stat-card--${c.color}`}>
           <div className="stat-body">
@@ -44,31 +49,54 @@ const MyApplications = () => (
         </div>
       </div>
       <div className="section-card-body">
+        {isLoading && <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Loading…</p>}
+        {isError   && <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-error)' }}>Failed to load applications.</p>}
+        {!isLoading && !isError && (
         <div className="dash-table-wrap">
           <table className="dash-table">
             <thead>
               <tr>
                 <th>Job Title</th>
-                <th>Employer</th>
-                <th>Applied</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Pay</th>
+                <th>Applied On</th>
                 <th>Status</th>
               </tr>
             </thead>
             <tbody>
-              {myApps.map(a => (
-                <tr key={a.id}>
-                  <td style={{ fontWeight: 600 }}>{a.job}</td>
-                  <td style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{a.employer}</td>
-                  <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{a.applied}</td>
-                  <td><span className={`badge ${STATUS_CLASS[a.status] || 'badge-applied'}`}>{a.status}</span></td>
-                </tr>
-              ))}
+              {myApps.length === 0 && (
+                <tr><td colSpan={6} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No applications yet. Start applying to jobs to track them here.</td></tr>
+              )}
+              {myApps.map(app => {
+                const job = app.jobId || {};
+                return (
+                  <tr key={app._id}>
+                    <td style={{ fontWeight: 600 }}>{job.title || '—'}</td>
+                    <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{job.company || '—'}</td>
+                    <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{job.city || '—'}</td>
+                    <td style={{ fontWeight: 700, color: 'var(--color-accent)', fontSize: '0.85rem' }}>
+                      {job.pay ? `₹${job.pay}/${job.payType === 'monthly' ? 'mo' : 'day'}` : '—'}
+                    </td>
+                    <td style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      {new Date(app.createdAt).toLocaleDateString('en-IN')}
+                    </td>
+                    <td>
+                      <span className={`badge ${STATUS_CLASS[app.status] || 'badge-applied'}`}>
+                        {STATUS_LABEL[app.status] || app.status}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
+        )}
       </div>
     </div>
   </div>
-);
+  );
+};
 
 export default MyApplications;

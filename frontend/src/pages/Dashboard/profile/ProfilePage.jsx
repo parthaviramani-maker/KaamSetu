@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { MdPerson, MdEmail, MdPhone, MdLocationOn, MdWork, MdSave, MdCheck, MdEdit } from 'react-icons/md';
 import { selectUser, selectRole } from '../../../store/authSlice';
 import Avatar from '../../../components/Avatar';
+import { useGetMeQuery, useUpdateMeMutation } from '../../../services/userApi';
+import toast from '../../../components/Toast/toast';
 
 const ROLE_LABELS = {
   employer: 'Kaam Saheb · Employer',
@@ -15,18 +17,34 @@ const ProfilePage = () => {
   const user = useSelector(selectUser);
   const role = useSelector(selectRole);
 
+  const { data: meRes } = useGetMeQuery();
+  const meUser = meRes?.data || user || {};
+
   const [editing, setEditing] = useState(false);
-  const [saved,   setSaved]   = useState(false);
   const [errors,  setErrors]  = useState({});
+  const [saved,   setSaved]   = useState(false);
+  const [updateMe, { isLoading: isSaving }] = useUpdateMeMutation();
 
   const [form, setForm] = useState({
-    name:     user?.name  || '',
-    email:    user?.email || '',
+    name:     '',
+    email:    '',
     phone:    '',
     city:     '',
     skill:    '',
     bio:      '',
   });
+
+  // Sync form once API profile is loaded
+  useEffect(() => {
+    if (meUser?.name) {
+      setForm(f => ({
+        ...f,
+        name:  meUser.name  || '',
+        email: meUser.email || '',
+        phone: meUser.phone || '',
+      }));
+    }
+  }, [meUser?.name]);
 
   const handle = (e) => {
     setForm(p => ({ ...p, [e.target.name]: e.target.value }));
@@ -43,16 +61,23 @@ const ProfilePage = () => {
     return errs;
   };
 
-  const handleSave = (e) => {
+  const handleSave = async (e) => {
     e.preventDefault();
     const errs = validate();
     if (Object.keys(errs).length > 0) { setErrors(errs); return; }
-    setSaved(true);
-    setEditing(false);
-    setTimeout(() => setSaved(false), 3000);
+    try {
+      await updateMe({
+        name:  form.name.trim(),
+        phone: form.phone.trim() || undefined,
+      }).unwrap();
+      toast.success('Profile updated!');
+      setEditing(false);
+    } catch (err) {
+      toast.error(err?.data?.message || 'Failed to update profile');
+    }
   };
 
-  const avatarUrl = user?.avatar ||
+  const avatarUrl = meUser?.avatar ||
     `https://ui-avatars.com/api/?name=${encodeURIComponent(form.name || 'User')}&background=00ABB3&color=fff&size=128`;
   const completion = [form.name, form.email, form.phone, form.city, form.skill, form.bio].filter(Boolean).length;
   const completionPct = Math.round((completion / 6) * 100);
@@ -165,13 +190,9 @@ const ProfilePage = () => {
 
               {editing && (
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', alignItems: 'center' }}>
-                  {saved && (
-                    <span style={{ fontSize: '0.82rem', color: '#27AE60', display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 600 }}>
-                      <MdCheck size={15} /> Saved!
-                    </span>
-                  )}
                   <button
                     type="submit"
+                    disabled={isSaving}
                     style={{
                       display: 'flex', alignItems: 'center', gap: '6px',
                       padding: '0.55rem 1.25rem', borderRadius: '8px',
@@ -180,7 +201,7 @@ const ProfilePage = () => {
                       fontSize: '0.85rem', fontFamily: 'inherit',
                     }}
                   >
-                    <MdSave size={16} /> Save Changes
+                    <MdSave size={16} /> {isSaving ? 'Saving…' : 'Save Changes'}
                   </button>
                 </div>
               )}

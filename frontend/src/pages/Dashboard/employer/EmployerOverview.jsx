@@ -2,20 +2,17 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import {
   MdWork, MdPeople, MdPersonAdd, MdAttachMoney,
-  MdArrowForward, MdLocationOn, MdAccessTime, MdTrendingUp,
+  MdArrowForward, MdLocationOn, MdAccessTime,
   MdPostAdd, MdPayment, MdWbSunny,
 } from 'react-icons/md';
-import { JobIcon } from '../data/jobIcons';
-import Avatar from '../../../components/Avatar';
-import {
-  ResponsiveContainer, AreaChart, Area,
-  XAxis, YAxis, CartesianGrid, Tooltip,
-} from 'recharts';
 import { selectUser } from '../../../store/authSlice';
-import {
-  jobs, applicants, employerActivity,
-  employerStats, employerMonthlyData,
-} from '../data/dummyData';
+import { useGetMyJobsQuery } from '../../../services/jobApi';
+
+const EmptyState = ({ message }) => (
+  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
+    {message}
+  </div>
+);
 
 const getGreeting = () => {
   const h = new Date().getHours();
@@ -26,10 +23,13 @@ const getGreeting = () => {
 };
 
 const EmployerOverview = () => {
-  const user = useSelector(selectUser);
+  const user  = useSelector(selectUser);
   const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  const activeJobs = jobs.filter(j => j.status === 'active');
+  const { data: jobsRes } = useGetMyJobsQuery();
+  const jobs = jobsRes?.data || [];
+  const openJobs   = jobs.filter(j => j.status === 'open').length;
+  const totalJobs  = jobs.length;
 
   return (
     <div>
@@ -51,41 +51,37 @@ const EmployerOverview = () => {
         <div className="stat-card stat-card--teal">
           <div className="stat-icon"><MdWork /></div>
           <div className="stat-body">
-            <p className="stat-label">Active Jobs</p>
-            <p className="stat-value">{employerStats.activeJobs}</p>
-            <p className="stat-sub">2 closing this week</p>
+            <p className="stat-label">Open Jobs</p>
+            <p className="stat-value">{openJobs}</p>
+            <p className="stat-sub">{openJobs === 0 ? 'No open jobs yet' : `${openJobs} open`}</p>
           </div>
-          <span className="stat-trend up"><MdTrendingUp /> +2 this month</span>
         </div>
 
         <div className="stat-card stat-card--blue">
           <div className="stat-icon" style={{ background: 'rgba(49,130,206,0.12)', color: '#3182CE' }}><MdPeople /></div>
           <div className="stat-body">
-            <p className="stat-label">Total Applicants</p>
-            <p className="stat-value">{employerStats.totalApplicants}</p>
-            <p className="stat-sub">12 new today</p>
+            <p className="stat-label">Total Jobs Posted</p>
+            <p className="stat-value">{totalJobs}</p>
+            <p className="stat-sub">{totalJobs === 0 ? 'No jobs posted yet' : `${totalJobs} total`}</p>
           </div>
-          <span className="stat-trend up"><MdTrendingUp /> +18% this week</span>
         </div>
 
         <div className="stat-card stat-card--green">
           <div className="stat-icon" style={{ background: 'rgba(39,174,96,0.12)', color: '#27AE60' }}><MdPersonAdd /></div>
           <div className="stat-body">
             <p className="stat-label">Workers Hired</p>
-            <p className="stat-value">{employerStats.hired}</p>
-            <p className="stat-sub">All time placements</p>
+            <p className="stat-value">0</p>
+            <p className="stat-sub">Hire tracking coming soon</p>
           </div>
-          <span className="stat-trend up"><MdTrendingUp /> 3 this month</span>
         </div>
 
         <div className="stat-card stat-card--amber">
           <div className="stat-icon" style={{ background: 'rgba(246,173,85,0.12)', color: '#C68A00' }}><MdAttachMoney /></div>
           <div className="stat-body">
             <p className="stat-label">Monthly Spend</p>
-            <p className="stat-value">{employerStats.monthlySpend}</p>
-            <p className="stat-sub">Dec 2024</p>
+            <p className="stat-value">₹0</p>
+            <p className="stat-sub">Payments coming soon</p>
           </div>
-          <span className="stat-trend down">↓ 8% vs last month</span>
         </div>
       </div>
 
@@ -116,32 +112,37 @@ const EmployerOverview = () => {
           <div className="section-card-header">
             <div>
               <h3>Active Job Postings</h3>
-              <p>{activeJobs.length} jobs currently live</p>
+              <p>Your live job listings</p>
             </div>
             <Link to="/dashboard/employer/my-jobs" className="view-all-link">
               View All <MdArrowForward />
             </Link>
           </div>
           <div className="section-card-body">
-            <div className="jobs-list">
-              {activeJobs.map(job => (
-                <div key={job.id} className="job-card">
-                  <div className="job-icon"><JobIcon iconKey={job.icon} /></div>
-                  <div className="job-info">
-                    <h4>{job.title}</h4>
-                    <div className="job-meta">
-                      <span><MdLocationOn />{job.area}</span>
-                      <span><MdAccessTime />{job.posted}</span>
+            {jobs.filter(j => j.status === 'open').length === 0 ? (
+              <EmptyState message="No active jobs. Post your first job to get started." />
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                {jobs.filter(j => j.status === 'open').slice(0, 3).map(job => (
+                  <div key={job._id} style={{
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                    padding: '0.75rem', borderRadius: '8px', background: 'var(--bg-hover)',
+                    gap: '0.5rem', flexWrap: 'wrap',
+                  }}>
+                    <div style={{ minWidth: 0 }}>
+                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.88rem', color: 'var(--text-primary)' }}>{job.title}</p>
+                      <p style={{ margin: '2px 0 0', fontSize: '0.75rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <MdLocationOn size={12} />{job.city}{job.area ? `, ${job.area}` : ''}
+                        <MdAccessTime size={12} style={{ marginLeft: '6px' }} />{job.workersNeeded} workers
+                      </p>
                     </div>
-                    <span className={`badge badge-${job.status}`}>{job.status}</span>
+                    <span style={{ fontWeight: 700, color: 'var(--color-accent)', fontSize: '0.85rem', whiteSpace: 'nowrap' }}>
+                      ₹{job.pay}/{job.payType === 'monthly' ? 'mo' : 'day'}
+                    </span>
                   </div>
-                  <div className="job-right">
-                    <p className="job-pay">{job.pay}</p>
-                    <span className={`badge badge-open`}>{job.workers} needed</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -157,72 +158,7 @@ const EmployerOverview = () => {
             </Link>
           </div>
           <div className="section-card-body">
-            <div className="dash-table-wrap">
-              <table className="dash-table">
-                <thead>
-                  <tr>
-                    <th>Worker</th>
-                    <th>Job</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {applicants.slice(0, 5).map(a => (
-                    <tr key={a.id}>
-                      <td>
-                        <div className="td-user">
-                          <Avatar src={a.avatar} alt={a.name} />
-                          <div className="td-user-info">
-                            <div className="name">{a.name}</div>
-                            <div className="meta">{a.skill}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td style={{ fontSize: '0.8rem', maxWidth: '120px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                        {a.job}
-                      </td>
-                      <td>
-                        <span className={`badge badge-${a.status}`}>{a.status}</span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 6-Month Trend Chart */}
-      <div className="section-card" style={{ marginBottom: '1.5rem' }}>
-        <div className="section-card-header">
-          <div><h3>6-Month Trend</h3><p>Applicants received &amp; workers hired</p></div>
-        </div>
-        <div className="section-card-body">
-          <div className="chart-container">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={employerMonthlyData} margin={{ top: 4, right: 12, left: -10, bottom: 0 }}>
-                <defs>
-                  <linearGradient id="empApplicants" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#00ABB3" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#00ABB3" stopOpacity={0} />
-                  </linearGradient>
-                  <linearGradient id="empHired" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%"  stopColor="#27AE60" stopOpacity={0.25} />
-                    <stop offset="95%" stopColor="#27AE60" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                <XAxis dataKey="month" tick={{ fontSize: 11 }} />
-                <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip
-                  contentStyle={{ background: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: 8, fontSize: 12 }}
-                  labelStyle={{ color: 'var(--text-secondary)' }}
-                />
-                <Area type="monotone" dataKey="applicants" name="Applicants" stroke="#00ABB3" strokeWidth={2} fill="url(#empApplicants)" dot={false} />
-                <Area type="monotone" dataKey="hired"      name="Hired"      stroke="#27AE60" strokeWidth={2} fill="url(#empHired)"      dot={false} />
-              </AreaChart>
-            </ResponsiveContainer>
+            <EmptyState message="No applicants yet. Post a job to start receiving applications." />
           </div>
         </div>
       </div>
@@ -236,17 +172,7 @@ const EmployerOverview = () => {
           </div>
         </div>
         <div className="section-card-body">
-          <div className="activity-list">
-            {employerActivity.map(act => (
-              <div key={act.id} className="activity-item">
-                <div className="activity-dot" />
-                <div className="activity-content">
-                  <p className="activity-text" dangerouslySetInnerHTML={{ __html: act.text }} />
-                  <p className="activity-time">{act.time}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <EmptyState message="No activity yet." />
         </div>
       </div>
     </div>

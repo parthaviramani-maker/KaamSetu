@@ -11,9 +11,28 @@ import {
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { selectIsDark, toggleTheme } from '../../store/themeSlice';
 import EmployerOverview from '../Dashboard/employer/EmployerOverview';
+import PostJob          from '../Dashboard/employer/PostJob';
+import MyJobs           from '../Dashboard/employer/MyJobs';
+import Applicants       from '../Dashboard/employer/Applicants';
+import Payments         from '../Dashboard/employer/Payments';
+
 import WorkerOverview   from '../Dashboard/worker/WorkerOverview';
+import FindJobs         from '../Dashboard/worker/FindJobs';
+import MyApplications   from '../Dashboard/worker/MyApplications';
+import Earnings         from '../Dashboard/worker/Earnings';
+
 import AgentOverview    from '../Dashboard/agent/AgentOverview';
+import ManageWorkers    from '../Dashboard/agent/ManageWorkers';
+import Placements       from '../Dashboard/agent/Placements';
+import Commission       from '../Dashboard/agent/Commission';
+import Area             from '../Dashboard/agent/Area';
+
 import AdminOverview    from '../Dashboard/admin/AdminOverview';
+import AllUsers         from '../Dashboard/admin/AllUsers';
+import AllJobs          from '../Dashboard/admin/AllJobs';
+import AllAgents        from '../Dashboard/admin/AllAgents';
+import Reports          from '../Dashboard/admin/Reports';
+import Settings         from '../Dashboard/admin/Settings';
 import '../Dashboard/Dashboard.scss';
 
 const MENUS = {
@@ -69,11 +88,35 @@ const getGreeting = () => {
   return 'Good Night';
 };
 
-const OVERVIEW_MAP = {
-  employer: EmployerOverview,
-  worker:   WorkerOverview,
-  agent:    AgentOverview,
-  admin:    AdminOverview,
+const PAGES = {
+  employer: {
+    overview:    EmployerOverview,
+    'post-job':  PostJob,
+    'my-jobs':   MyJobs,
+    applicants:  Applicants,
+    payments:    Payments,
+  },
+  worker: {
+    overview:    WorkerOverview,
+    'find-jobs': FindJobs,
+    apps:        MyApplications,
+    earnings:    Earnings,
+  },
+  agent: {
+    overview:    AgentOverview,
+    workers:     ManageWorkers,
+    placements:  Placements,
+    commission:  Commission,
+    area:        Area,
+  },
+  admin: {
+    overview:    AdminOverview,
+    users:       AllUsers,
+    jobs:        AllJobs,
+    agents:      AllAgents,
+    reports:     Reports,
+    settings:    Settings,
+  },
 };
 
 const DemoLayout = () => {
@@ -87,12 +130,16 @@ const DemoLayout = () => {
   const demoUser    = DEMO_USERS[role];
   const menuItems   = MENUS[role] || MENUS.employer;
 
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen,    setSidebarOpen]    = useState(false);
+  const [activeSection,  setActiveSection]  = useState('overview');
 
-  // Close sidebar on role change
-  useEffect(() => { setSidebarOpen(false); }, [role]);
+  // Reset to overview & close sidebar when role changes
+  useEffect(() => {
+    setSidebarOpen(false);
+    setActiveSection('overview');
+  }, [role]);
 
-  const OverviewComponent = OVERVIEW_MAP[role];
+  const ActiveComponent = PAGES[role]?.[activeSection] || PAGES[role]?.overview;
 
   const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(demoUser.name)}&background=00ABB3&color=fff&size=64`;
 
@@ -143,13 +190,13 @@ const DemoLayout = () => {
             <div className="sidebar-section-label">Navigation</div>
             {menuItems.map((item) => {
               const Icon = item.icon;
-              const isOverview = item.id === 'overview';
+              const isActive = item.id === activeSection;
               return (
                 <div
                   key={item.id}
-                  className={`nav-item${isOverview ? ' active' : ''}`}
-                  style={{ cursor: isOverview ? 'default' : 'not-allowed', opacity: isOverview ? 1 : 0.45 }}
-                  title={isOverview ? '' : 'Available in real dashboard'}
+                  className={`nav-item${isActive ? ' active' : ''}`}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() => { setActiveSection(item.id); setSidebarOpen(false); }}
                 >
                   <Icon className="nav-icon" />
                   <span className="nav-label">{item.label}</span>
@@ -191,7 +238,7 @@ const DemoLayout = () => {
             </button>
 
             <div className="top-bar-left">
-              <h1>Dashboard</h1>
+              <h1>{menuItems.find(i => i.id === activeSection)?.label || 'Dashboard'}</h1>
               <p className="page-subtitle">{demoUser.roleLabel} · {demoUser.sub}</p>
             </div>
 
@@ -218,7 +265,7 @@ const DemoLayout = () => {
           </header>
 
           <div className="scrollable-content">
-            <OverviewComponent />
+            <ActiveComponent />
           </div>
         </main>
 

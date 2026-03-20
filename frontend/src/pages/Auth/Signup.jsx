@@ -211,12 +211,13 @@ function Signup({ onGoLogin }) {
         setOtpError(data.message || 'Verification failed');
         return;
       }
+      const userRole = data.data.user.role;
       dispatch(loginSuccess({
         user:  data.data.user,
         token: data.data.token,
-        role:  data.data.user.role,
+        role:  userRole,
       }));
-      navigate('/dashboard', { replace: true });
+      navigate(`/dashboard/${userRole}`, { replace: true });
     } catch (err) {
       setOtpError(err.message || 'Something went wrong');
     } finally {

@@ -65,6 +65,7 @@ const getGreeting = () => {
 
 const getPageTitle = (pathname) => {
   const map = {
+    '/dashboard':                       ['Dashboard',      'Welcome to KaamSetu'],
     '/dashboard/employer':              ['Dashboard',      'Employer Overview'],
     '/dashboard/employer/post-job':     ['Post New Job',   'Create a job posting'],
     '/dashboard/employer/my-jobs':      ['My Jobs',        'Manage your job postings'],
@@ -142,8 +143,8 @@ const DashboardLayout = () => {
         <div className="sidebar-header">
           <a className="brand" href="/dashboard">
             <div className="brand-logo">
-              <img
-                src={isDark ? '/favicon.png' : '/favicon-light.png'}
+          <img
+                src="/favicon.png"
                 alt="KaamSetu"
                 className="brand-logo-img"
                 onError={e => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}

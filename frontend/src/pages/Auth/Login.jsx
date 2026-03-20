@@ -82,12 +82,13 @@ function Login({ onGoSignup }) {
         return;
       }
 
+      const userRole = data.data.user.role;
       dispatch(loginSuccess({
         user:  data.data.user,
         token: data.data.token,
-        role:  data.data.user.role,
+        role:  userRole,
       }));
-      navigate('/dashboard', { replace: true });
+      navigate(`/dashboard/${userRole}`, { replace: true });
     } catch (err) {
       toast.error(err.message || 'Something went wrong');
     } finally {
@@ -108,12 +109,13 @@ function Login({ onGoSignup }) {
         toast.error(data.message || 'Verification failed');
         return;
       }
+      const userRole = data.data.user.role;
       dispatch(loginSuccess({
         user:  data.data.user,
         token: data.data.token,
-        role:  data.data.user.role,
+        role:  userRole,
       }));
-      navigate('/dashboard', { replace: true });
+      navigate(`/dashboard/${userRole}`, { replace: true });
     } catch (err) {
       toast.error(err.message || 'Something went wrong');
     } finally {

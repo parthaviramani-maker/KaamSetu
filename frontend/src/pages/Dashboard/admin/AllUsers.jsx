@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MdSearch } from 'react-icons/md';
 import Avatar from '../../../components/Avatar';
-import { allUsers } from '../data/dummyData';
+import { useGetAllUsersQuery } from '../../../services/adminApi';
 
 const ROLE_BADGE = {
   employer: 'badge-teal',
@@ -14,11 +14,18 @@ const AllUsers = () => {
   const [search,     setSearch]     = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
 
+  const { data: res, isLoading, isError } = useGetAllUsersQuery(
+    { role: roleFilter !== 'all' ? roleFilter : undefined, search: search || undefined },
+    { refetchOnMountOrArgChange: true }
+  );
+  const allUsers = res?.data || [];
+
+  // client-side filter for instant search UX (server also filters on refetch)
   const filtered = allUsers.filter(u => {
-    const matchSearch = u.name.toLowerCase().includes(search.toLowerCase()) ||
-                        u.email.toLowerCase().includes(search.toLowerCase());
-    const matchRole   = roleFilter === 'all' || u.role === roleFilter;
-    return matchSearch && matchRole;
+    const matchSearch = !search ||
+      u.name.toLowerCase().includes(search.toLowerCase()) ||
+      u.email.toLowerCase().includes(search.toLowerCase());
+    return matchSearch;
   });
 
   return (
@@ -26,10 +33,10 @@ const AllUsers = () => {
       {/* Summary */}
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '1.5rem' }}>
         {[
-          { label: 'Total',     val: allUsers.length,                                      color: 'teal' },
-          { label: 'Employers', val: allUsers.filter(u => u.role === 'employer').length,   color: 'blue' },
-          { label: 'Workers',   val: allUsers.filter(u => u.role === 'worker').length,     color: 'green' },
-          { label: 'Agents',    val: allUsers.filter(u => u.role === 'agent').length,      color: 'amber' },
+          { label: 'Total',     val: allUsers.length,                                     color: 'teal' },
+          { label: 'Employers', val: allUsers.filter(u => u.role === 'employer').length,  color: 'blue' },
+          { label: 'Workers',   val: allUsers.filter(u => u.role === 'worker').length,    color: 'green' },
+          { label: 'Agents',    val: allUsers.filter(u => u.role === 'agent').length,     color: 'amber' },
         ].map(c => (
           <div key={c.label} className={`stat-card stat-card--${c.color}`}>
             <div className="stat-body">
@@ -62,6 +69,9 @@ const AllUsers = () => {
         </div>
 
         <div className="section-card-body">
+          {isLoading && <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Loading…</p>}
+          {isError   && <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--color-error)' }}>Failed to load users.</p>}
+          {!isLoading && !isError && (
           <div className="dash-table-wrap">
             <table className="dash-table">
               <thead>
@@ -69,7 +79,7 @@ const AllUsers = () => {
                   <th>User</th>
                   <th>Email</th>
                   <th>Role</th>
-                  <th>Status</th>
+                  <th>Phone</th>
                   <th>Joined</th>
                 </tr>
               </thead>
@@ -78,22 +88,28 @@ const AllUsers = () => {
                   <tr><td colSpan={5} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No users found</td></tr>
                 )}
                 {filtered.map(u => (
-                  <tr key={u.id}>
+                  <tr key={u._id}>
                     <td>
                       <div className="td-user">
-                        <Avatar src={u.avatar} alt={u.name} />
+                        <Avatar
+                          src={`https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'U')}&background=00ABB3&color=fff&size=80`}
+                          alt={u.name}
+                        />
                         <div className="td-user-info"><div className="name">{u.name}</div></div>
                       </div>
                     </td>
                     <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{u.email}</td>
                     <td><span className={`badge ${ROLE_BADGE[u.role] || 'badge-applied'}`}>{u.role}</span></td>
-                    <td><span className={`badge badge-${u.status === 'active' ? 'hired' : 'rejected'}`}>{u.status}</span></td>
-                    <td style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>{u.joined}</td>
+                    <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{u.phone || '—'}</td>
+                    <td style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      {new Date(u.createdAt).toLocaleDateString('en-IN')}
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
+          )}
         </div>
       </div>
     </div>

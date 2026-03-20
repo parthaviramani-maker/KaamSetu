@@ -4,6 +4,7 @@ import { PORT, FRONTEND_URL } from './config/config.js';
 import connectDB from './config/db.js';
 import routes from './routes/index.js';
 import responseHandler from './utils/responseHandler.js';
+import seedAdmin from './utils/seedAdmin.js';
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use('*', (req, res) => {
 const startServer = async () => {
     try {
         await connectDB();
+        await seedAdmin(); // Auto-create admin if none exists
 
         app.listen(PORT, () => {
             console.log(`✅ KaamSetu API running on http://localhost:${PORT}`);

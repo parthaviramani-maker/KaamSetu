@@ -49,7 +49,8 @@ function AuthCallback() {
       );
       // If first-time Google user, send to onboarding
       const isNew = params.get('isNewUser') === 'true';
-      navigate(isNew ? '/auth/onboarding' : '/dashboard', { replace: true });
+      const resolvedRole = role || payload.role;
+      navigate(isNew ? '/auth/onboarding' : `/dashboard/${resolvedRole}`, { replace: true });
     } catch {
       setErrMsg('Invalid token received. Please sign in again.');
     }

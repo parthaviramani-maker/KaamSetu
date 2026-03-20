@@ -12,3 +12,5 @@ export const GOOGLE_CLIENT_ID  = process.env.GOOGLE_CLIENT_ID  || '';
 export const GOOGLE_CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET || '';
 export const EMAIL_USER        = process.env.EMAIL_USER        || '';
 export const EMAIL_PASS        = process.env.EMAIL_PASS        || '';
+export const ADMIN_EMAIL       = process.env.ADMIN_EMAIL       || 'admin@kaamsetu.in';
+export const ADMIN_PASSWORD    = process.env.ADMIN_PASSWORD    || 'Admin@123';
