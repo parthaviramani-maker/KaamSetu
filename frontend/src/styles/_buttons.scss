@@ -5,11 +5,7 @@
 // KAAMSETU BUTTONS
 // =============================================================================
 
-<<<<<<< HEAD
 $btn-ease: ease;
-=======
-$btn-ease: cubic-bezier(0.2, 0, 0, 1);
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
 %btn-base {
   display: inline-flex;
@@ -25,7 +21,6 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
   cursor: pointer;
   text-decoration: none;
   transition:
-<<<<<<< HEAD
     background 0.22s $btn-ease,
     color 0.22s $btn-ease,
     border-color 0.22s $btn-ease,
@@ -33,23 +28,12 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     opacity 0.22s $btn-ease,
     transform 0.22s $btn-ease,
     filter 0.22s $btn-ease;
-=======
-    background 0.14s $btn-ease,
-    color 0.14s $btn-ease,
-    border-color 0.14s $btn-ease,
-    box-shadow 0.14s $btn-ease,
-    transform 0.12s $btn-ease,
-    opacity 0.14s $btn-ease;
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   padding: 0.875rem $space-xl;
   white-space: nowrap;
   user-select: none;
   position: relative;
   overflow: hidden;
-<<<<<<< HEAD
   will-change: transform;
-=======
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
   &::after {
     content: '';
@@ -57,12 +41,8 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     inset: 0;
     background: rgba(255, 255, 255, 0);
     border-radius: inherit;
-<<<<<<< HEAD
     pointer-events: none;
     transition: background 0.22s $btn-ease;
-=======
-    transition: background 0.08s $btn-ease;
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   }
 
   &:active::after { background: rgba(255, 255, 255, 0.12); }
@@ -87,21 +67,11 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
   box-shadow: 0 2px 8px rgba(0, 171, 179, 0.35);
 
   &:hover:not(:disabled) {
-<<<<<<< HEAD
     filter: brightness(0.88);
     box-shadow: 0 6px 18px rgba(0, 171, 179, 0.45);
   }
 
   &:active:not(:disabled) {
-=======
-    background: var(--color-accent-dark, #{$color-teal-dark});
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 171, 179, 0.4);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     box-shadow: 0 1px 4px rgba(0, 171, 179, 0.25);
   }
 }
@@ -115,19 +85,10 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
 
   &:hover:not(:disabled) {
     background: rgba(0, 171, 179, 0.07);
-<<<<<<< HEAD
     box-shadow: 0 4px 10px rgba(0, 171, 179, 0.18);
   }
 
   &:active:not(:disabled) {
-=======
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 171, 179, 0.15);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     box-shadow: none;
   }
 }
@@ -143,16 +104,9 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     background: var(--bg-hover);
     color: var(--text-primary);
     border-color: var(--color-accent);
-<<<<<<< HEAD
   }
 
   &:active:not(:disabled) { opacity: 0.85; }
-=======
-    transform: translateY(-1px);
-  }
-
-  &:active:not(:disabled) { transform: translateY(0) scale(0.97); }
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 }
 
 // ── Dark — charcoal filled ────────────────────────────────────────────────────
@@ -163,22 +117,12 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
   box-shadow: 0 2px 8px rgba(60, 64, 72, 0.3);
 
   &:hover:not(:disabled) {
-<<<<<<< HEAD
     filter: brightness(1.25);
     box-shadow: 0 6px 16px rgba(60, 64, 72, 0.38);
   }
 
   &:active:not(:disabled) {
     box-shadow: 0 1px 4px rgba(60, 64, 72, 0.2);
-=======
-    background: lighten($color-charcoal, 8%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(60, 64, 72, 0.35);
-  }
-
-  &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   }
 }
 
@@ -197,16 +141,9 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     background: var(--bg-hover);
     color: var(--color-accent);
     border-color: var(--color-accent);
-<<<<<<< HEAD
   }
 
   &:active:not(:disabled) { opacity: 0.8; }
-=======
-    transform: scale(1.06);
-  }
-
-  &:active:not(:disabled) { transform: scale(0.94); }
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 }
 
 // ── Sizes ─────────────────────────────────────────────────────────────────────

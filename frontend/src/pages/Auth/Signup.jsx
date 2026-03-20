@@ -1,22 +1,13 @@
-<<<<<<< HEAD
 import { useState, useRef } from 'react';
-=======
-import { useState } from 'react';
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FcGoogle } from 'react-icons/fc';
-<<<<<<< HEAD
 import { FiUser, FiMail, FiLock, FiPhone, FiEye, FiEyeOff, FiArrowLeft, FiArrowRight, FiRefreshCw } from 'react-icons/fi';
 import { loginSuccess } from '../../store/authSlice';
 import workerImg   from '../../assets/vector/Worker_vector.png';
 import employerImg from '../../assets/vector/Employee_vector.png';
 import agentImg    from '../../assets/vector/Agent_vector.png';
-=======
-import { FiUser, FiMail, FiLock, FiPhone, FiEye, FiEyeOff, FiArrowLeft, FiArrowRight } from 'react-icons/fi';
-import { loginSuccess } from '../../store/authSlice';
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
 const stepVariants = {
   enter:  (dir) => ({ opacity: 0, x: dir > 0 ? 30 : -30 }),
@@ -24,7 +15,6 @@ const stepVariants = {
   exit:   (dir) => ({ opacity: 0, x: dir > 0 ? -30 : 30 }),
 };
 
-<<<<<<< HEAD
 const TOTAL_STEPS = 6;
 
 const ROLES = [
@@ -32,15 +22,11 @@ const ROLES = [
   { value: 'employer', label: 'Employer', desc: 'I want to hire workers',  img: employerImg, color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
   { value: 'agent',    label: 'Agent',    desc: 'I help place workers',    img: agentImg,    color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
 ];
-=======
-const TOTAL_STEPS = 4;
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
 function Signup({ onGoLogin }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-<<<<<<< HEAD
   const btnMotion = {};
 
   const [step,         setStep]       = useState(1);
@@ -56,15 +42,6 @@ function Signup({ onGoLogin }) {
   const [resendTimer,  setResendTimer]= useState(0);
   const otpRefs = useRef([]);
   const resendInterval = useRef(null);
-=======
-  const [step,     setStep]    = useState(1);
-  const [dir,      setDir]     = useState(1);
-  const [formData, setFormData]= useState({ full_name: '', email: '', password: '', phone: '' });
-  const [errors,   setErrors]  = useState({});
-  const [response, setResponse]= useState(null);
-  const [loading,  setLoading] = useState(false);
-  const [showPw,   setShowPw]  = useState(false);
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -84,7 +61,6 @@ function Signup({ onGoLogin }) {
       if (!formData.password.trim()) return 'Password is required';
       if (formData.password.length < 6) return 'Minimum 6 characters';
     }
-<<<<<<< HEAD
     if (field === 'role') {
       if (!formData.role) return 'Please select your role';
     }
@@ -119,15 +95,6 @@ function Signup({ onGoLogin }) {
       setCheckingEmail(false);
     }
 
-=======
-    return null;
-  };
-
-  const goNext = (e, field) => {
-    e.preventDefault();
-    const err = validate(field);
-    if (err) { setErrors({ [field]: err }); return; }
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     setErrors({});
     setDir(1);
     setStep(s => s + 1);
@@ -135,16 +102,12 @@ function Signup({ onGoLogin }) {
 
   const goBack = () => {
     setDir(-1);
-<<<<<<< HEAD
     // Going back from OTP step resets otp state
     if (step === 6) { setOtp(['', '', '', '', '', '']); setOtpError(''); }
-=======
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     setStep(s => s - 1);
     setErrors({});
   };
 
-<<<<<<< HEAD
   // ── OTP digit input handlers ──────────────────────────────
   const handleOtpChange = (index, value) => {
     if (!/^[0-9]?$/.test(value)) return;
@@ -256,23 +219,6 @@ function Signup({ onGoLogin }) {
       navigate('/dashboard', { replace: true });
     } catch (err) {
       setOtpError(err.message || 'Something went wrong');
-=======
-  const handleGoogleSignup = () => {
-    // TODO: integrate Google OAuth
-    alert('Google OAuth — coming soon!');
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setResponse(null);
-    try {
-      // TODO: call register API
-      dispatch(loginSuccess({ user: { email: formData.email, name: formData.full_name }, token: 'stub-token', role: null }));
-      navigate('/dashboard', { replace: true });
-    } catch (err) {
-      setResponse({ success: false, message: err.message });
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     } finally {
       setLoading(false);
     }
@@ -282,17 +228,12 @@ function Signup({ onGoLogin }) {
     <>
       {/* Header */}
       <div className="auth-page__header">
-<<<<<<< HEAD
         <h1 className="auth-page__title">
           {step === 6 ? 'Verify your email' : 'Create account'}
         </h1>
         <p className="auth-page__description">
           {step === 6 ? 'Check your inbox for a 6-digit code' : 'Get started in just a few steps'}
         </p>
-=======
-        <h1 className="auth-page__title">Create account</h1>
-        <p className="auth-page__description">Get started in just a few steps</p>
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
       </div>
 
       {/* Step progress bars */}
@@ -312,18 +253,11 @@ function Signup({ onGoLogin }) {
       {/* Google — only on step 1 */}
       {step === 1 && (
         <>
-<<<<<<< HEAD
           <motion.button className="btn-google btn-full" onClick={handleGoogleSignup} type="button"
             whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}>
             <FcGoogle size={20} />
             Sign up with Google
           </motion.button>
-=======
-          <button className="btn-google btn-full" onClick={handleGoogleSignup} type="button">
-            <FcGoogle size={20} />
-            Sign up with Google
-          </button>
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
           <div className="divider"><span>or</span></div>
         </>
       )}
@@ -367,17 +301,8 @@ function Signup({ onGoLogin }) {
                 />
                 {errors.full_name && <span className="form-error">{errors.full_name}</span>}
               </div>
-<<<<<<< HEAD
               <motion.button type="submit" className="btn-primary btn-full"
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-=======
-              <motion.button
-                type="submit"
-                className="btn-primary btn-full"
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
                 Continue <FiArrowRight size={15} />
               </motion.button>
             </motion.form>
@@ -410,19 +335,9 @@ function Signup({ onGoLogin }) {
                 />
                 {errors.email && <span className="form-error">{errors.email}</span>}
               </div>
-<<<<<<< HEAD
               <motion.button type="submit" className="btn-primary btn-full" disabled={checkingEmail}
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
                 {checkingEmail ? 'Checking…' : <> Continue <FiArrowRight size={15} /> </>}
-=======
-              <motion.button
-                type="submit"
-                className="btn-primary btn-full"
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                Continue <FiArrowRight size={15} />
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
               </motion.button>
             </motion.form>
           )}
@@ -465,27 +380,14 @@ function Signup({ onGoLogin }) {
                 </div>
                 {errors.password && <span className="form-error">{errors.password}</span>}
               </div>
-<<<<<<< HEAD
               <motion.button type="submit" className="btn-primary btn-full"
                 whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
-=======
-              <motion.button
-                type="submit"
-                className="btn-primary btn-full"
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
                 Continue <FiArrowRight size={15} />
               </motion.button>
             </motion.form>
           )}
 
-<<<<<<< HEAD
           {/* Step 4: Role selection */}
-=======
-          {/* Step 4: Phone (optional) + submit */}
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
           {step === 4 && (
             <motion.form
               key="s4"
@@ -495,7 +397,6 @@ function Signup({ onGoLogin }) {
               animate="center"
               exit="exit"
               transition={{ duration: 0.2, ease: 'easeOut' }}
-<<<<<<< HEAD
               onSubmit={(e) => goNext(e, 'role')}
               noValidate
             >
@@ -536,9 +437,6 @@ function Signup({ onGoLogin }) {
               exit="exit"
               transition={{ duration: 0.2, ease: 'easeOut' }}
               onSubmit={handlePhoneNext}
-=======
-              onSubmit={handleSubmit}
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
               noValidate
             >
               <div className="form-group">
@@ -556,7 +454,6 @@ function Signup({ onGoLogin }) {
                   autoComplete="tel"
                   autoFocus
                 />
-<<<<<<< HEAD
                 {errors.phone && <span className="form-error">{errors.phone}</span>}
               </div>
               <motion.button type="submit" className="btn-primary btn-full" disabled={loading}
@@ -646,37 +543,12 @@ function Signup({ onGoLogin }) {
                   </button>
                 )}
               </div>
-=======
-              </div>
-              <motion.button
-                type="submit"
-                className="btn-primary btn-full"
-                disabled={loading}
-                whileHover={{ scale: 1.01 }}
-                whileTap={{ scale: 0.98 }}
-              >
-                {loading ? 'Creating account…' : 'Create Account'}
-              </motion.button>
-
-              {response && (
-                <motion.div
-                  className={`alert alert--${response.success ? 'success' : 'error'}`}
-                  initial={{ opacity: 0, y: -8 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  style={{ marginTop: '1rem' }}
-                >
-                  <strong>{response.success ? '✓ Success' : '✗ Error'}</strong>
-                  <p>{response.message}</p>
-                </motion.div>
-              )}
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
             </motion.form>
           )}
 
         </AnimatePresence>
       </div>
 
-<<<<<<< HEAD
       {/* Footer — hidden on OTP step */}
       {step !== 6 && (
         <div className="auth-page__footer">
@@ -686,15 +558,6 @@ function Signup({ onGoLogin }) {
           </button>
         </div>
       )}
-=======
-      {/* Footer */}
-      <div className="auth-page__footer">
-        Already have an account?{' '}
-        <button className="btn-link" onClick={onGoLogin} type="button">
-          Sign in
-        </button>
-      </div>
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
     </>
   );
 }

@@ -1,13 +1,8 @@
-<<<<<<< HEAD
 import { useEffect, useState } from 'react';
-=======
-import { useEffect } from 'react';
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 import { useSelector, useDispatch } from 'react-redux';
 import { RouterProvider } from 'react-router-dom';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { selectIsDark, toggleTheme } from './store/themeSlice';
-<<<<<<< HEAD
 import ToastContainer  from './components/Toast/ToastContainer';
 import OfflineBanner   from './components/OfflineBanner/OfflineBanner';
 import PageLoader      from './components/PageLoader/PageLoader';
@@ -16,15 +11,10 @@ import router from './routes';
 // Minimum ms the splash loader is visible on every page load / refresh
 const SPLASH_MS = 1000;
 
-=======
-import router from './routes';
-
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 function App() {
   const dispatch = useDispatch();
   const isDark   = useSelector(selectIsDark);
 
-<<<<<<< HEAD
   // Splash state — true = loader visible, 'out' = fading out, false = gone
   const [splash, setSplash] = useState(true);
 
@@ -35,8 +25,6 @@ function App() {
     return () => { clearTimeout(fadeTimer); clearTimeout(doneTimer); };
   }, []);
 
-=======
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   // Sync theme class on <html>
   useEffect(() => {
     const html = document.documentElement;
@@ -51,7 +39,6 @@ function App() {
 
   return (
     <>
-<<<<<<< HEAD
       {/* ── Splash / page-refresh loader ─────────────────────────────── */}
       {splash && (
         <div
@@ -71,9 +58,6 @@ function App() {
       <RouterProvider router={router} />
       <ToastContainer />
       <OfflineBanner />
-=======
-      <RouterProvider router={router} />
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 
       {/* ── Global Theme FAB ─────────────────────────────────────────── */}
       <button

@@ -89,11 +89,7 @@
 .auth-page__panel-logo {
   display: flex;
   justify-content: flex-start;   // left-aligned on desktop
-<<<<<<< HEAD
   margin-bottom: 0.5rem;
-=======
-  margin-bottom: $space-xl;
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   width: 100%;
   max-width: 460px;
 
@@ -235,11 +231,7 @@
 }
 
 // =============================================================================
-<<<<<<< HEAD
 // FORM GROUP (label above input)
-=======
-// FORM GROUP (label + input + error)
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 // =============================================================================
 
 .form-group {
@@ -248,7 +240,6 @@
   label {
     display: flex;
     align-items: center;
-<<<<<<< HEAD
     gap: 0.3rem;
     font-size: 0.7rem;
     line-height: 1;                    // collapse extra line-box height
@@ -271,13 +262,6 @@
   // label turns teal when its input is focused
   &:has(input:focus) label {
     color: var(--color-accent);
-=======
-    gap: $space-xs;
-    font-size: $font-size-sm;
-    font-weight: $font-weight-medium;
-    color: var(--text-primary);
-    margin-bottom: $space-xs;
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
   }
 
   input {
@@ -306,14 +290,11 @@
     border-color: $color-error;
     &:focus { box-shadow: 0 0 0 3px rgba(229, 62, 62, 0.15); }
   }
-<<<<<<< HEAD
 
   &--error label {
     color: $color-error;
     svg { color: $color-error; }
   }
-=======
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 }
 
 .form-error {
@@ -482,7 +463,6 @@
 }
 
 // =============================================================================
-<<<<<<< HEAD
 // ONBOARDING PAGE (centered single-card layout)
 // =============================================================================
 
@@ -919,8 +899,6 @@
 }
 
 // =============================================================================
-=======
->>>>>>> ab1561c24907c7fecd4e655bc6f4490e6aa04442
 // DEMO ACCESS
 // =============================================================================
 
