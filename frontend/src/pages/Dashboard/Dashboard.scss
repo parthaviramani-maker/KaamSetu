@@ -1820,6 +1820,331 @@ html.dark-mode {
 }
 
 // =============================================================================
+// GREY QA ICON VARIANT
+// =============================================================================
+.qa-icon.grey {
+  background: rgba($color-grey, 0.12);
+  color: var(--text-secondary);
+}
+
+// =============================================================================
+// DEMO BANNER
+// =============================================================================
+.demo-banner {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: #f6a502;
+  color: #3a2500;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  padding: 0 $space-xl;
+  height: 44px;
+  flex-shrink: 0;
+
+  span { flex: 1; }
+
+  &__cta {
+    margin-left: auto;
+    color: #3a2500;
+    font-weight: $font-weight-bold;
+    text-decoration: none;
+    border-bottom: 1.5px solid rgba(58, 37, 0, 0.4);
+    transition: opacity $transition-fast;
+    white-space: nowrap;
+    &:hover { opacity: 0.75; }
+  }
+
+  @media (max-width: $bp-sm) {
+    padding: 0 $space-md;
+    gap: 0.4rem;
+    &__cta { display: none; }
+  }
+}
+
+// =============================================================================
+// DEMO ROLE TABS (sidebar switcher)
+// =============================================================================
+.demo-role-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  margin-bottom: $space-md;
+  padding: 4px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: $radius-md;
+  flex-shrink: 0;
+}
+
+.demo-role-tab {
+  padding: 6px 4px;
+  border-radius: $radius-sm;
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 11px;
+  font-weight: $font-weight-semibold;
+  font-family: $font-primary;
+  cursor: pointer;
+  text-align: center;
+  transition: all $transition-fast;
+  letter-spacing: 0.2px;
+
+  &.active {
+    background: $color-teal;
+    color: $color-white;
+    box-shadow: 0 2px 8px rgba($color-teal, 0.4);
+  }
+
+  &:not(.active):hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// =============================================================================
+// WELCOME PAGE (real dashboard overview)
+// =============================================================================
+.welcome-page {
+  max-width: 800px;
+}
+
+// Hero greeting banner
+.welcome-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(135deg, $color-teal 0%, $color-teal-dark 60%, darken($color-teal-dark, 8%) 100%);
+  border-radius: $radius-xl;
+  padding: $space-xl $space-2xl;
+  margin-bottom: $space-xl;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0, 171, 179, 0.25);
+
+  @media (max-width: $bp-md) {
+    padding: $space-lg;
+    flex-direction: column;
+    gap: $space-md;
+    align-items: flex-start;
+  }
+
+  // Decorative circle accents
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: $radius-full;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -60px; right: 100px;
+    width: 150px; height: 150px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: $radius-full;
+  }
+
+  &__left { z-index: 1; }
+
+  &__tag {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: rgba(255, 255, 255, 0.7);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0 0 $space-xs;
+  }
+
+  &__name {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: $color-white;
+    margin: 0 0 $space-xs;
+    @media (max-width: $bp-md) { font-size: $font-size-xl; }
+  }
+
+  &__desc {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0;
+  }
+
+  &__right {
+    z-index: 1;
+    text-align: right;
+    @media (max-width: $bp-md) { text-align: left; }
+  }
+
+  &__date {
+    font-size: $font-size-sm;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
+  }
+
+  &__role-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: $space-sm;
+    padding: $space-xs $space-md;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: $radius-full;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: $color-white;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    backdrop-filter: blur(4px);
+  }
+
+  &__role-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: $radius-full;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1;   transform: scale(1); }
+  50%       { opacity: 0.6; transform: scale(1.3); }
+}
+
+// Section title
+.welcome-section-title {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0 0 $space-md;
+}
+
+// Quick links grid
+.welcome-links-grid {
+  display: flex;
+  flex-direction: column;
+  gap: $space-sm;
+  margin-bottom: $space-xl;
+}
+
+// Individual link card
+.welcome-link-card {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  padding: $space-md $space-lg;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-xl;
+  text-decoration: none;
+  transition: all $transition-normal;
+
+  &:hover {
+    border-color: var(--border-strong);
+    box-shadow: $shadow-md;
+    transform: translateX(4px);
+
+    .welcome-link-card__arrow {
+      opacity: 1;
+      transform: translateX(3px);
+    }
+  }
+
+  &__icon {
+    // uses .qa-icon color variants (teal, blue, green, amber, grey)
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: $radius-lg;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+    margin: 0 0 2px;
+  }
+
+  &__desc {
+    font-size: $font-size-xs;
+    color: var(--text-secondary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__arrow {
+    color: var(--text-secondary);
+    opacity: 0.4;
+    transition: opacity $transition-fast, transform $transition-fast;
+    flex-shrink: 0;
+  }
+}
+
+// Getting started info card
+.welcome-info-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: $radius-xl;
+  padding: $space-xl;
+  border-left: 4px solid $color-teal;
+
+  h3 {
+    font-size: $font-size-base;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+    margin: 0 0 $space-xs;
+  }
+
+  p {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+    margin: 0 0 $space-lg;
+    line-height: 1.6;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px $space-lg;
+    background: linear-gradient(135deg, $color-teal 0%, $color-teal-dark 100%);
+    color: $color-white;
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    font-family: $font-primary;
+    border-radius: $radius-md;
+    text-decoration: none;
+    transition: all $transition-fast;
+    box-shadow: 0 2px 8px rgba($color-teal, 0.3);
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba($color-teal, 0.45);
+    }
+  }
+}
+
+// =============================================================================
 // FLOATING THEME TOGGLE FAB
 // =============================================================================
 .theme-fab {

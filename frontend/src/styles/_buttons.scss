@@ -5,7 +5,7 @@
 // KAAMSETU BUTTONS
 // =============================================================================
 
-$btn-ease: cubic-bezier(0.2, 0, 0, 1);
+$btn-ease: ease;
 
 %btn-base {
   display: inline-flex;
@@ -21,17 +21,19 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
   cursor: pointer;
   text-decoration: none;
   transition:
-    background 0.14s $btn-ease,
-    color 0.14s $btn-ease,
-    border-color 0.14s $btn-ease,
-    box-shadow 0.14s $btn-ease,
-    transform 0.12s $btn-ease,
-    opacity 0.14s $btn-ease;
+    background 0.22s $btn-ease,
+    color 0.22s $btn-ease,
+    border-color 0.22s $btn-ease,
+    box-shadow 0.22s $btn-ease,
+    opacity 0.22s $btn-ease,
+    transform 0.22s $btn-ease,
+    filter 0.22s $btn-ease;
   padding: 0.875rem $space-xl;
   white-space: nowrap;
   user-select: none;
   position: relative;
   overflow: hidden;
+  will-change: transform;
 
   &::after {
     content: '';
@@ -39,7 +41,8 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     inset: 0;
     background: rgba(255, 255, 255, 0);
     border-radius: inherit;
-    transition: background 0.08s $btn-ease;
+    pointer-events: none;
+    transition: background 0.22s $btn-ease;
   }
 
   &:active::after { background: rgba(255, 255, 255, 0.12); }
@@ -64,13 +67,11 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
   box-shadow: 0 2px 8px rgba(0, 171, 179, 0.35);
 
   &:hover:not(:disabled) {
-    background: var(--color-accent-dark, #{$color-teal-dark});
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(0, 171, 179, 0.4);
+    filter: brightness(0.88);
+    box-shadow: 0 6px 18px rgba(0, 171, 179, 0.45);
   }
 
   &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
     box-shadow: 0 1px 4px rgba(0, 171, 179, 0.25);
   }
 }
@@ -84,12 +85,10 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
 
   &:hover:not(:disabled) {
     background: rgba(0, 171, 179, 0.07);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 10px rgba(0, 171, 179, 0.15);
+    box-shadow: 0 4px 10px rgba(0, 171, 179, 0.18);
   }
 
   &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
     box-shadow: none;
   }
 }
@@ -105,10 +104,9 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     background: var(--bg-hover);
     color: var(--text-primary);
     border-color: var(--color-accent);
-    transform: translateY(-1px);
   }
 
-  &:active:not(:disabled) { transform: translateY(0) scale(0.97); }
+  &:active:not(:disabled) { opacity: 0.85; }
 }
 
 // ── Dark — charcoal filled ────────────────────────────────────────────────────
@@ -119,13 +117,12 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
   box-shadow: 0 2px 8px rgba(60, 64, 72, 0.3);
 
   &:hover:not(:disabled) {
-    background: lighten($color-charcoal, 8%);
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(60, 64, 72, 0.35);
+    filter: brightness(1.25);
+    box-shadow: 0 6px 16px rgba(60, 64, 72, 0.38);
   }
 
   &:active:not(:disabled) {
-    transform: translateY(0) scale(0.98);
+    box-shadow: 0 1px 4px rgba(60, 64, 72, 0.2);
   }
 }
 
@@ -144,10 +141,9 @@ $btn-ease: cubic-bezier(0.2, 0, 0, 1);
     background: var(--bg-hover);
     color: var(--color-accent);
     border-color: var(--color-accent);
-    transform: scale(1.06);
   }
 
-  &:active:not(:disabled) { transform: scale(0.94); }
+  &:active:not(:disabled) { opacity: 0.8; }
 }
 
 // ── Sizes ─────────────────────────────────────────────────────────────────────
