@@ -4,5 +4,7 @@ import deleteMe from './deleteMe.js';
 import setPassword from './setPassword.js';
 import getAuthorizedEmails from './getAuthorizedEmails.js';
 import updateAuthorizedEmails from './updateAuthorizedEmails.js';
+import getBankDetails from './getBankDetails.js';
+import updateBankDetails from './updateBankDetails.js';
 
-export { getMe, updateMe, deleteMe, setPassword, getAuthorizedEmails, updateAuthorizedEmails };
+export { getMe, updateMe, deleteMe, setPassword, getAuthorizedEmails, updateAuthorizedEmails, getBankDetails, updateBankDetails };

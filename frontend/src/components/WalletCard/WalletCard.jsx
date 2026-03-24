@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp } from 'react-icons/md';
+import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp, MdOutlineArrowCircleDown } from 'react-icons/md';
 import { useGetWalletBalanceQuery } from '../../services/walletApi';
 import TopupModal from '../TopupModal/TopupModal';
+import WithdrawModal from '../WithdrawModal/WithdrawModal';
 import './WalletCard.scss';
 
 const WalletCard = ({ showTransactions = false }) => {
   const { data, isLoading, refetch } = useGetWalletBalanceQuery();
-  const [showModal, setShowModal] = useState(false);
+  const [showModal,    setShowModal]    = useState(false);
+  const [showWithdraw, setShowWithdraw] = useState(false);
 
   const balance      = data?.data?.balance ?? 0;
   const recent       = data?.data?.recentTransactions ?? [];
@@ -42,6 +44,15 @@ const WalletCard = ({ showTransactions = false }) => {
           >
             <MdAddCircle size={16} />
             Add Money
+          </button>
+          <button
+            className="wallet-card__btn wallet-card__btn--withdraw"
+            onClick={() => setShowWithdraw(true)}
+            disabled={balance === 0}
+            style={{ marginTop: '0.4rem', background: balance === 0 ? 'var(--bg-hover)' : 'rgba(41,128,185,0.12)', color: balance === 0 ? 'var(--text-muted)' : '#2980b9', border: '1.5px solid rgba(41,128,185,0.3)' }}
+          >
+            <MdOutlineArrowCircleDown size={16} />
+            Withdraw
           </button>
         </div>
 
@@ -92,6 +103,14 @@ const WalletCard = ({ showTransactions = false }) => {
           currentBalance={balance}
           onClose={() => setShowModal(false)}
           onSuccess={() => { refetch(); setShowModal(false); }}
+        />
+      )}
+
+      {showWithdraw && (
+        <WithdrawModal
+          currentBalance={balance}
+          onClose={() => setShowWithdraw(false)}
+          onSuccess={() => { refetch(); setShowWithdraw(false); }}
         />
       )}
     </>

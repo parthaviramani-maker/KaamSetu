@@ -77,6 +77,14 @@ const userSchema = new mongoose.Schema(
             default: 0,
             min: 0,
         },
+        // Bank Details for withdrawal
+        bankDetails: {
+            accountHolderName: { type: String, default: null, trim: true },
+            accountNumber:     { type: String, default: null, trim: true },
+            ifscCode:          { type: String, default: null, trim: true, uppercase: true },
+            bankName:          { type: String, default: null, trim: true },
+            upiId:             { type: String, default: null, trim: true },
+        },
     },
     { timestamps: true }
 );

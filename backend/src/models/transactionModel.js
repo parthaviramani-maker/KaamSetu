@@ -22,10 +22,10 @@ const transactionSchema = new mongoose.Schema(
             required: true,
             trim: true,
         },
-        // topup | job_payment | commission | platform_fee
+        // topup | job_payment | commission | platform_fee | withdrawal
         category: {
             type: String,
-            enum: ['topup', 'job_payment', 'commission', 'platform_fee'],
+            enum: ['topup', 'job_payment', 'commission', 'platform_fee', 'withdrawal'],
             required: true,
         },
         // Reference to placement (optional)

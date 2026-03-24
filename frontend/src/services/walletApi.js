@@ -19,6 +19,12 @@ export const walletApi = createApi({
             invalidatesTags: [{ type: 'Wallet', id: 'BALANCE' }, { type: 'Wallet', id: 'TXN' }],
         }),
 
+        // Withdraw from wallet via password
+        withdrawWallet: builder.mutation({
+            query: (body) => ({ url: '/wallet/withdraw', method: 'POST', body }),
+            invalidatesTags: [{ type: 'Wallet', id: 'BALANCE' }, { type: 'Wallet', id: 'TXN' }],
+        }),
+
         // Full transaction history
         getTransactions: builder.query({
             query: (params = {}) => ({ url: '/wallet/transactions', params }),
@@ -30,5 +36,6 @@ export const walletApi = createApi({
 export const {
     useGetWalletBalanceQuery,
     useTopupWalletMutation,
+    useWithdrawWalletMutation,
     useGetTransactionsQuery,
 } = walletApi;

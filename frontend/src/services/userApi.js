@@ -4,7 +4,7 @@ import baseQueryWithLogout from '../store/baseQuery';
 export const userApi = createApi({
     reducerPath: 'userApi',
     baseQuery: baseQueryWithLogout,
-    tagTypes: ['User', 'AuthorizedEmails'],
+    tagTypes: ['User', 'AuthorizedEmails', 'BankDetails'],
     endpoints: (builder) => ({
 
         // Get my full profile
@@ -40,6 +40,17 @@ export const userApi = createApi({
         setPassword: builder.mutation({
             query: (body) => ({ url: '/users/set-password', method: 'POST', body }),
         }),
+
+        // Bank details for withdrawal
+        getBankDetails: builder.query({
+            query: () => '/users/me/bank-details',
+            providesTags: ['BankDetails'],
+        }),
+
+        updateBankDetails: builder.mutation({
+            query: (body) => ({ url: '/users/me/bank-details', method: 'PUT', body }),
+            invalidatesTags: ['BankDetails'],
+        }),
     }),
 });
 
@@ -50,4 +61,6 @@ export const {
     useGetAuthorizedEmailsQuery,
     useUpdateAuthorizedEmailsMutation,
     useSetPasswordMutation,
+    useGetBankDetailsQuery,
+    useUpdateBankDetailsMutation,
 } = userApi;
