@@ -18,9 +18,9 @@ const stepVariants = {
 const TOTAL_STEPS = 6;
 
 const ROLES = [
-  { value: 'worker',   label: 'Worker',   desc: 'I want to find jobs',     img: workerImg,   color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
-  { value: 'employer', label: 'Employer', desc: 'I want to hire workers',  img: employerImg, color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
-  { value: 'agent',    label: 'Agent',    desc: 'I help place workers',    img: agentImg,    color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
+  { value: 'worker',   label: 'Kaam Saathi', sublabel: 'Worker',   desc: 'Muje kaam chahiye',      img: workerImg,   color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
+  { value: 'employer', label: 'Kaam Saheb',  sublabel: 'Employer', desc: 'Muje workers chahiye',   img: employerImg, color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
+  { value: 'agent',    label: 'Kaam Setu',   sublabel: 'Agent',    desc: 'Main workers place karta hun', img: agentImg, color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
 ];
 
 function Signup({ onGoLogin }) {

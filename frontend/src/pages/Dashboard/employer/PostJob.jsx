@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { MdCheckCircle, MdArrowBack } from 'react-icons/md';
+import { MdCheckCircle, MdArrowBack, MdWarning, MdAccountBalanceWallet } from 'react-icons/md';
 import { useCreateJobMutation } from '../../../services/jobApi';
+import { useGetWalletBalanceQuery } from '../../../services/walletApi';
+import WalletCard from '../../../components/WalletCard/WalletCard';
 import toast from '../../../components/Toast/toast';
 
 const initialForm = {
@@ -17,6 +19,10 @@ const PostJob = () => {
   const [errors, setErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
   const [createJob, { isLoading: isPosting }] = useCreateJobMutation();
+  const { data: walletData } = useGetWalletBalanceQuery();
+  const walletBalance = walletData?.data?.balance ?? 0;
+  const jobPay = Number(form.pay) || 0;
+  const isBalanceLow = jobPay > 0 && walletBalance < jobPay;
 
   const validate = () => {
     const e = {};
@@ -25,8 +31,8 @@ const PostJob = () => {
     if (!form.area.trim())        e.area        = 'Work area / site is required';
     if (!form.city.trim())        e.city        = 'City is required';
     if (!form.workType)           e.workType    = 'Please select work type';
-    if (!form.pay.trim())         e.pay         = 'Pay amount is required';
-    else if (isNaN(Number(form.pay))) e.pay     = 'Enter a valid number';
+    if (!form.pay)                           e.pay = 'Pay amount is required';
+    else if (isNaN(Number(form.pay)) || Number(form.pay) <= 0) e.pay = 'Enter a valid amount greater than 0';
     if (!form.workers.trim())     e.workers     = 'No. of workers required';
     else if (isNaN(Number(form.workers)) || Number(form.workers) < 1)
                                   e.workers     = 'Enter valid number ≥ 1';
@@ -121,6 +127,9 @@ const PostJob = () => {
         </div>
       </div>
 
+      {/* Wallet card — employer sees balance before posting */}
+      <WalletCard showTransactions={false} />
+
       <div className="section-card">
         <div className="section-card-header">
           <div>
@@ -193,8 +202,16 @@ const PostJob = () => {
               <div className="form-group">
                 <label>Pay (₹) <span className="required">*</span></label>
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input name="pay" value={form.pay} onChange={handleChange}
-                    placeholder="e.g. 600" style={{ flex: 1 }} />
+                  <input
+                    name="pay"
+                    type="number"
+                    min="1"
+                    step="1"
+                    value={form.pay}
+                    onChange={handleChange}
+                    placeholder="e.g. 600"
+                    style={{ flex: 1 }}
+                  />
                   <select name="payPeriod" value={form.payPeriod} onChange={handleChange}
                     style={{ width: 100 }}>
                     <option value="day">per day</option>
@@ -204,6 +221,29 @@ const PostJob = () => {
                   </select>
                 </div>
                 {errors.pay && <span className="field-error">⚠ {errors.pay}</span>}
+                {/* Live balance warning */}
+                {isBalanceLow && (
+                  <div style={{
+                    marginTop: '0.5rem',
+                    background: 'rgba(231,76,60,0.08)',
+                    border: '1.5px solid rgba(231,76,60,0.35)',
+                    borderRadius: '0.6rem',
+                    padding: '0.6rem 0.9rem',
+                    fontSize: '0.8rem',
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem', fontWeight: 700, color: '#e74c3c', marginBottom: '0.25rem' }}>
+                      <MdWarning size={15} /> Insufficient Wallet Balance
+                    </div>
+                    <div style={{ color: 'var(--text-secondary)', lineHeight: 1.5 }}>
+                      Your wallet: <strong style={{ color: 'var(--text-primary)' }}>&#8377;{walletBalance.toLocaleString('en-IN')}</strong>
+                      &nbsp;&nbsp;|
+                      &nbsp;&nbsp;Job pay: <strong style={{ color: '#e74c3c' }}>&#8377;{jobPay.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div style={{ marginTop: '0.3rem', color: '#e74c3c', fontWeight: 600, fontSize: '0.75rem' }}>
+                      Top up your wallet first — job cannot be posted without sufficient balance.
+                    </div>
+                  </div>
+                )}
               </div>
               <div className="form-group">
                 <label>Application Deadline <span className="required">*</span></label>
@@ -251,8 +291,8 @@ const PostJob = () => {
                 disabled={isPosting}>
                 Reset
               </button>
-              <button type="submit" className="btn btn-primary" disabled={isPosting}>
-                {isPosting ? 'Posting…' : '🚀 Post Job'}
+              <button type="submit" className="btn btn-primary" disabled={isPosting || isBalanceLow}>
+                {isPosting ? 'Posting…' : isBalanceLow ? '🔒 Top Up Wallet to Post' : '🚀 Post Job'}
               </button>
             </div>
           </form>

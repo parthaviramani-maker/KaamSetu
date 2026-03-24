@@ -27,6 +27,26 @@ const placementSchema = new mongoose.Schema(
             default: 0,
             min: 0,
         },
+        commissionType: {
+            type: String,
+            enum: ['fixed', 'percent'],
+            default: 'fixed',
+        },
+        commissionValue: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        platformFee: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
+        workerPaid: {
+            type: Number,
+            default: 0,
+            min: 0,
+        },
         status: {
             type: String,
             enum: ['active', 'completed'],

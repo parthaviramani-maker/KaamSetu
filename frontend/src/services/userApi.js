@@ -35,6 +35,11 @@ export const userApi = createApi({
             query: (emails) => ({ url: '/users/me/authorized-emails', method: 'PUT', body: { emails } }),
             invalidatesTags: ['AuthorizedEmails'],
         }),
+
+        // Google OAuth users only — set a password for the first time (enables wallet top-up)
+        setPassword: builder.mutation({
+            query: (body) => ({ url: '/users/set-password', method: 'POST', body }),
+        }),
     }),
 });
 
@@ -44,4 +49,5 @@ export const {
     useDeleteMeMutation,
     useGetAuthorizedEmailsQuery,
     useUpdateAuthorizedEmailsMutation,
+    useSetPasswordMutation,
 } = userApi;

@@ -39,7 +39,7 @@ app.get('/', (req, res) => {
 });
 
 // All API routes
-app.use('/api/v1', routes);
+app.use('/api/v1', routes); //v1 new version of api, v2 will be for mobile app if needed
 
 // 404 fallback
 app.use('*', (req, res) => {

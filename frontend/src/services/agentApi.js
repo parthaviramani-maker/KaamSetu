@@ -24,6 +24,18 @@ export const agentApi = createApi({
             query: () => '/agents/commission',
             providesTags: ['Agent'],
         }),
+
+        // Agent — all platform workers (for placement form dropdown)
+        getAllWorkers: builder.query({
+            query: () => '/agents/all-workers',
+            providesTags: ['Agent'],
+        }),
+
+        // Agent — create a new placement
+        createPlacement: builder.mutation({
+            query: (body) => ({ url: '/agents/placements', method: 'POST', body }),
+            invalidatesTags: ['Agent'],
+        }),
     }),
 });
 
@@ -31,4 +43,6 @@ export const {
     useGetAgentWorkersQuery,
     useGetAgentPlacementsQuery,
     useGetAgentCommissionQuery,
+    useGetAllWorkersQuery,
+    useCreatePlacementMutation,
 } = agentApi;

@@ -93,6 +93,10 @@
   width: 100%;
   max-width: 460px;
 
+  @media (min-width: #{$bp-xl})  { max-width: 520px; }
+  @media (min-width: #{$bp-2xl}) { max-width: 580px; }
+  @media (min-width: #{$bp-3xl}) { max-width: 660px; }
+
   a { text-decoration: none; }
 
   img {
@@ -117,6 +121,10 @@
   max-width: 460px;
   position: relative;
   margin: auto 0;
+
+  @media (min-width: #{$bp-xl})  { max-width: 520px; }
+  @media (min-width: #{$bp-2xl}) { max-width: 580px; }
+  @media (min-width: #{$bp-3xl}) { max-width: 660px; }
 
   @media (max-width: #{$bp-md}) {
     max-width: 100%;

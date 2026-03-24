@@ -75,6 +75,32 @@ const AdminOverview = () => {
         </div>
       </div>
 
+      {/* Platform Earnings Row */}
+      <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', marginTop: '1rem' }}>
+        <div className="stat-card" style={{
+          background: 'linear-gradient(135deg, #1a6b3c, #27ae60)',
+          color: '#fff',
+          boxShadow: '0 6px 24px rgba(39,174,96,0.3)',
+        }}>
+          <div className="stat-icon" style={{ background: 'rgba(255,255,255,0.2)', color: '#fff' }}>
+            <MdMonetizationOn />
+          </div>
+          <div className="stat-body">
+            <p className="stat-label" style={{ color: 'rgba(255,255,255,0.8)' }}>Platform Earnings (10% fee)</p>
+            <p className="stat-value" style={{ color: '#fff' }}>₹{(s.platformEarnings || 0).toLocaleString('en-IN')}</p>
+            <p className="stat-sub" style={{ color: 'rgba(255,255,255,0.65)' }}>Total collected from placements</p>
+          </div>
+        </div>
+        <div className="stat-card stat-card--teal">
+          <div className="stat-icon"><MdAttachMoney /></div>
+          <div className="stat-body">
+            <p className="stat-label">Wallet Circulation</p>
+            <p className="stat-value">₹{(s.totalWalletBalance || 0).toLocaleString('en-IN')}</p>
+            <p className="stat-sub">Total across all user wallets</p>
+          </div>
+        </div>
+      </div>
+
       {/* Bar Chart + Top Agents */}
       <div className="dash-grid-2">
         <div className="section-card">

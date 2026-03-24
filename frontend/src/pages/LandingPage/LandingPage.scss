@@ -14,10 +14,11 @@
 // â”€â”€ Shared container â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 .lp__container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 0 $space-xl;
 
+  @media (min-width: 1440px) { padding: 0 $space-4xl; }
   @include md { padding: 0 $space-md; }
 }
 
@@ -107,10 +108,11 @@
 
 .lp__nav-inner {
   @include flex-between;
-  max-width: 1200px;
+  max-width: 1920px;
   margin: 0 auto;
   padding: 0 $space-xl;
 
+  @media (min-width: 1440px) { padding: 0 $space-4xl; }
   @include md { padding: 0 $space-md; }
 }
 

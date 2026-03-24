@@ -1,5 +1,6 @@
 import { MdMonetizationOn, MdTrendingUp, MdSwapHoriz, MdStar } from 'react-icons/md';
 import { useGetAgentCommissionQuery, useGetAgentPlacementsQuery } from '../../../services/agentApi';
+import WalletCard from '../../../components/WalletCard/WalletCard';
 
 const Commission = () => {
   const { data: summaryRes, isLoading, isError } = useGetAgentCommissionQuery();
@@ -16,6 +17,9 @@ const Commission = () => {
 
   return (
   <div>
+    {/* Wallet Card */}
+    <WalletCard showTransactions={false} />
+
     {/* Stats */}
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '1.5rem' }}>
       {[
