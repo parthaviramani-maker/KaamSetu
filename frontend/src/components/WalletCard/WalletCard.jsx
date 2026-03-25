@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp, MdOutlineArrowCircleDown, MdAccountBalance } from 'react-icons/md';
+import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp, MdOutlineArrowCircleDown, MdAccountBalance, MdSend } from 'react-icons/md';
 import { useGetWalletBalanceQuery } from '../../services/walletApi';
 import { useGetBankDetailsQuery } from '../../services/userApi';
 import TopupModal from '../TopupModal/TopupModal';
 import WithdrawModal from '../WithdrawModal/WithdrawModal';
+import TransferModal from '../TransferModal/TransferModal';
 import BankDetailsModal from '../BankDetailsModal/BankDetailsModal';
 import './WalletCard.scss';
 
@@ -12,6 +13,7 @@ const WalletCard = ({ showTransactions = false }) => {
   const { data: bankData, refetch: refetchBank } = useGetBankDetailsQuery();
   const [showModal,    setShowModal]    = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [showTransfer, setShowTransfer] = useState(false);
   const [showBankModal,  setShowBankModal]  = useState(false);
   const [pendingAction,  setPendingAction]  = useState(null); // 'topup' | 'withdraw'
 
@@ -87,6 +89,15 @@ const WalletCard = ({ showTransactions = false }) => {
             <MdOutlineArrowCircleDown size={16} />
             Withdraw
           </button>
+          <button
+            className="wallet-card__btn"
+            onClick={() => setShowTransfer(true)}
+            disabled={balance === 0}
+            style={{ marginTop: '0.4rem', background: balance === 0 ? 'var(--bg-hover)' : 'rgba(39,174,96,0.12)', color: balance === 0 ? 'var(--text-muted)' : '#27ae60', border: '1.5px solid rgba(39,174,96,0.3)' }}
+          >
+            <MdSend size={16} />
+            Send Money
+          </button>
           {!hasBankAccount && (
             <button
               className="wallet-card__btn"
@@ -154,6 +165,14 @@ const WalletCard = ({ showTransactions = false }) => {
           currentBalance={balance}
           onClose={() => setShowWithdraw(false)}
           onSuccess={() => { refetch(); setShowWithdraw(false); }}
+        />
+      )}
+
+      {showTransfer && (
+        <TransferModal
+          currentBalance={balance}
+          onClose={() => setShowTransfer(false)}
+          onSuccess={() => { refetch(); setShowTransfer(false); }}
         />
       )}
 

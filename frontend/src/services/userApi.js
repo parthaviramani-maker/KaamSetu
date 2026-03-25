@@ -51,6 +51,12 @@ export const userApi = createApi({
             query: (body) => ({ url: '/users/me/bank-details', method: 'PUT', body }),
             invalidatesTags: ['BankDetails'],
         }),
+
+        // All users list (for transfer dropdown)
+        getUsersList: builder.query({
+            query: () => '/users/list',
+            providesTags: ['User'],
+        }),
     }),
 });
 
@@ -63,4 +69,5 @@ export const {
     useSetPasswordMutation,
     useGetBankDetailsQuery,
     useUpdateBankDetailsMutation,
+    useGetUsersListQuery,
 } = userApi;

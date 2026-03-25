@@ -25,6 +25,12 @@ export const walletApi = createApi({
             invalidatesTags: [{ type: 'Wallet', id: 'BALANCE' }, { type: 'Wallet', id: 'TXN' }],
         }),
 
+        // Transfer money to another user by email
+        transferWallet: builder.mutation({
+            query: (body) => ({ url: '/wallet/transfer', method: 'POST', body }),
+            invalidatesTags: [{ type: 'Wallet', id: 'BALANCE' }, { type: 'Wallet', id: 'TXN' }],
+        }),
+
         // Full transaction history
         getTransactions: builder.query({
             query: (params = {}) => ({ url: '/wallet/transactions', params }),
@@ -37,5 +43,6 @@ export const {
     useGetWalletBalanceQuery,
     useTopupWalletMutation,
     useWithdrawWalletMutation,
+    useTransferWalletMutation,
     useGetTransactionsQuery,
 } = walletApi;

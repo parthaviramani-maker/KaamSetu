@@ -1,5 +1,5 @@
 import express from 'express';
-import { getMe, updateMe, deleteMe, setPassword, getAuthorizedEmails, updateAuthorizedEmails, getBankDetails, updateBankDetails } from '../controllers/userController/index.js';
+import { getMe, updateMe, deleteMe, setPassword, getAuthorizedEmails, updateAuthorizedEmails, getBankDetails, updateBankDetails, getUsers } from '../controllers/userController/index.js';
 import authenticateUser from '../middlewares/authMiddleware.js';
 import requireRole from '../middlewares/roleMiddleware.js';
 
@@ -7,6 +7,7 @@ const router = express.Router();
 
 router.use(authenticateUser);
 
+router.get('/list',                  getUsers.handler);
 router.get('/me',                    getMe.validator,       getMe.handler);
 router.put('/me',                    updateMe.validator,    updateMe.handler);
 router.delete('/me',                 deleteMe.handler);

@@ -179,6 +179,72 @@ export const sendTopupEmail = async (to, name, amount, balanceAfter) => {
 };
 
 /**
+ * Send a wallet transfer alert email to sender or receiver.
+ * @param {string} to            Recipient email
+ * @param {string} name          Recipient name
+ * @param {string} role          Recipient role
+ * @param {string} otherName     Other party name
+ * @param {string} otherRole     Other party role
+ * @param {string} otherEmail    Other party email
+ * @param {number} amount        Transfer amount
+ * @param {number} balanceAfter  Recipient's balance after transfer
+ * @param {'sent'|'received'} direction
+ */
+export const sendTransferEmail = async (to, name, role, otherName, otherRole, otherEmail, amount, balanceAfter, direction) => {
+    const formatRole = (r) => r ? r.charAt(0).toUpperCase() + r.slice(1) : '';
+    const myLabel    = `${name} (${formatRole(role)})`;
+    const otherLabel = `${otherName} (${formatRole(otherRole)})`;
+    const now   = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+    const isSent = direction === 'sent';
+
+    const color    = isSent ? '#e53e3e' : '#27ae60';
+    const bgColor  = isSent ? '#fff5f5' : '#f0fff4';
+    const bdColor  = isSent ? '#feb2b2' : '#9ae6b4';
+    const sign     = isSent ? '-' : '+';
+    const emoji    = isSent ? '💸' : '💰';
+    const subject  = isSent
+        ? `KaamSetu — ₹${amount.toLocaleString('en-IN')} Sent to ${otherLabel}`
+        : `KaamSetu — ₹${amount.toLocaleString('en-IN')} Received from ${otherLabel}`;
+    const headline = isSent ? 'Wallet Transfer Sent 💸' : 'Wallet Transfer Received 💰';
+    const label    = isSent ? 'Sent To' : 'Received From';
+
+    await transporter.sendMail({
+        from: `"KaamSetu" <${EMAIL_USER}>`,
+        to,
+        subject,
+        html: `
+            <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;border:1px solid #e2e8f0;border-radius:12px;">
+                <h2 style="color:#00ABB3;margin-bottom:8px;">KaamSetu</h2>
+                <h3 style="margin-bottom:4px;">${headline}</h3>
+                <p style="color:#4a5568;margin-top:4px;">Hi <strong>${myLabel}</strong>,</p>
+                <p style="color:#4a5568;">A wallet transfer was ${isSent ? 'made from' : 'credited to'} your KaamSetu account:</p>
+                <div style="background:${bgColor};border:1px solid ${bdColor};border-radius:10px;padding:20px;margin:16px 0;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#718096;font-size:14px;">${label}</span>
+                        <strong style="color:#2d3748;">${otherLabel} (${otherEmail})</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#718096;font-size:14px;">Amount</span>
+                        <strong style="color:${color};font-size:18px;">${sign}₹${amount.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#718096;font-size:14px;">Wallet Balance</span>
+                        <strong style="color:#2d3748;font-size:16px;">₹${balanceAfter.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:#718096;font-size:14px;">Date &amp; Time (IST)</span>
+                        <span style="color:#2d3748;font-size:13px;">${now}</span>
+                    </div>
+                </div>
+                <p style="color:#718096;font-size:13px;">If you did not ${isSent ? 'make this transfer' : 'expect this transfer'}, please change your password immediately.</p>
+                <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
+                <p style="color:#a0aec0;font-size:12px;">KaamSetu &middot; Indian Labour Marketplace</p>
+            </div>
+        `,
+    });
+};
+
+/**
  * Send a password reset email with a reset link.
  * @param {string} to   Recipient email
  * @param {string} token  Reset token
