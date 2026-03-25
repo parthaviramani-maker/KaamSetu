@@ -6,7 +6,8 @@ import {
   MdSearch, MdAssignment, MdAttachMoney, MdPerson,
   MdGroup, MdSwapHoriz, MdMonetizationOn, MdMap,
   MdSupervisorAccount, MdBusinessCenter, MdBarChart,
-  MdSettings, MdLogout, MdMenu, MdClose, MdLightMode, MdDarkMode
+  MdSettings, MdLogout, MdMenu, MdClose, MdLightMode, MdDarkMode,
+  MdAccountBalanceWallet
 } from 'react-icons/md';
 import { FiSun, FiMoon } from 'react-icons/fi';
 import { logout, selectUser, selectRole } from '../../store/authSlice';
@@ -39,12 +40,13 @@ const MENUS = {
     { id: 'profile',  label: 'My Profile',   icon: MdPerson,          path: '/dashboard/profile' },
   ],
   admin: [
-    { id: 'overview', label: 'Dashboard',    icon: MdDashboard,       path: '/dashboard/admin' },
-    { id: 'users',    label: 'All Users',    icon: MdSupervisorAccount,path: '/dashboard/admin/users' },
-    { id: 'jobs',     label: 'All Jobs',     icon: MdBusinessCenter,  path: '/dashboard/admin/jobs' },
-    { id: 'agents',   label: 'All Agents',   icon: MdGroup,           path: '/dashboard/admin/agents' },
-    { id: 'reports',  label: 'Reports',      icon: MdBarChart,        path: '/dashboard/admin/reports' },
-    { id: 'settings', label: 'Settings',     icon: MdSettings,        path: '/dashboard/admin/settings' },
+    { id: 'overview', label: 'Dashboard',    icon: MdDashboard,            path: '/dashboard/admin' },
+    { id: 'users',    label: 'All Users',    icon: MdSupervisorAccount,    path: '/dashboard/admin/users' },
+    { id: 'jobs',     label: 'All Jobs',     icon: MdBusinessCenter,       path: '/dashboard/admin/jobs' },
+    { id: 'agents',   label: 'All Agents',   icon: MdGroup,                path: '/dashboard/admin/agents' },
+    { id: 'reports',  label: 'Reports',      icon: MdBarChart,             path: '/dashboard/admin/reports' },
+    { id: 'wallet',   label: 'My Wallet',    icon: MdAccountBalanceWallet, path: '/dashboard/admin/wallet' },
+    { id: 'settings', label: 'Settings',     icon: MdSettings,             path: '/dashboard/admin/settings' },
   ],
 };
 
@@ -85,6 +87,7 @@ const getPageTitle = (pathname) => {
     '/dashboard/admin/jobs':            ['All Jobs',       'All job postings on platform'],
     '/dashboard/admin/agents':          ['All Agents',     'Manage agents'],
     '/dashboard/admin/reports':         ['Reports',        'Platform analytics & insights'],
+    '/dashboard/admin/wallet':          ['My Wallet',      'Add money, withdraw & transaction history'],
     '/dashboard/admin/settings':        ['Settings',       'Platform configuration'],
     '/dashboard/profile':               ['My Profile',     'Manage your account'],
   };

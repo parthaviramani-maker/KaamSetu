@@ -44,6 +44,7 @@ import AllJobs       from '../pages/Dashboard/admin/AllJobs';
 import AllAgents     from '../pages/Dashboard/admin/AllAgents';
 import Reports       from '../pages/Dashboard/admin/Reports';
 import Settings      from '../pages/Dashboard/admin/Settings';
+import AdminWallet   from '../pages/Dashboard/admin/AdminWallet';
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 import ProfilePage from '../pages/Dashboard/profile/ProfilePage';
@@ -139,6 +140,7 @@ const router = createBrowserRouter([
       { path: 'admin/agents',         element: <RoleRoute allowedRole="admin"><AllAgents /></RoleRoute> },
       { path: 'admin/reports',        element: <RoleRoute allowedRole="admin"><Reports /></RoleRoute> },
       { path: 'admin/settings',       element: <RoleRoute allowedRole="admin"><Settings /></RoleRoute> },
+      { path: 'admin/wallet',         element: <RoleRoute allowedRole="admin"><AdminWallet /></RoleRoute> },
 
       // Profile (shared across all roles)
       { path: 'profile',              element: <ProfilePage /> },

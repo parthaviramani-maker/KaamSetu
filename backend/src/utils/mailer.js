@@ -137,6 +137,48 @@ export const sendWithdrawalEmail = async (to, name, amount, balanceAfter, bankDe
 };
 
 /**
+ * Send a wallet top-up confirmation email.
+ * @param {string} to           Recipient email
+ * @param {string} name         Recipient name
+ * @param {number} amount       Amount added
+ * @param {number} balanceAfter New wallet balance
+ */
+export const sendTopupEmail = async (to, name, amount, balanceAfter) => {
+    const now = new Date().toLocaleString('en-IN', { timeZone: 'Asia/Kolkata', dateStyle: 'medium', timeStyle: 'short' });
+
+    await transporter.sendMail({
+        from: `"KaamSetu" <${EMAIL_USER}>`,
+        to,
+        subject: `KaamSetu — ₹${amount.toLocaleString('en-IN')} Added to your Wallet`,
+        html: `
+            <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:24px;border:1px solid #e2e8f0;border-radius:12px;">
+                <h2 style="color:#00ABB3;margin-bottom:8px;">KaamSetu</h2>
+                <h3 style="margin-bottom:4px;">Wallet Top-Up Successful 💰</h3>
+                <p style="color:#4a5568;margin-top:4px;">Hi <strong>${name}</strong>,</p>
+                <p style="color:#4a5568;">Money has been added to your KaamSetu wallet:</p>
+                <div style="background:#f0fff4;border:1px solid #9ae6b4;border-radius:10px;padding:20px;margin:16px 0;">
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#718096;font-size:14px;">Amount Added</span>
+                        <strong style="color:#27ae60;font-size:18px;">+₹${amount.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                        <span style="color:#718096;font-size:14px;">New Wallet Balance</span>
+                        <strong style="color:#2d3748;font-size:16px;">₹${balanceAfter.toLocaleString('en-IN')}</strong>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;">
+                        <span style="color:#718096;font-size:14px;">Date &amp; Time (IST)</span>
+                        <span style="color:#2d3748;font-size:13px;">${now}</span>
+                    </div>
+                </div>
+                <p style="color:#718096;font-size:13px;">If you did not make this transaction, please change your password immediately and contact support.</p>
+                <hr style="border:none;border-top:1px solid #e2e8f0;margin:20px 0;">
+                <p style="color:#a0aec0;font-size:12px;">KaamSetu &middot; Indian Labour Marketplace</p>
+            </div>
+        `,
+    });
+};
+
+/**
  * Send a password reset email with a reset link.
  * @param {string} to   Recipient email
  * @param {string} token  Reset token

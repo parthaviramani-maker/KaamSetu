@@ -22,6 +22,14 @@ export default {
             const user = await User.findById(req.user.id).select('password walletBalance email name bankDetails');
             if (!user) return responseHandler.notFound(res, 'User not found');
 
+            // Bank account must be linked before withdrawal
+            if (!user.bankDetails?.accountNumber) {
+                return responseHandler.badRequest(res, {
+                    message: 'Please link your bank account before withdrawing money.',
+                    code: 'NO_BANK_ACCOUNT',
+                });
+            }
+
             // Google OAuth users may not have a password
             if (!user.password) {
                 return responseHandler.badRequest(res, {
@@ -72,7 +80,8 @@ export default {
 
             // Fire withdrawal email (non-blocking)
             sendWithdrawalEmail(user.email, user.name, amount, balanceAfter, hasBankDetails ? bd : null)
-                .catch(err => console.error('[mailer] sendWithdrawalEmail failed:', err.message));
+                .then(() => console.log(`[mailer] sendWithdrawalEmail sent to ${user.email}`))
+                .catch(err => console.error('[mailer] sendWithdrawalEmail failed:', err.message, err.code || ''));
 
             return responseHandler.success(res, `₹${amount} withdrawn successfully!`, {
                 balance:   balanceAfter,

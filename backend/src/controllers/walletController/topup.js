@@ -4,6 +4,7 @@ import User from '../../models/userModel.js';
 import Transaction from '../../models/transactionModel.js';
 import validator from '../../utils/validator.js';
 import responseHandler from '../../utils/responseHandler.js';
+import { sendTopupEmail } from '../../utils/mailer.js';
 
 export default {
     validator: validator({
@@ -18,8 +19,16 @@ export default {
             const { amount, password } = req.body;
 
             // Fetch user — explicitly include both fields in inclusive projection
-            const user = await User.findById(req.user.id).select('password walletBalance');
+            const user = await User.findById(req.user.id).select('password walletBalance bankDetails');
             if (!user) return responseHandler.notFound(res, 'User not found');
+
+            // Bank account must be linked before any wallet transaction
+            if (!user.bankDetails?.accountNumber) {
+                return responseHandler.badRequest(res, {
+                    message: 'Please link your bank account before adding money to your wallet.',
+                    code: 'NO_BANK_ACCOUNT',
+                });
+            }
 
             // Google OAuth users may not have a password
             if (!user.password) {
@@ -53,6 +62,13 @@ export default {
                 balanceBefore,
                 balanceAfter,
             });
+
+            // Fire top-up confirmation email (non-blocking)
+            const fullUser = await User.findById(req.user.id).select('email name');
+            if (fullUser) {
+                sendTopupEmail(fullUser.email, fullUser.name, amount, balanceAfter)
+                    .catch(err => console.error('[mailer] sendTopupEmail failed:', err.message));
+            }
 
             return responseHandler.success(res, `₹${amount} added to wallet successfully!`, {
                 balance: balanceAfter,

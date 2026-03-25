@@ -32,9 +32,9 @@ const WithdrawModal = ({ currentBalance, onClose, onSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!isValid)             { toast.error(isOverBalance ? 'Amount exceeds your balance' : 'Minimum ₹1 enter karo'); return; }
-    if (amt > 100000)         { toast.error('Maximum ₹1,00,000 ek vakhte'); return; }
-    if (!password.trim())     { toast.error('Password enter karo'); return; }
+    if (!isValid)             { toast.error(isOverBalance ? 'Amount exceeds your balance' : 'Minimum amount is ₹1'); return; }
+    if (amt > 100000)         { toast.error('Maximum ₹1,00,000 per transaction'); return; }
+    if (!password.trim())     { toast.error('Please enter your password'); return; }
 
     try {
       await withdrawWallet({ amount: amt, password }).unwrap();
@@ -46,6 +46,8 @@ const WithdrawModal = ({ currentBalance, onClose, onSuccess }) => {
       const errCode = err?.data?.error?.code;
       if (errCode === 'NO_PASSWORD_SET') {
         setStep('set-password');
+      } else if (errCode === 'NO_BANK_ACCOUNT') {
+        toast.error('Please link your bank account first. Close this and click "Link Bank Account".');
       } else {
         toast.error(err?.data?.message || 'Withdrawal failed. Try again.');
       }
@@ -54,12 +56,12 @@ const WithdrawModal = ({ currentBalance, onClose, onSuccess }) => {
 
   const handleSetPassword = async (e) => {
     e.preventDefault();
-    if (!newPw.trim())         { toast.error('Password enter karo'); return; }
+    if (!newPw.trim())         { toast.error('Please enter a password'); return; }
     if (newPw.length < 6)      { toast.error('Password must be at least 6 characters'); return; }
     if (newPw !== confirmPw)   { toast.error('Passwords do not match'); return; }
     try {
       await setPasswordFn({ newPassword: newPw }).unwrap();
-      toast.success('Password set! Ab withdraw karo 🎉');
+      toast.success('Password set! You can now withdraw. 🎉');
       setPassword(newPw);
       setNewPw('');
       setConfirmPw('');

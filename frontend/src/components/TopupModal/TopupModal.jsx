@@ -51,9 +51,9 @@ const TopupModal = ({ currentBalance, onClose, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const amt = Number(amount);
-    if (!amt || amt < 1)     { toast.error('Minimum ₹1 amount enter karo'); return; }
-    if (amt > 100000)        { toast.error('Maximum ₹1,00,000 ek vakhte'); return; }
-    if (!password.trim())    { toast.error('Password enter karo'); return; }
+    if (!amt || amt < 1)     { toast.error('Minimum amount is ₹1'); return; }
+    if (amt > 100000)        { toast.error('Maximum ₹1,00,000 per transaction'); return; }
+    if (!password.trim())    { toast.error('Please enter your password'); return; }
 
     try {
       await topupWallet({ amount: amt, password }).unwrap();
@@ -67,13 +67,15 @@ const TopupModal = ({ currentBalance, onClose, onSuccess }) => {
         delay: Math.random() * 0.6,
       }));
       setCoins(newCoins);
-      toast.success(`₹${amt.toLocaleString('en-IN')} wallet ma add thaya! 🎉`);
+      toast.success(`₹${amt.toLocaleString('en-IN')} added to your wallet! 🎉`);
       setTimeout(() => { onSuccess?.(); }, 2000);
     } catch (err) {
       const errCode = err?.data?.error?.code;
       // Google OAuth user has no password — redirect to set-password step
       if (errCode === 'NO_PASSWORD_SET') {
         setStep('set-password');
+      } else if (errCode === 'NO_BANK_ACCOUNT') {
+        toast.error('Please link your bank account first. Close this and click "Link Bank Account".');
       } else {
         toast.error(err?.data?.message || 'Top-up failed. Try again.');
       }
@@ -82,12 +84,12 @@ const TopupModal = ({ currentBalance, onClose, onSuccess }) => {
 
   const handleSetPassword = async (e) => {
     e.preventDefault();
-    if (!newPw.trim())               { toast.error('Password enter karo'); return; }
+    if (!newPw.trim())               { toast.error('Please enter a password'); return; }
     if (newPw.length < 6)            { toast.error('Password must be at least 6 characters'); return; }
     if (newPw !== confirmPw)         { toast.error('Passwords do not match'); return; }
     try {
       await setPasswordFn({ newPassword: newPw }).unwrap();
-      toast.success('Password set! Ab top-up karo 🎉');
+      toast.success('Password set! You can now top up your wallet. 🎉');
       // Auto-fill the password field so user can proceed immediately
       setPassword(newPw);
       setNewPw('');

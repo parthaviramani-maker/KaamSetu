@@ -1,18 +1,51 @@
 import { useState } from 'react';
-import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp, MdOutlineArrowCircleDown } from 'react-icons/md';
+import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp, MdOutlineArrowCircleDown, MdAccountBalance } from 'react-icons/md';
 import { useGetWalletBalanceQuery } from '../../services/walletApi';
+import { useGetBankDetailsQuery } from '../../services/userApi';
 import TopupModal from '../TopupModal/TopupModal';
 import WithdrawModal from '../WithdrawModal/WithdrawModal';
+import BankDetailsModal from '../BankDetailsModal/BankDetailsModal';
 import './WalletCard.scss';
 
 const WalletCard = ({ showTransactions = false }) => {
   const { data, isLoading, refetch } = useGetWalletBalanceQuery();
+  const { data: bankData, refetch: refetchBank } = useGetBankDetailsQuery();
   const [showModal,    setShowModal]    = useState(false);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [showBankModal,  setShowBankModal]  = useState(false);
+  const [pendingAction,  setPendingAction]  = useState(null); // 'topup' | 'withdraw'
 
   const balance      = data?.data?.balance ?? 0;
   const recent       = data?.data?.recentTransactions ?? [];
   const lastCredit   = recent.find(t => t.type === 'credit');
+  const bankDetails  = bankData?.data;
+  const hasBankAccount = !!(bankDetails?.accountNumber);
+
+  const handleAddMoneyClick = () => {
+    if (!hasBankAccount) {
+      setPendingAction('topup');
+      setShowBankModal(true);
+    } else {
+      setShowModal(true);
+    }
+  };
+
+  const handleWithdrawClick = () => {
+    if (!hasBankAccount) {
+      setPendingAction('withdraw');
+      setShowBankModal(true);
+    } else {
+      setShowWithdraw(true);
+    }
+  };
+
+  const handleBankModalSuccess = () => {
+    refetchBank();
+    setShowBankModal(false);
+    if (pendingAction === 'topup')    setShowModal(true);
+    if (pendingAction === 'withdraw') setShowWithdraw(true);
+    setPendingAction(null);
+  };
 
   return (
     <>
@@ -40,20 +73,30 @@ const WalletCard = ({ showTransactions = false }) => {
         <div className="wallet-card__right">
           <button
             className="wallet-card__btn"
-            onClick={() => setShowModal(true)}
+            onClick={handleAddMoneyClick}
           >
             <MdAddCircle size={16} />
             Add Money
           </button>
           <button
             className="wallet-card__btn wallet-card__btn--withdraw"
-            onClick={() => setShowWithdraw(true)}
-            disabled={balance === 0}
-            style={{ marginTop: '0.4rem', background: balance === 0 ? 'var(--bg-hover)' : 'rgba(41,128,185,0.12)', color: balance === 0 ? 'var(--text-muted)' : '#2980b9', border: '1.5px solid rgba(41,128,185,0.3)' }}
+            onClick={handleWithdrawClick}
+            disabled={balance === 0 && hasBankAccount}
+            style={{ marginTop: '0.4rem', background: (balance === 0 && hasBankAccount) ? 'var(--bg-hover)' : 'rgba(41,128,185,0.12)', color: (balance === 0 && hasBankAccount) ? 'var(--text-muted)' : '#2980b9', border: '1.5px solid rgba(41,128,185,0.3)' }}
           >
             <MdOutlineArrowCircleDown size={16} />
             Withdraw
           </button>
+          {!hasBankAccount && (
+            <button
+              className="wallet-card__btn"
+              onClick={() => { setPendingAction(null); setShowBankModal(true); }}
+              style={{ marginTop: '0.4rem', background: 'rgba(168,85,247,0.12)', color: '#a855f7', border: '1.5px solid rgba(168,85,247,0.3)', fontSize: '0.75rem' }}
+            >
+              <MdAccountBalance size={14} />
+              Link Bank Account
+            </button>
+          )}
         </div>
 
         <span className="wallet-card__icon">💰</span>
@@ -111,6 +154,14 @@ const WalletCard = ({ showTransactions = false }) => {
           currentBalance={balance}
           onClose={() => setShowWithdraw(false)}
           onSuccess={() => { refetch(); setShowWithdraw(false); }}
+        />
+      )}
+
+      {showBankModal && (
+        <BankDetailsModal
+          existingDetails={hasBankAccount ? bankDetails : null}
+          onClose={() => { setShowBankModal(false); setPendingAction(null); }}
+          onSuccess={handleBankModalSuccess}
         />
       )}
     </>
