@@ -18,6 +18,7 @@ import {
 } from 'react-icons/hi2';
 import { MdAdminPanelSettings } from 'react-icons/md';
 import { selectIsDark } from '../../store/themeSlice';
+import { selectIsLogin, selectRole } from '../../store/authSlice';
 import './LandingPage.scss';
 
 // ── Data ────────────────────────────────────────────────────────────────────
@@ -186,6 +187,16 @@ const DEMO_ROLES = [
 function LandingPage() {
   const navigate   = useNavigate();
   const isDark     = useSelector(selectIsDark);
+  const isLogin    = useSelector(selectIsLogin);
+  const userRole   = useSelector(selectRole);
+
+  const handleRoleCta = (roleKey) => {
+    if (isLogin) {
+      navigate(`/dashboard/${userRole}`);
+    } else {
+      navigate('/auth', { state: { mode: 'signup', preRole: roleKey } });
+    }
+  };
 
   const [scrolled,   setScrolled]   = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -454,6 +465,7 @@ function LandingPage() {
                   className={`lp__role-cta ${role.color === 'teal' ? 'btn-primary' : 'btn-secondary'} btn-sm`}
                   whileHover={{ scale: 1.04 }}
                   whileTap={{ scale: 0.97 }}
+                  onClick={() => handleRoleCta(role.key)}
                 >
                   {role.cta} <FiArrowRight size={13} />
                 </motion.button>

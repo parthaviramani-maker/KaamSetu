@@ -64,6 +64,7 @@ function App() {
         className={`theme-fab${isDark ? ' theme-fab--dark' : ''}`}
         onClick={() => dispatch(toggleTheme())}
         aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        data-tooltip={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
       >
         {isDark ? <FiSun size={20} /> : <FiMoon size={20} />}
       </button>

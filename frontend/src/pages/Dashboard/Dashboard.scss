@@ -2178,7 +2178,7 @@ html.dark-mode {
 
   // Tooltip label on hover
   &::after {
-    content: attr(title);
+    content: attr(data-tooltip);
     position: absolute;
     right: calc(100% + 10px);
     top: 50%;

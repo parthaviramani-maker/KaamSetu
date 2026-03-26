@@ -23,7 +23,7 @@ const ROLES = [
   { value: 'agent',    label: 'Kaam Setu',   sublabel: 'Agent',    desc: 'Main workers place karta hun', img: agentImg, color: '#00ABB3', bg: 'rgba(0,171,179,0.1)' },
 ];
 
-function Signup({ onGoLogin }) {
+function Signup({ onGoLogin, preRole }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -31,7 +31,7 @@ function Signup({ onGoLogin }) {
 
   const [step,         setStep]       = useState(1);
   const [dir,          setDir]        = useState(1);
-  const [formData,     setFormData]   = useState({ full_name: '', email: '', password: '', phone: '', role: '' });
+  const [formData,     setFormData]   = useState({ full_name: '', email: '', password: '', phone: '', role: preRole || '' });
   const [errors,       setErrors]     = useState({});
   const [response,     setResponse]   = useState(null);
   const [loading,      setLoading]    = useState(false);

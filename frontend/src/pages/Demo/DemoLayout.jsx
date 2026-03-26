@@ -273,8 +273,8 @@ const DemoLayout = () => {
         <button
           className="theme-fab"
           onClick={() => dispatch(toggleTheme())}
-          title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
           aria-label="Toggle theme"
+          data-tooltip={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
         >
           {isDark ? <FiSun size={20} /> : <FiMoon size={20} />}
         </button>

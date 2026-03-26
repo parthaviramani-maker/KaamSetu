@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { selectIsDark } from '../../store/themeSlice';
 import slide1 from '../../assets/illustrations/slide1.webp';
@@ -27,9 +27,12 @@ const formVariants = {
 };
 
 function AuthPage() {
-  const isDark = useSelector(selectIsDark);
+  const isDark    = useSelector(selectIsDark);
+  const location  = useLocation();
+  const preRole   = location.state?.preRole || null;
 
-  const [isLogin, setIsLogin] = useState(true);
+  // If navigated with mode=signup (e.g. from landing page role CTA), open signup directly
+  const [isLogin, setIsLogin] = useState(location.state?.mode !== 'signup');
   const [dir,     setDir]     = useState(1);
   const [current, setCurrent] = useState(0);
 
@@ -83,7 +86,7 @@ function AuthPage() {
           >
             {isLogin
               ? <Login  onGoSignup={goSignup} isDark={isDark} />
-              : <Signup onGoLogin={goLogin}   isDark={isDark} />
+              : <Signup onGoLogin={goLogin}   isDark={isDark} preRole={preRole} />
             }
           </motion.div>
         </AnimatePresence>

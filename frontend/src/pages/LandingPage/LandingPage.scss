@@ -661,6 +661,12 @@
   &--charcoal {
     border-top: 3px solid $color-charcoal;
     .lp__role-icon { background: rgba(60, 64, 72, 0.1); color: $color-charcoal; }
+
+    // Dark mode — charcoal is near-invisible on dark bg, use grey instead
+    html.dark-mode & {
+      border-top: 3px solid $color-grey;
+      .lp__role-icon { background: rgba(178, 178, 178, 0.12); color: $color-grey; }
+    }
   }
 }
 
