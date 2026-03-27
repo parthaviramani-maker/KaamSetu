@@ -1,4 +1,4 @@
-import { MdStar, MdLocationOn, MdMonetizationOn, MdSwapHoriz } from 'react-icons/md';
+import { MdSupervisorAccount, MdSwapHoriz, MdMonetizationOn, MdTrendingUp } from 'react-icons/md';
 import Avatar from '../../../components/Avatar';
 import { useGetAllAgentsQuery } from '../../../services/adminApi';
 
@@ -11,18 +11,30 @@ const AllAgents = () => {
   return (
   <div>
     <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '1.5rem' }}>
-      {[
-        { label: 'Total Agents',     val: agents.length,   color: 'teal' },
-        { label: 'Total Placements', val: totalPlacements, color: 'blue' },
-        { label: 'Total Commission', val: `₹${agents.reduce((s, a) => s + (a.totalCommission || 0), 0).toLocaleString('en-IN')}`, color: 'amber' },
-      ].map(c => (
-        <div key={c.label} className={`stat-card stat-card--${c.color}`}>
-          <div className="stat-body">
-            <p className="stat-label">{c.label}</p>
-            <p className="stat-value">{c.val}</p>
-          </div>
+      <div className="stat-card stat-card--teal">
+        <div className="stat-icon stat-icon--teal"><MdSupervisorAccount /></div>
+        <div className="stat-body">
+          <p className="stat-label">Total Agents</p>
+          <p className="stat-value">{agents.length}</p>
+          <p className="stat-sub">registered</p>
         </div>
-      ))}
+      </div>
+      <div className="stat-card stat-card--blue">
+        <div className="stat-icon stat-icon--blue"><MdSwapHoriz /></div>
+        <div className="stat-body">
+          <p className="stat-label">Total Placements</p>
+          <p className="stat-value">{totalPlacements}</p>
+          <p className="stat-sub">all time</p>
+        </div>
+      </div>
+      <div className="stat-card stat-card--amber">
+        <div className="stat-icon stat-icon--amber"><MdMonetizationOn /></div>
+        <div className="stat-body">
+          <p className="stat-label">Total Commission</p>
+          <p className="stat-value">₹{agents.reduce((s, a) => s + (a.totalCommission || 0), 0).toLocaleString('en-IN')}</p>
+          <p className="stat-sub">earned by agents</p>
+        </div>
+      </div>
     </div>
 
     <div className="section-card">
@@ -64,12 +76,12 @@ const AllAgents = () => {
                   <td style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{a.email}</td>
                   <td style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>{a.phone || '—'}</td>
                   <td>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700, color: 'var(--color-accent)' }}>
+                    <span className="list-row__value">
                       <MdSwapHoriz size={15} />{a.totalPlacements || 0}
                     </span>
                   </td>
-                  <td style={{ fontWeight: 700, color: '#27AE60' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  <td>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '4px', fontWeight: 700, color: '#27AE60' }}>
                       <MdMonetizationOn size={14} />₹{(a.totalCommission || 0).toLocaleString('en-IN')}
                     </span>
                   </td>

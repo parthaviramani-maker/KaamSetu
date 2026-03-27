@@ -1,5 +1,9 @@
 import { useState } from 'react';
-import { MdAccountBalanceWallet, MdAddCircle, MdTrendingUp, MdOutlineArrowCircleDown, MdAccountBalance, MdSend } from 'react-icons/md';
+import {
+  MdAccountBalanceWallet, MdAddCircle, MdTrendingUp,
+  MdOutlineArrowCircleDown, MdAccountBalance, MdSend, MdCheckCircle,
+  MdEdit,
+} from 'react-icons/md';
 import { useGetWalletBalanceQuery } from '../../services/walletApi';
 import { useGetBankDetailsQuery } from '../../services/userApi';
 import TopupModal from '../TopupModal/TopupModal';
@@ -11,34 +15,26 @@ import './WalletCard.scss';
 const WalletCard = ({ showTransactions = false }) => {
   const { data, isLoading, refetch } = useGetWalletBalanceQuery();
   const { data: bankData, refetch: refetchBank } = useGetBankDetailsQuery();
-  const [showModal,    setShowModal]    = useState(false);
-  const [showWithdraw, setShowWithdraw] = useState(false);
-  const [showTransfer, setShowTransfer] = useState(false);
-  const [showBankModal,  setShowBankModal]  = useState(false);
-  const [pendingAction,  setPendingAction]  = useState(null); // 'topup' | 'withdraw'
+  const [showModal,     setShowModal]     = useState(false);
+  const [showWithdraw,  setShowWithdraw]  = useState(false);
+  const [showTransfer,  setShowTransfer]  = useState(false);
+  const [showBankModal, setShowBankModal] = useState(false);
+  const [pendingAction, setPendingAction] = useState(null);
 
-  const balance      = data?.data?.balance ?? 0;
-  const recent       = data?.data?.recentTransactions ?? [];
-  const lastCredit   = recent.find(t => t.type === 'credit');
-  const bankDetails  = bankData?.data;
+  const balance        = data?.data?.balance            ?? 0;
+  const recent         = data?.data?.recentTransactions ?? [];
+  const lastCredit     = recent.find(t => t.type === 'credit');
+  const bankDetails    = bankData?.data;
   const hasBankAccount = !!(bankDetails?.accountNumber);
 
   const handleAddMoneyClick = () => {
-    if (!hasBankAccount) {
-      setPendingAction('topup');
-      setShowBankModal(true);
-    } else {
-      setShowModal(true);
-    }
+    if (!hasBankAccount) { setPendingAction('topup'); setShowBankModal(true); }
+    else setShowModal(true);
   };
 
   const handleWithdrawClick = () => {
-    if (!hasBankAccount) {
-      setPendingAction('withdraw');
-      setShowBankModal(true);
-    } else {
-      setShowWithdraw(true);
-    }
+    if (!hasBankAccount) { setPendingAction('withdraw'); setShowBankModal(true); }
+    else setShowWithdraw(true);
   };
 
   const handleBankModalSuccess = () => {
@@ -49,8 +45,53 @@ const WalletCard = ({ showTransactions = false }) => {
     setPendingAction(null);
   };
 
+  // 4 action boxes
+  const actions = [
+    {
+      key: 'add',
+      icon: <MdAddCircle size={32} />,
+      label: 'Add Money',
+      sub: 'Top up wallet',
+      mod: 'teal',
+      onClick: handleAddMoneyClick,
+      disabled: false,
+    },
+    {
+      key: 'withdraw',
+      icon: <MdOutlineArrowCircleDown size={32} />,
+      label: 'Withdraw',
+      sub: 'To bank account',
+      mod: 'warning',
+      onClick: handleWithdrawClick,
+      disabled: balance === 0 && hasBankAccount,
+    },
+    {
+      key: 'send',
+      icon: <MdSend size={32} />,
+      label: 'Send Money',
+      sub: 'Transfer to user',
+      mod: 'info',
+      onClick: () => setShowTransfer(true),
+      disabled: balance === 0,
+    },
+    {
+      key: 'bank',
+      icon: <MdAccountBalance size={32} />,
+      label: 'Link Bank',
+      sub: 'Required for wallet',
+      mod: 'success',
+      onClick: () => { setPendingAction(null); setShowBankModal(true); },
+      disabled: false,
+    },
+  ];
+
+  // If bank is linked, we only show first 3 actions (Add, Withdraw, Send)
+  // to keep a clean 3-column layout as requested.
+  const displayActions = hasBankAccount ? actions.slice(0, 3) : actions;
+
   return (
     <>
+      {/* ── Balance Card ── */}
       <div className="wallet-card">
         <div className="wallet-card__left">
           <div className="wallet-card__label">
@@ -63,59 +104,54 @@ const WalletCard = ({ showTransactions = false }) => {
           </div>
           {lastCredit && (
             <div className="wallet-card__sub">
-              <MdTrendingUp size={11} style={{ verticalAlign: 'middle' }} />{' '}
+              <MdTrendingUp size={14} />{' '}
               Last credit: +₹{lastCredit.amount.toLocaleString('en-IN')}
             </div>
           )}
-          {!lastCredit && !isLoading && (
-            <div className="wallet-card__sub">Add money to get started</div>
-          )}
         </div>
+        
+        {hasBankAccount && (
+          <div className="wallet-card__bank-badge">
+            <div className="bank-pill-mini">
+              <MdAccountBalance size={11} />
+              <span>{bankDetails.bankName}</span>
+              <button
+                type="button"
+                className="bank-edit-btn"
+                onClick={(e) => { e.stopPropagation(); setShowBankModal(true); }}
+                title="Edit Bank Details"
+              >
+                <MdEdit size={11} />
+              </button>
+            </div>
+          </div>
+        )}
 
-        <div className="wallet-card__right">
-          <button
-            className="wallet-card__btn"
-            onClick={handleAddMoneyClick}
-          >
-            <MdAddCircle size={16} />
-            Add Money
-          </button>
-          <button
-            className="wallet-card__btn wallet-card__btn--withdraw"
-            onClick={handleWithdrawClick}
-            disabled={balance === 0 && hasBankAccount}
-            style={{ marginTop: '0.4rem', background: (balance === 0 && hasBankAccount) ? 'var(--bg-hover)' : 'rgba(41,128,185,0.12)', color: (balance === 0 && hasBankAccount) ? 'var(--text-muted)' : '#2980b9', border: '1.5px solid rgba(41,128,185,0.3)' }}
-          >
-            <MdOutlineArrowCircleDown size={16} />
-            Withdraw
-          </button>
-          <button
-            className="wallet-card__btn"
-            onClick={() => setShowTransfer(true)}
-            disabled={balance === 0}
-            style={{ marginTop: '0.4rem', background: balance === 0 ? 'var(--bg-hover)' : 'rgba(39,174,96,0.12)', color: balance === 0 ? 'var(--text-muted)' : '#27ae60', border: '1.5px solid rgba(39,174,96,0.3)' }}
-          >
-            <MdSend size={16} />
-            Send Money
-          </button>
-          {!hasBankAccount && (
-            <button
-              className="wallet-card__btn"
-              onClick={() => { setPendingAction(null); setShowBankModal(true); }}
-              style={{ marginTop: '0.4rem', background: 'rgba(168,85,247,0.12)', color: '#a855f7', border: '1.5px solid rgba(168,85,247,0.3)', fontSize: '0.75rem' }}
-            >
-              <MdAccountBalance size={14} />
-              Link Bank Account
-            </button>
-          )}
-        </div>
+        <MdAccountBalanceWallet className="wallet-card__icon" size={84} />
+      </div>
 
-        <span className="wallet-card__icon">💰</span>
+      {/* ── Action Boxes (Auto 3 or 4 cols) ── */}
+      <div className={`wallet-actions ${hasBankAccount ? 'wallet-actions--3' : ''}`}>
+        {displayActions.map(a => (
+          <button
+            key={a.key}
+            type="button"
+            className={`wallet-action wallet-action--${a.mod}`}
+            onClick={a.onClick}
+            disabled={a.disabled}
+          >
+            <span className="wallet-action__icon-wrap">{a.icon}</span>
+            <div className="wallet-action__content">
+              <span className="wallet-action__label">{a.label}</span>
+              <span className="wallet-action__sub">{a.sub}</span>
+            </div>
+          </button>
+        ))}
       </div>
 
       {/* Recent mini transactions */}
       {showTransactions && recent.length > 0 && (
-        <div className="section-card" style={{ marginBottom: '1.5rem' }}>
+        <div className="section-card wallet-transactions">
           <div className="section-card-header">
             <div><h3>Recent Transactions</h3><p>Last {recent.length} entries</p></div>
           </div>
@@ -133,14 +169,14 @@ const WalletCard = ({ showTransactions = false }) => {
                 <tbody>
                   {recent.map(t => (
                     <tr key={t._id}>
-                      <td style={{ fontWeight: 500, fontSize: '0.85rem' }}>{t.description}</td>
-                      <td style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
+                      <td className="tx-desc">{t.description}</td>
+                      <td className="tx-date">
                         {new Date(t.createdAt).toLocaleDateString('en-IN')}
                       </td>
-                      <td style={{ fontWeight: 700, color: t.type === 'credit' ? '#27AE60' : '#e74c3c' }}>
+                      <td className={`tx-amount tx-amount--${t.type}`}>
                         {t.type === 'credit' ? '+' : '-'}₹{t.amount.toLocaleString('en-IN')}
                       </td>
-                      <td style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
+                      <td className="tx-balance">
                         ₹{t.balanceAfter.toLocaleString('en-IN')}
                       </td>
                     </tr>

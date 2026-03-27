@@ -15,3 +15,6 @@ export const EMAIL_PASS        = process.env.EMAIL_PASS        || '';
 export const ADMIN_EMAIL            = process.env.ADMIN_EMAIL            || 'admin@kaamsetu.in';
 export const ADMIN_PASSWORD         = process.env.ADMIN_PASSWORD         || 'Admin@123';
 export const PLATFORM_FEE_PERCENT   = Number(process.env.PLATFORM_FEE_PERCENT) || 10;
+export const CLOUDINARY_CLOUD_NAME  = process.env.CLOUDINARY_CLOUD_NAME  || '';
+export const CLOUDINARY_API_KEY     = process.env.CLOUDINARY_API_KEY     || '';
+export const CLOUDINARY_API_SECRET  = process.env.CLOUDINARY_API_SECRET  || '';

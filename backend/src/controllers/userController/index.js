@@ -7,5 +7,7 @@ import updateAuthorizedEmails from './updateAuthorizedEmails.js';
 import getBankDetails from './getBankDetails.js';
 import updateBankDetails from './updateBankDetails.js';
 import getUsers from './getUsers.js';
+import uploadAvatar from './uploadAvatar.js';
+import removeAvatar from './removeAvatar.js';
 
-export { getMe, updateMe, deleteMe, setPassword, getAuthorizedEmails, updateAuthorizedEmails, getBankDetails, updateBankDetails, getUsers };
+export { getMe, updateMe, deleteMe, setPassword, getAuthorizedEmails, updateAuthorizedEmails, getBankDetails, updateBankDetails, getUsers, uploadAvatar, removeAvatar };

@@ -244,6 +244,25 @@ select:-webkit-autofill:focus {
 }
 
 // =============================================================================
+// SPLASH OVERLAY — Full-screen loader shown on every page load/refresh
+// =============================================================================
+
+.splash-overlay {
+  position:       fixed;
+  inset:          0;
+  z-index:        99999;
+  opacity:        1;
+  transition:     none;
+  pointer-events: all;
+
+  &--out {
+    opacity:        0;
+    transition:     opacity 0.3s ease-out;
+    pointer-events: none;
+  }
+}
+
+// =============================================================================
 // THEME FAB — Floating round theme toggle (bottom-right)
 // =============================================================================
 

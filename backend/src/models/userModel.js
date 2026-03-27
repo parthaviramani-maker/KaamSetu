@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema(
             type: String,
             default: null,
         },
+        avatarPublicId: {
+            type: String,
+            default: null,
+        },
         phone: {
             type: String,
             default: null,

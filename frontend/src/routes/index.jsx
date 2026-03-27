@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
-import { selectIsLogin, selectRole } from '../store/authSlice';
+import { PrivateRoute, PublicRoute, RoleRoute, DashboardRedirect } from './guards';
 
 // ── Public pages ──────────────────────────────────────────────────────────────
 import NotFound       from '../pages/NotFound';
@@ -48,33 +47,6 @@ import AdminWallet   from '../pages/Dashboard/admin/AdminWallet';
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 import ProfilePage from '../pages/Dashboard/profile/ProfilePage';
-
-// ── Route guards ─────────────────────────────────────────────────────────────
-function PrivateRoute({ children }) {
-  const isLogin = useSelector(selectIsLogin);
-  return isLogin ? children : <Navigate to="/auth" replace />;
-}
-
-function PublicRoute({ children }) {
-  const isLogin = useSelector(selectIsLogin);
-  return !isLogin ? children : <Navigate to="/dashboard" replace />;
-}
-
-// Redirects to correct role dashboard if user tries to access a different role's page
-function RoleRoute({ allowedRole, children }) {
-  const role = useSelector(selectRole);
-  if (role === allowedRole) return children;
-  const validRoles = ['employer', 'worker', 'agent', 'admin'];
-  const target = validRoles.includes(role) ? `/dashboard/${role}` : '/dashboard/worker';
-  return <Navigate to={target} replace />;
-}
-
-function DashboardRedirect() {
-  const role = useSelector(selectRole);
-  const validRoles = ['employer', 'worker', 'agent', 'admin'];
-  const target = validRoles.includes(role) ? `/dashboard/${role}` : '/dashboard/worker';
-  return <Navigate to={target} replace />;
-}
 
 const router = createBrowserRouter([
   // ── Landing ─────────────────────────────────────────────────────────────────

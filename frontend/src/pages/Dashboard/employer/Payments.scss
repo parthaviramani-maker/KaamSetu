@@ -1,0 +1,136 @@
+@use '../../../styles/variables' as *;
+
+// =============================================================================
+// PAYMENTS PAGE
+// =============================================================================
+
+.payments-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+// ── Search box ──────────────────────────────────────────────────────────────
+.pay-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__icon {
+    position: absolute;
+    left: $space-sm;
+    color: var(--text-secondary);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+
+  &__input {
+    height: 34px;
+    padding: 0 $space-md 0 2.1rem;
+    border-radius: $radius-md;
+    border: 1px solid var(--border-color);
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: $font-size-xs;
+    font-family: $font-primary;
+    outline: none;
+    width: 190px;
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &::placeholder { color: var(--text-secondary); opacity: 0.7; }
+    &:focus {
+      border-color: $color-teal;
+      box-shadow: 0 0 0 3px rgba($color-teal, 0.1);
+    }
+
+    @media (max-width: $bp-md) { width: 130px; }
+  }
+}
+
+// ── Filter tabs: All | Credit | Debit ───────────────────────────────────────
+.pay-tabs {
+  display: flex;
+  border: 1px solid var(--border-color);
+  border-radius: $radius-md;
+  overflow: hidden;
+
+  &__btn {
+    padding: 6px $space-md;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    font-family: $font-primary;
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all $transition-fast;
+    white-space: nowrap;
+    line-height: 1;
+
+    & + & { border-left: 1px solid var(--border-color); }
+
+    &--active { background: var(--bg-hover); color: var(--text-primary); }
+
+    &--credit#{&}--active {
+      color: var(--color-success);
+      background: rgba(39, 174, 96, 0.08);
+    }
+    &--debit#{&}--active {
+      color: var(--color-danger);
+      background: var(--color-danger-bg);
+    }
+  }
+}
+
+// ── Table helpers ────────────────────────────────────────────────────────────
+.tx-serial {
+  color: var(--text-muted);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  white-space: nowrap;
+}
+
+// ── Scoped overrides inside payments page ──────────────────────────────────
+.payments-page {
+
+  // Truncate long description text in table
+  .tx-desc {
+    max-width: 240px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    @media (max-width: $bp-lg) { max-width: 160px; }
+    @media (max-width: $bp-md) { max-width: 110px; }
+  }
+
+  // section-card-header: wrap search+tabs below title on small screens
+  .section-card-header {
+    @media (max-width: $bp-lg) {
+      flex-wrap: wrap;
+      row-gap: $space-sm;
+
+      .header-right {
+        width: 100%;
+        flex-wrap: wrap;
+        gap: $space-sm;
+      }
+
+      .pay-search {
+        flex: 1;
+        min-width: 140px;
+
+        &__input { width: 100%; }
+      }
+    }
+
+    @media (max-width: $bp-sm) {
+      .pay-tabs {
+        width: 100%;
+        justify-content: stretch;
+
+        &__btn { flex: 1; text-align: center; }
+      }
+    }
+  }
+}

@@ -41,16 +41,7 @@ function App() {
     <>
       {/* ── Splash / page-refresh loader ─────────────────────────────── */}
       {splash && (
-        <div
-          style={{
-            position:   'fixed',
-            inset:      0,
-            zIndex:     99999,
-            opacity:    splash === 'out' ? 0 : 1,
-            transition: splash === 'out' ? 'opacity 0.3s ease-out' : 'none',
-            pointerEvents: splash === 'out' ? 'none' : 'all',
-          }}
-        >
+        <div className={`splash-overlay${splash === 'out' ? ' splash-overlay--out' : ''}`}>
           <PageLoader />
         </div>
       )}

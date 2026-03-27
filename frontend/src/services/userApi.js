@@ -57,6 +57,23 @@ export const userApi = createApi({
             query: () => '/users/list',
             providesTags: ['User'],
         }),
+
+        // Avatar — upload (multipart/form-data)
+        uploadAvatar: builder.mutation({
+            query: (formData) => ({
+                url: '/users/me/avatar',
+                method: 'POST',
+                body: formData,
+                formData: true,
+            }),
+            invalidatesTags: ['User'],
+        }),
+
+        // Avatar — remove
+        removeAvatar: builder.mutation({
+            query: () => ({ url: '/users/me/avatar', method: 'DELETE' }),
+            invalidatesTags: ['User'],
+        }),
     }),
 });
 
@@ -70,4 +87,6 @@ export const {
     useGetBankDetailsQuery,
     useUpdateBankDetailsMutation,
     useGetUsersListQuery,
+    useUploadAvatarMutation,
+    useRemoveAvatarMutation,
 } = userApi;

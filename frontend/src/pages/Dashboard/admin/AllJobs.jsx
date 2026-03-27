@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MdSearch, MdWork, MdLocationOn } from 'react-icons/md';
+import { MdSearch, MdWork, MdLocationOn, MdBusiness, MdCheckCircle } from 'react-icons/md';
 import { useGetAllAdminJobsQuery } from '../../../services/adminApi';
 
 const AllJobs = () => {
@@ -19,36 +19,49 @@ const AllJobs = () => {
   return (
     <div>
       <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', marginBottom: '1.5rem' }}>
-        {[
-      { label: 'Total Jobs', val: jobs.length,                                 color: 'teal' },
-          { label: 'Open',       val: jobs.filter(j => j.status === 'open').length,   color: 'green' },
-          { label: 'Closed',     val: jobs.filter(j => j.status === 'closed').length, color: 'amber' },
-        ].map(c => (
-          <div key={c.label} className={`stat-card stat-card--${c.color}`}>
-            <div className="stat-body">
-              <p className="stat-label">{c.label}</p>
-              <p className="stat-value">{c.val}</p>
-            </div>
+        <div className="stat-card stat-card--teal">
+          <div className="stat-icon stat-icon--teal"><MdWork /></div>
+          <div className="stat-body">
+            <p className="stat-label">Total Jobs</p>
+            <p className="stat-value">{jobs.length}</p>
+            <p className="stat-sub">all postings</p>
           </div>
-        ))}
+        </div>
+        <div className="stat-card stat-card--green">
+          <div className="stat-icon stat-icon--green"><MdCheckCircle /></div>
+          <div className="stat-body">
+            <p className="stat-label">Open</p>
+            <p className="stat-value">{jobs.filter(j => j.status === 'open').length}</p>
+            <p className="stat-sub">active listings</p>
+          </div>
+        </div>
+        <div className="stat-card stat-card--amber">
+          <div className="stat-icon stat-icon--amber"><MdBusiness /></div>
+          <div className="stat-body">
+            <p className="stat-label">Closed</p>
+            <p className="stat-value">{jobs.filter(j => j.status === 'closed').length}</p>
+            <p className="stat-sub">completed jobs</p>
+          </div>
+        </div>
       </div>
 
       <div className="section-card">
-        <div className="section-card-header" style={{ flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 200px' }}>
-            <MdSearch size={18} style={{ color: 'var(--text-secondary)' }} />
-            <input
-              className="dash-search-input"
-              placeholder="Search jobs…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+        <div className="section-card-header">
+          <div className="filter-inner">
+            <div className="fi-search">
+              <MdSearch className="fi-icon" size={18} />
+              <input
+                placeholder="Search jobs…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <select className="dash-filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+              <option value="all">All Status</option>
+              <option value="open">Open</option>
+              <option value="closed">Closed</option>
+            </select>
           </div>
-          <select className="dash-filter-select" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
-            <option value="all">All Status</option>
-          <option value="open">Open</option>
-            <option value="closed">Closed</option>
-          </select>
         </div>
 
         <div className="section-card-body">

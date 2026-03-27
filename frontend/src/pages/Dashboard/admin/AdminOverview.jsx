@@ -3,23 +3,26 @@ import {
   MdBusiness, MdGroup, MdSupervisorAccount, MdAttachMoney,
   MdArrowForward, MdSwapHoriz, MdMonetizationOn, MdAdminPanelSettings,
 } from 'react-icons/md';
-import { useGetAdminStatsQuery, useGetAllUsersQuery, useGetAllAgentsQuery } from '../../../services/adminApi';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import { useGetAdminStatsQuery, useGetAllUsersQuery, useGetAllAgentsQuery, useGetAdminReportsQuery } from '../../../services/adminApi';
 
 const EmptyState = ({ message }) => (
-  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-    {message}
+  <div className="empty-state">
+    <p>{message}</p>
   </div>
 );
 
 const AdminOverview = () => {
   const today = new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
 
-  const { data: statsRes } = useGetAdminStatsQuery();
-  const { data: usersRes  } = useGetAllUsersQuery({});
-  const { data: agentsRes } = useGetAllAgentsQuery();
-  const s       = statsRes?.data || {};
+  const { data: statsRes   } = useGetAdminStatsQuery();
+  const { data: usersRes    } = useGetAllUsersQuery({});
+  const { data: agentsRes   } = useGetAllAgentsQuery();
+  const { data: reportsRes  } = useGetAdminReportsQuery();
+  const s       = statsRes?.data  || {};
   const users   = usersRes?.data  || [];
   const agents  = agentsRes?.data || [];
+  const monthly = reportsRes?.data?.monthly || [];
 
   return (
     <div>
@@ -108,7 +111,19 @@ const AdminOverview = () => {
             <div><h3>Monthly Placements</h3><p>Last 6 months</p></div>
           </div>
           <div className="section-card-body">
-            <EmptyState message="No placement data yet." />
+            {monthly.every(m => m.placements === 0) ? (
+              <EmptyState message="No placement data yet." />
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={monthly} margin={{ top: 4, right: 8, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
+                  <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
+                  <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} allowDecimals={false} />
+                  <Tooltip formatter={(v) => [v, 'Placements']} />
+                  <Bar dataKey="placements" fill="var(--color-accent, #00ABB3)" radius={[4, 4, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </div>
         </div>
 
@@ -121,22 +136,19 @@ const AdminOverview = () => {
             {agents.length === 0 ? (
               <EmptyState message="No agents registered yet." />
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div className="list-rows">
                 {[...agents].sort((a, b) => (b.totalPlacements || 0) - (a.totalPlacements || 0)).slice(0, 4).map(a => (
-                  <div key={a._id} style={{
-                    display: 'flex', alignItems: 'center', gap: '0.75rem',
-                    padding: '0.6rem', borderRadius: '8px', background: 'var(--bg-hover)',
-                  }}>
+                  <div key={a._id} className="list-row">
                     <img
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(a.name || 'A')}&background=00ABB3&color=fff&size=40`}
                       alt={a.name}
-                      style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                      className="list-row__avatar"
                     />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>{a.name}</p>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{a.email}</p>
+                    <div className="list-row__info">
+                      <p className="name">{a.name}</p>
+                      <p className="meta">{a.email}</p>
                     </div>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '3px', fontWeight: 700, color: 'var(--color-accent)', fontSize: '0.82rem', whiteSpace: 'nowrap' }}>
+                    <span className="list-row__value">
                       <MdSwapHoriz size={14} />{a.totalPlacements || 0} placements
                     </span>
                   </div>
@@ -158,25 +170,19 @@ const AdminOverview = () => {
             {users.length === 0 ? (
               <EmptyState message="No signups yet." />
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div className="list-rows">
                 {[...users].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)).slice(0, 4).map(u => (
-                  <div key={u._id} style={{
-                    display: 'flex', alignItems: 'center', gap: '0.75rem',
-                    padding: '0.6rem', borderRadius: '8px', background: 'var(--bg-hover)',
-                  }}>
+                  <div key={u._id} className="list-row">
                     <img
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || 'U')}&background=00ABB3&color=fff&size=40`}
                       alt={u.name}
-                      style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                      className="list-row__avatar"
                     />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>{u.name}</p>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)' }}>{u.email}</p>
+                    <div className="list-row__info">
+                      <p className="name">{u.name}</p>
+                      <p className="meta">{u.email}</p>
                     </div>
-                    <span style={{
-                      fontSize: '0.72rem', padding: '2px 8px', borderRadius: '12px', fontWeight: 600,
-                      background: 'rgba(0,171,179,0.1)', color: 'var(--color-accent)', whiteSpace: 'nowrap',
-                    }}>{u.role}</span>
+                    <span className="list-row__badge">{u.role}</span>
                   </div>
                 ))}
               </div>

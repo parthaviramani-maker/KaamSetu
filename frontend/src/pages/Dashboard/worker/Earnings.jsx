@@ -1,9 +1,9 @@
-import { MdAttachMoney, MdTrendingUp, MdWork, MdAccountBalanceWallet } from 'react-icons/md';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
+import {
+  MdAttachMoney, MdTrendingUp, MdWork, MdAccountBalanceWallet,
+  MdCalendarMonth, MdReceiptLong, MdArrowUpward,
+} from 'react-icons/md';
 import { useGetWalletBalanceQuery, useGetTransactionsQuery } from '../../../services/walletApi';
 import WalletCard from '../../../components/WalletCard/WalletCard';
-
-const MONTH_NAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 const Earnings = () => {
   const { data: balData } = useGetWalletBalanceQuery();
@@ -15,113 +15,131 @@ const Earnings = () => {
 
   const now       = new Date();
   const thisMonth = credits.filter(t => new Date(t.createdAt).getMonth() === now.getMonth());
-  const totalEarned = credits.reduce((s, t) => s + t.amount, 0);
-  const thisEarned  = thisMonth.reduce((s, t) => s + t.amount, 0);
-
-  // Monthly chart: last 6 months
-  const chartData = Array.from({ length: 6 }, (_, i) => {
-    const m   = (now.getMonth() - 5 + i + 12) % 12;
-    const y   = now.getFullYear() - (now.getMonth() - 5 + i < 0 ? 1 : 0);
-    const sum = credits
-      .filter(t => { const d = new Date(t.createdAt); return d.getMonth() === m && d.getFullYear() === y; })
-      .reduce((s, t) => s + t.amount, 0);
-    return { month: MONTH_NAMES[m], amount: sum };
+  const lastMonth = credits.filter(t => {
+    const d = new Date(t.createdAt);
+    const lm = (now.getMonth() - 1 + 12) % 12;
+    return d.getMonth() === lm;
   });
+
+  const totalEarned  = credits.reduce((s, t) => s + t.amount, 0);
+  const thisEarned   = thisMonth.reduce((s, t) => s + t.amount, 0);
+  const lastEarned   = lastMonth.reduce((s, t) => s + t.amount, 0);
+  const growth       = lastEarned > 0 ? Math.round(((thisEarned - lastEarned) / lastEarned) * 100) : null;
 
   const fmt = (n) => `₹${n.toLocaleString('en-IN')}`;
 
+  // Group credits by month
+  const grouped = credits.reduce((acc, t) => {
+    const d = new Date(t.createdAt);
+    const key = d.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+    if (!acc[key]) acc[key] = [];
+    acc[key].push(t);
+    return acc;
+  }, {});
+
+  const stats = [
+    { label: 'Total Earned',   val: fmt(totalEarned), color: 'blue',  icon: <MdAttachMoney size={22} /> },
+    { label: 'This Month',     val: fmt(thisEarned),  color: 'green', icon: <MdTrendingUp size={22} /> },
+    { label: 'Jobs Done',      val: credits.length,   color: 'amber', icon: <MdWork size={22} /> },
+  ];
+
   return (
-  <div>
-    {/* Wallet Card */}
-    <WalletCard showTransactions={false} />
+    <div>
+      {/* Wallet Card */}
+      <WalletCard showTransactions={false} />
 
-    {/* Stats */}
-    <div className="stats-grid" style={{ gridTemplateColumns: 'repeat(4, 1fr)', marginBottom: '1.5rem' }}>
-      {[
-        { label: 'Wallet Balance', val: fmt(balance),      color: 'teal',  icon: <MdAccountBalanceWallet /> },
-        { label: 'Total Earned',   val: fmt(totalEarned),  color: 'blue',  icon: <MdAttachMoney /> },
-        { label: 'This Month',     val: fmt(thisEarned),   color: 'green', icon: <MdTrendingUp /> },
-        { label: 'Jobs Done',      val: credits.length,    color: 'amber', icon: <MdWork /> },
-      ].map(c => (
-        <div key={c.label} className={`stat-card stat-card--${c.color}`}>
-          <div className="stat-icon">{c.icon}</div>
-          <div className="stat-body">
-            <p className="stat-label">{c.label}</p>
-            <p className="stat-value">{c.val}</p>
-          </div>
-        </div>
-      ))}
-    </div>
-
-    <div className="dash-grid-2">
-      {/* Monthly Bar Chart */}
-      <div className="section-card">
-        <div className="section-card-header">
-          <div><h3>Monthly Earnings</h3><p>Last 6 months</p></div>
-        </div>
-        <div className="section-card-body">
-          {credits.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-              No earnings yet. Apply for jobs to start earning!
+      {/* Stats — forced 4-col regardless of viewport within dashboard */}
+      <div className="earn-stats-grid">
+        {stats.map(s => (
+          <div key={s.label} className={`stat-card stat-card--${s.color}`}>
+            <div className="stat-icon">{s.icon}</div>
+            <div className="stat-body">
+              <p className="stat-label">{s.label}</p>
+              <p className="stat-value">{s.val}</p>
+              {s.label === 'This Month' && growth !== null && (
+                <p className={`stat-sub ${growth >= 0 ? 'text-success' : 'text-danger'}`}>
+                  {growth >= 0 ? '↑' : '↓'} {Math.abs(growth)}% vs last month
+                </p>
+              )}
             </div>
-          ) : (
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={chartData} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" />
-                <XAxis dataKey="month" tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
-                <YAxis tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={v => `₹${v}`} />
-                <Tooltip formatter={(v) => [`₹${v.toLocaleString('en-IN')}`, 'Earned']} />
-                <Bar dataKey="amount" fill="#27ae60" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </div>
+          </div>
+        ))}
       </div>
 
       {/* Payment History */}
       <div className="section-card">
         <div className="section-card-header">
-          <div><h3>Payment History</h3><p>{credits.length} earnings</p></div>
-        </div>
-        <div className="section-card-body">
-          {isLoading && <p style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)' }}>Loading…</p>}
-          {!isLoading && (
-          <div className="dash-table-wrap">
-            <table className="dash-table">
-              <thead>
-                <tr>
-                  <th>Job / Description</th>
-                  <th>Date</th>
-                  <th>Amount</th>
-                  <th>Balance After</th>
-                </tr>
-              </thead>
-              <tbody>
-                {credits.length === 0 && (
-                  <tr><td colSpan={4} style={{ textAlign: 'center', color: 'var(--text-secondary)', padding: '2rem' }}>No payment history yet.</td></tr>
-                )}
-                {credits.map(t => (
-                  <tr key={t._id}>
-                    <td style={{ fontWeight: 500, fontSize: '0.85rem' }}>{t.description}</td>
-                    <td style={{ fontSize: '0.78rem', color: 'var(--text-secondary)' }}>
-                      {new Date(t.createdAt).toLocaleDateString('en-IN')}
-                    </td>
-                    <td style={{ fontWeight: 700, color: '#27AE60' }}>
-                      +₹{t.amount.toLocaleString('en-IN')}
-                    </td>
-                    <td style={{ fontSize: '0.82rem', color: 'var(--text-secondary)' }}>
-                      ₹{t.balanceAfter.toLocaleString('en-IN')}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div>
+            <h3 className="earn-section-title">
+              <MdReceiptLong size={18} style={{ verticalAlign: 'middle', marginRight: 6 }} />
+              Payment History
+            </h3>
+            <p>{credits.length} earning{credits.length !== 1 ? 's' : ''} recorded</p>
           </div>
+          {thisEarned > 0 && (
+            <div className="earn-month-badge">
+              <MdCalendarMonth size={14} />
+              This month: <strong>{fmt(thisEarned)}</strong>
+            </div>
+          )}
+        </div>
+
+        <div className="section-card-body">
+          {isLoading && (
+            <div className="empty-state">Loading transactions…</div>
+          )}
+
+          {!isLoading && credits.length === 0 && (
+            <div className="earn-empty">
+              <MdAttachMoney size={48} className="earn-empty__icon" />
+              <h4>No earnings yet</h4>
+              <p>Apply for jobs and get hired to start earning!</p>
+            </div>
+          )}
+
+          {!isLoading && credits.length > 0 && (
+            <div className="earn-timeline">
+              {Object.entries(grouped).map(([month, txns]) => (
+                <div key={month} className="earn-month-group">
+                  {/* Month header */}
+                  <div className="earn-month-label">
+                    <span>{month}</span>
+                    <span className="earn-month-total">
+                      {fmt(txns.reduce((s, t) => s + t.amount, 0))}
+                    </span>
+                  </div>
+
+                  {/* Transaction rows */}
+                  {txns.map((t, i) => (
+                    <div key={t._id} className="earn-tx-row">
+                      <div className="earn-tx-icon">
+                        <MdArrowUpward size={16} />
+                      </div>
+                      <div className="earn-tx-info">
+                        <p className="earn-tx-desc">{t.description}</p>
+                        <p className="earn-tx-date">
+                          {new Date(t.createdAt).toLocaleDateString('en-IN', {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                          })}
+                        </p>
+                      </div>
+                      <div className="earn-tx-right">
+                        <span className="earn-tx-amount">
+                          +{fmt(t.amount)}
+                        </span>
+                        <span className="earn-tx-balance">
+                          Balance: {fmt(t.balanceAfter)}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
           )}
         </div>
       </div>
     </div>
-  </div>
   );
 };
 

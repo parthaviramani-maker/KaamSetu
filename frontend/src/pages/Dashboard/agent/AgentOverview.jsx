@@ -12,9 +12,7 @@ import { selectUser } from '../../../store/authSlice';
 import { useGetAgentCommissionQuery, useGetAgentWorkersQuery } from '../../../services/agentApi';
 
 const EmptyState = ({ message }) => (
-  <div style={{ textAlign: 'center', padding: '2rem', color: 'var(--text-secondary)', fontSize: '0.88rem' }}>
-    {message}
-  </div>
+  <div className="empty-state">{message}</div>
 );
 
 const getGreeting = () => {
@@ -43,7 +41,7 @@ const AgentOverview = () => {
       {/* Greeting Banner */}
       <div className="dash-greeting">
         <div className="greeting-left">
-          <p className="greeting-tag" style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><MdWbSunny size={13} /> {getGreeting()}</p>
+          <p className="greeting-tag"><span className="greeting-tag-inner"><MdWbSunny size={13} /> {getGreeting()}</span></p>
           <h2>{user?.name || 'Bhavesh Patel'}</h2>
           <p>Manage your workers and grow your placement network.</p>
         </div>
@@ -65,7 +63,7 @@ const AgentOverview = () => {
         </div>
 
         <div className="stat-card stat-card--blue">
-          <div className="stat-icon" style={{ background: 'rgba(49,130,206,0.12)', color: '#3182CE' }}><MdSwapHoriz /></div>
+          <div className="stat-icon"><MdSwapHoriz /></div>
           <div className="stat-body">
             <p className="stat-label">Active Placements</p>
             <p className="stat-value">{activePlaced}</p>
@@ -74,7 +72,7 @@ const AgentOverview = () => {
         </div>
 
         <div className="stat-card stat-card--green">
-          <div className="stat-icon" style={{ background: 'rgba(39,174,96,0.12)', color: '#27AE60' }}><MdPending /></div>
+          <div className="stat-icon"><MdPending /></div>
           <div className="stat-body">
             <p className="stat-label">Total Placements</p>
             <p className="stat-value">{summary.totalPlacements || 0}</p>
@@ -83,7 +81,7 @@ const AgentOverview = () => {
         </div>
 
         <div className="stat-card stat-card--amber">
-          <div className="stat-icon" style={{ background: 'rgba(246,173,85,0.12)', color: '#C68A00' }}><MdMonetizationOn /></div>
+          <div className="stat-icon"><MdMonetizationOn /></div>
           <div className="stat-body">
             <p className="stat-label">Total Commission</p>
             <p className="stat-value">₹{totalComm.toLocaleString('en-IN')}</p>
@@ -92,25 +90,7 @@ const AgentOverview = () => {
         </div>
       </div>
 
-      {/* Quick Actions */}
-      <div className="quick-actions">
-        <Link to="/dashboard/agent/workers" className="quick-action-btn">
-          <div className="qa-icon teal"><MdGroup size={24} /></div>
-          <span>My Workers</span>
-        </Link>
-        <Link to="/dashboard/agent/placements" className="quick-action-btn">
-          <div className="qa-icon blue"><MdSwapHoriz size={24} /></div>
-          <span>Placements</span>
-        </Link>
-        <Link to="/dashboard/agent/commission" className="quick-action-btn">
-          <div className="qa-icon green"><MdMonetizationOn size={24} /></div>
-          <span>Commission</span>
-        </Link>
-        <Link to="/dashboard/agent/area" className="quick-action-btn">
-          <div className="qa-icon amber"><MdLocationOn size={24} /></div>
-          <span>My Area</span>
-        </Link>
-      </div>
+
 
       {/* Worker Roster Preview + Activity */}
       <div className="dash-grid-2">
@@ -123,20 +103,17 @@ const AgentOverview = () => {
             {workersList.length === 0 ? (
               <EmptyState message="No workers registered yet. Add workers to your roster." />
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div className="item-list--tight">
                 {workersList.slice(0, 4).map(w => (
-                  <div key={w._id} style={{
-                    display: 'flex', alignItems: 'center', gap: '0.75rem',
-                    padding: '0.6rem', borderRadius: '8px', background: 'var(--bg-hover)',
-                  }}>
+                  <div key={w._id} className="item-row--user">
                     <img
                       src={`https://ui-avatars.com/api/?name=${encodeURIComponent(w.name || 'W')}&background=00ABB3&color=fff&size=40`}
                       alt={w.name}
-                      style={{ width: 36, height: 36, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }}
+                      className="item-avatar"
                     />
-                    <div style={{ minWidth: 0 }}>
-                      <p style={{ margin: 0, fontWeight: 700, fontSize: '0.85rem', color: 'var(--text-primary)' }}>{w.name}</p>
-                      <p style={{ margin: 0, fontSize: '0.75rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{w.email}</p>
+                    <div className="item-user-info">
+                      <p className="item-name">{w.name}</p>
+                      <p className="item-email">{w.email}</p>
                     </div>
                   </div>
                 ))}

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import {
   MdSearch, MdLocationOn, MdAccessTime, MdWork,
   MdExpandMore, MdExpandLess, MdSend, MdCheckCircle,
-  MdPeople, MdCalendarToday, MdPhone, MdBusiness,
+  MdPeople, MdCalendarToday, MdPhone, MdBusiness, MdWarning,
 } from 'react-icons/md';
 import { JobIcon } from '../data/jobIcons';
 import { useGetAllJobsQuery } from '../../../services/jobApi';
@@ -14,14 +14,12 @@ const FindJobs = () => {
   const [typeFilter, setTypeFilter] = useState('all');
   const [expanded,   setExpanded]   = useState(null);
   const [applying,   setApplying]   = useState(new Set());
-  // Local set tracks newly applied this session (merged with DB data below)
   const [newlyApplied, setNewlyApplied] = useState(new Set());
 
   const { data: jobsRes, isLoading, isError } = useGetAllJobsQuery();
   const { data: myAppsRes } = useGetMyApplicationsQuery();
   const [applyJob] = useApplyJobMutation();
 
-  // Build applied set from DB + this session
   const dbAppliedIds = new Set(
     (myAppsRes?.data || []).map(app => app.jobId?._id || app.jobId)
   );
@@ -51,38 +49,32 @@ const FindJobs = () => {
   };
 
   if (isLoading) return (
-    <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--text-secondary)' }}>
-      <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>🔍</div>
-      Loading jobs…
+    <div className="empty-state">
+      <MdSearch size={48} className="empty-icon" />
+      <h4>Loading jobs…</h4>
     </div>
   );
+
   if (isError) return (
-    <div style={{ textAlign: 'center', padding: '4rem', color: 'var(--color-error)' }}>
-      <div style={{ fontSize: '2rem', marginBottom: '0.75rem' }}>⚠️</div>
-      Failed to load jobs. Please try again.
+    <div className="empty-state">
+      <MdWarning size={48} className="empty-icon" />
+      <h4>Failed to load jobs</h4>
+      <p>Please try refreshing the page</p>
     </div>
   );
 
   return (
     <div>
-      {/* ── Search + Filter Bar ───────────────────────────────────────── */}
-      <div className="section-card" style={{ marginBottom: '1.5rem' }}>
-        <div className="section-card-body" style={{ padding: '1rem 1.25rem' }}>
-          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div style={{
-              display: 'flex', alignItems: 'center', gap: '0.5rem',
-              flex: '1 1 220px',
-              background: 'var(--bg-primary)',
-              border: '1px solid var(--border-color)',
-              borderRadius: '10px', padding: '0 0.75rem',
-            }}>
-              <MdSearch size={18} style={{ color: 'var(--text-secondary)', flexShrink: 0 }} />
+      {/* ── Search + Filter Bar ──────────────────────────────────────────── */}
+      <div className="section-card fj-filter-card">
+        <div className="section-card-body">
+          <div className="fj-filter-bar">
+            <div className="fj-search-wrap">
+              <MdSearch size={18} className="search-icon" />
               <input
-                className="dash-search-input"
                 placeholder="Search by title, area, or skill…"
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                style={{ border: 'none', background: 'transparent', padding: '0.65rem 0' }}
               />
             </div>
             <select
@@ -99,19 +91,18 @@ const FindJobs = () => {
         </div>
       </div>
 
-      {/* Result count */}
-      <p style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', marginBottom: '1rem', fontWeight: 500 }}>
+      <p className="fj-result-count">
         {filtered.length} job{filtered.length !== 1 ? 's' : ''} found
       </p>
 
-      {/* ── Job Cards ─────────────────────────────────────────────────── */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+      {/* ── Job Cards ──────────────────────────────────────────────── */}
+      <div className="fj-list">
 
         {filtered.length === 0 && (
-          <div className="section-card" style={{ textAlign: 'center', padding: '4rem 2rem', color: 'var(--text-secondary)' }}>
-            <div style={{ fontSize: '2.5rem', marginBottom: '0.75rem' }}>🔎</div>
-            <p style={{ fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>No jobs found</p>
-            <p style={{ fontSize: '0.85rem' }}>Try different keywords or remove filters</p>
+          <div className="empty-state">
+            <MdWork size={48} className="empty-icon" />
+            <h4>No jobs found</h4>
+            <p>Try different keywords or remove filters</p>
           </div>
         )}
 
@@ -127,143 +118,107 @@ const FindJobs = () => {
           return (
             <div
               key={jobId}
-              className="section-card"
-              style={{
-                transition: 'box-shadow 0.2s',
-                ...(isApplied ? { borderLeft: '3px solid #27AE60' } : {}),
-              }}
+              className={`section-card${isApplied ? ' fj-card--applied' : ''}`}
             >
-              <div style={{ padding: '1.25rem 1.5rem' }}>
+              <div className="fj-card-body">
 
-                {/* ── Top Row ─────────────────────────────────────── */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
-
-                  {/* Job Icon */}
-                  <div className="job-icon" style={{ minWidth: 48, height: 48, borderRadius: 14, fontSize: 26 }}>
-                    <JobIcon iconKey={job.workType} size={26} />
+                {/* ── Top Row ──────────────────────────────────────── */}
+                <div className="fj-top-row">
+                  <div className="fj-job-icon">
+                    <JobIcon iconKey={job.workType} size={24} />
                   </div>
 
-                  {/* Main Info */}
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap', marginBottom: '0.2rem' }}>
-                      <h3 style={{ fontSize: '1.02rem', fontWeight: 700, margin: 0, color: 'var(--text-primary)' }}>{job.title}</h3>
+                  <div className="fj-info">
+                    <div className="fj-title-row">
+                      <h3>{job.title}</h3>
                       <span className={`badge badge-${job.status}`}>{job.status}</span>
                       {isApplied && (
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 3,
-                          fontSize: '0.72rem', fontWeight: 700,
-                          color: '#27AE60', background: 'rgba(39,174,96,0.1)',
-                          borderRadius: 20, padding: '2px 8px',
-                        }}>
-                          <MdCheckCircle size={12} /> Applied
+                        <span className="badge badge-active">
+                          <MdCheckCircle size={14} /> Applied
                         </span>
                       )}
                     </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', marginBottom: '0.5rem' }}>
-                      <MdBusiness size={13} style={{ color: 'var(--text-secondary)' }} />
-                      <span style={{ fontSize: '0.82rem', color: 'var(--text-secondary)', fontWeight: 500 }}>{job.company}</span>
+                    <div className="fj-company-row">
+                      <MdBusiness size={14} />
+                      <span>{job.company}</span>
                     </div>
 
-                    {/* Meta pills */}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem', marginBottom: '0.6rem' }}>
-                      <span style={pillStyle}><MdLocationOn size={12} /> {job.city}{job.area ? `, ${job.area}` : ''}</span>
-                      <span style={pillStyle}><MdWork size={12} /> {job.workType}</span>
-                      <span style={pillStyle}><MdPeople size={12} /> {job.workersNeeded} needed</span>
+                    <div className="fj-meta-pills">
+                      <span className="job-pill"><MdLocationOn size={14} /> {job.city}{job.area ? `, ${job.area}` : ''}</span>
+                      <span className="job-pill"><MdWork size={14} /> {job.workType}</span>
+                      <span className="job-pill"><MdPeople size={14} /> {job.workersNeeded} needed</span>
                       {daysLeft !== null && (
-                        <span style={{ ...pillStyle, ...(daysLeft <= 3 ? urgentPill : {}) }}>
-                          <MdCalendarToday size={12} />
+                        <span className={`job-pill${daysLeft <= 3 ? ' job-pill--urgent' : ''}`}>
+                          <MdCalendarToday size={14} />
                           {daysLeft > 0 ? `${daysLeft}d left` : 'Last day!'}
                         </span>
                       )}
                     </div>
 
-                    {/* Skill tags */}
-                    <div style={{ display: 'flex', gap: '0.35rem', flexWrap: 'wrap' }}>
+                    <div className="fj-skills">
                       {(job.skills || []).map(s => (
-                        <span key={s} style={skillTag}>{s}</span>
+                        <span key={s} className="badge-teal">{s}</span>
                       ))}
                     </div>
                   </div>
 
-                  {/* Pay block */}
-                  <div style={{ textAlign: 'right', flexShrink: 0, minWidth: 80 }}>
-                    <p style={{ fontWeight: 800, color: 'var(--color-accent)', fontSize: '1.15rem', margin: 0, lineHeight: 1 }}>
-                      ₹{job.pay.toLocaleString('en-IN')}
-                    </p>
-                    <p style={{ fontSize: '0.72rem', color: 'var(--text-secondary)', margin: '3px 0 0' }}>
-                      per {job.payType === 'monthly' ? 'month' : 'day'}
-                    </p>
+                  <div className="fj-pay">
+                    <p className="fj-pay__amount">₹{job.pay.toLocaleString('en-IN')}</p>
+                    <p className="fj-pay__period">per {job.payType === 'monthly' ? 'month' : 'day'}</p>
                   </div>
                 </div>
 
-                {/* ── Divider ─────────────────────────────────────── */}
-                <div style={{ height: 1, background: 'var(--border-color)', margin: '1rem 0' }} />
+                <div className="fj-divider" />
 
-                {/* ── Bottom Row: expand + apply ───────────────────── */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '0.75rem' }}>
+                {/* ── Bottom Row ───────────────────────────────────── */}
+                <div className="fj-bottom-row">
                   <button
+                    className="fj-expand-btn"
                     onClick={() => setExpanded(isOpen ? null : jobId)}
-                    style={{
-                      background: 'none', border: 'none', cursor: 'pointer',
-                      color: 'var(--text-secondary)', fontSize: '0.82rem',
-                      display: 'flex', alignItems: 'center', gap: '4px', padding: 0,
-                      fontFamily: 'inherit', fontWeight: 500,
-                    }}
                   >
-                    {isOpen ? <><MdExpandLess size={18} /> Hide details</> : <><MdExpandMore size={18} /> View details</>}
+                    {isOpen
+                      ? <><MdExpandLess size={18} /> Hide details</>
+                      : <><MdExpandMore size={18} /> View details</>}
                   </button>
 
-                  {/* Apply Button */}
                   {isApplied ? (
-                    <div style={{
-                      display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
-                      padding: '0.55rem 1.25rem', borderRadius: 10,
-                      background: 'rgba(39,174,96,0.1)', color: '#27AE60',
-                      fontWeight: 700, fontSize: '0.85rem',
-                      border: '1.5px solid rgba(39,174,96,0.3)',
-                    }}>
-                      <MdCheckCircle size={17} /> Application Sent
+                    <div className="fj-applied-indicator">
+                      <MdCheckCircle size={18} /> Application Sent
                     </div>
                   ) : (
                     <button
                       className="btn btn-primary"
-                      style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.55rem 1.4rem', fontSize: '0.88rem' }}
                       onClick={() => handleApply(jobId)}
                       disabled={isApplying}
                     >
-                      <MdSend size={16} />
+                      <MdSend size={18} />
                       {isApplying ? 'Applying…' : 'Apply Now'}
                     </button>
                   )}
                 </div>
 
-                {/* ── Expanded Details ─────────────────────────────── */}
+                {/* ── Expanded Details ──────────────────────────── */}
                 {isOpen && (
-                  <div style={{
-                    marginTop: '1rem', padding: '1rem 1.25rem',
-                    background: 'var(--bg-primary)', borderRadius: 12,
-                    border: '1px solid var(--border-color)',
-                    fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: 1.7,
-                  }}>
+                  <div className="fj-details">
                     {job.description && (
-                      <p style={{ marginBottom: '0.75rem', color: 'var(--text-primary)' }}>{job.description}</p>
+                      <p className="fj-details__desc">{job.description}</p>
                     )}
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+                    <div className="fj-details__meta">
                       {job.deadline && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                          <MdCalendarToday size={14} style={{ color: 'var(--color-accent)' }} />
+                        <span className="fj-meta-item">
+                          <MdCalendarToday size={14} />
                           <strong>Deadline:</strong>&nbsp;{new Date(job.deadline).toLocaleDateString('en-IN')}
                         </span>
                       )}
                       {job.contactInfo && (
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                          <MdPhone size={14} style={{ color: 'var(--color-accent)' }} />
+                        <span className="fj-meta-item">
+                          <MdPhone size={14} />
                           <strong>Contact:</strong>&nbsp;{job.contactInfo}
                         </span>
                       )}
-                      <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                        <MdAccessTime size={14} style={{ color: 'var(--color-accent)' }} />
+                      <span className="fj-meta-item">
+                        <MdAccessTime size={14} />
                         <strong>Posted:</strong>&nbsp;{new Date(job.createdAt).toLocaleDateString('en-IN')}
                       </span>
                     </div>
@@ -276,30 +231,6 @@ const FindJobs = () => {
       </div>
     </div>
   );
-};
-
-// ── Shared micro-styles ───────────────────────────────────────────────────────
-const pillStyle = {
-  display: 'inline-flex', alignItems: 'center', gap: 4,
-  fontSize: '0.75rem', fontWeight: 500,
-  color: 'var(--text-secondary)',
-  background: 'var(--bg-primary)',
-  border: '1px solid var(--border-color)',
-  borderRadius: 20, padding: '2px 9px',
-};
-
-const urgentPill = {
-  color: '#E53E3E',
-  background: 'rgba(229,62,62,0.08)',
-  borderColor: 'rgba(229,62,62,0.25)',
-  fontWeight: 700,
-};
-
-const skillTag = {
-  fontSize: '0.72rem', padding: '3px 10px',
-  background: 'rgba(0,171,179,0.1)', color: 'var(--color-accent)',
-  borderRadius: 20, fontWeight: 600,
-  border: '1px solid rgba(0,171,179,0.2)',
 };
 
 export default FindJobs;

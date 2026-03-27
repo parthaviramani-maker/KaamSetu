@@ -30,6 +30,12 @@ export const adminApi = createApi({
             query: () => '/admin/agents',
             providesTags: ['Admin'],
         }),
+
+        // Monthly reports — last 6 months placements + revenue
+        getAdminReports: builder.query({
+            query: () => '/admin/reports',
+            providesTags: ['Admin'],
+        }),
     }),
 });
 
@@ -38,4 +44,5 @@ export const {
     useGetAllUsersQuery,
     useGetAllAdminJobsQuery,
     useGetAllAgentsQuery,
+    useGetAdminReportsQuery,
 } = adminApi;

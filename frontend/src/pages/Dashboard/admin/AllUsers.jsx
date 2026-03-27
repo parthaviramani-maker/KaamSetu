@@ -49,23 +49,24 @@ const AllUsers = () => {
 
       <div className="section-card">
         {/* Filters */}
-        <div className="section-card-header" style={{ flexWrap: 'wrap', gap: '0.75rem' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flex: '1 1 200px' }}>
-            <MdSearch size={18} style={{ color: 'var(--text-secondary)' }} />
-            <input
-              className="dash-search-input"
-              placeholder="Search by name or email…"
-              value={search}
-              onChange={e => setSearch(e.target.value)}
-            />
+        <div className="section-card-header">
+          <div className="filter-inner">
+            <div className="fi-search">
+              <MdSearch className="fi-icon" size={18} />
+              <input
+                placeholder="Search by name or email…"
+                value={search}
+                onChange={e => setSearch(e.target.value)}
+              />
+            </div>
+            <select className="dash-filter-select" value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
+              <option value="all">All Roles</option>
+              <option value="employer">Employer</option>
+              <option value="worker">Worker</option>
+              <option value="agent">Agent</option>
+              <option value="admin">Admin</option>
+            </select>
           </div>
-          <select className="dash-filter-select" value={roleFilter} onChange={e => setRoleFilter(e.target.value)}>
-            <option value="all">All Roles</option>
-            <option value="employer">Employer</option>
-            <option value="worker">Worker</option>
-            <option value="agent">Agent</option>
-            <option value="admin">Admin</option>
-          </select>
         </div>
 
         <div className="section-card-body">

@@ -181,170 +181,112 @@
 
 ---
 
-# 💸 NEXT FEATURE — Wallet Withdrawal `[TODO]`
+# ✅ FEATURE 2 — Wallet Withdrawal `[DONE]`
 
-> Worker/Agent/Employer — potana wallet na paise bahar kadhva shake (UPI/Bank par).
-> Same as topup but reverse — password verify + balance check.
+> Worker/Agent/Employer — potana wallet na paise bahar kadhva shake (Bank par).
+> Password verify + bank account linked check + balance check.
+
+```
+✅ walletController/withdraw.js     → POST /wallet/withdraw { amount, password }
+✅ transactionModel.js              → 'withdrawal' category already in enum
+✅ walletRoutes.js                  → POST /withdraw route added
+✅ walletApi.js                     → useWithdrawWalletMutation
+✅ WithdrawModal/WithdrawModal.jsx  → Quick presets, password verify, success animation
+✅ WalletCard.jsx                   → Withdraw button (disabled if balance=0)
+```
 
 ---
 
-## 🎯 Withdrawal Flow
+# ✅ FEATURE 3 — Wallet Send Money (Transfer) `[DONE]`
+
+> User to User wallet transfer by email. Password verify + balance check. 2 transaction records.
 
 ```
-1. User "Withdraw" button dabaave (WalletCard par)
-2. WithdrawModal khule
-3. User amount enter kare (max = current balance)
-4. User potano LOGIN PASSWORD enter kare (security mate)
-5. Backend:
-     → Password bcrypt sathe verify karo
-     → Balance check: walletBalance >= amount ? proceed : error
-     → walletBalance − amount
-     → Transaction record: type=debit, category=withdrawal
-6. Frontend:
-     → Success → balance update thay
-     → Framer-motion exit animation + toast
+✅ walletController/transfer.js     → POST /wallet/transfer { receiverEmail, amount, password }
+✅ transactionModel.js              → 'transfer_sent' + 'transfer_received' categories in enum
+✅ walletRoutes.js                  → POST /transfer route added
+✅ walletApi.js                     → useTransferWalletMutation
+✅ TransferModal/TransferModal.jsx  → User dropdown search, presets, password, success animation
+✅ WalletCard.jsx                   → Send Money button
+```
+
+---
+
+# 📊 NEXT FEATURE — Admin Reports Page `[TODO]`
+
+> Admin Reports page hamare placeholder chhe (hardcoded zeros). Real data connect karvu chhe.
+> Monthly placements + revenue charts + growth table.
+
+---
+
+## 🎯 Reports Page Flow
+
+```
+1. Admin Reports page khule
+2. Summary stats (Active Jobs, Total Users, Platform Revenue, Total Placements)
+3. Monthly Placements Bar Chart (last 6 months)
+4. Monthly Revenue Bar Chart (last 6 months)
+5. Monthly Growth Report table (month-wise data)
 ```
 
 ---
 
 ## 🏗️ Backend — Shu banavaanu chhe
 
-### 1. Transaction Model — category enum ma `withdrawal` add karo
-
-```js
-// transactionModel.js
-category: {
-  enum: ['topup', 'job_payment', 'commission', 'platform_fee', 'withdrawal'],  // ← ADD
-}
-```
-
-### 2. Navo Controller — `walletController/withdraw.js`
+### Navo Controller — `adminController/getReports.js`
 
 ```
+GET /admin/reports
 Logic:
-  → Joi validate: amount (min:1, max:100000), password (required)
-  → User fetch karo (.select('password walletBalance'))
-  → Google OAuth users: password nathi → error (same as topup)
-  → bcrypt.compare(password, user.password)
-  → walletBalance < amount → error "Insufficient balance"
-  → balanceBefore = user.walletBalance
-  → user.walletBalance -= amount
-  → user.save()
-  → Transaction.create({ type:'debit', category:'withdrawal', ... })
-  → Response: { balance: balanceAfter, withdrawn: amount }
-```
-
-### 3. Route — `walletRoutes.js` ma add karo
-
-```
-| Method | Endpoint         | Body                | Auth | Description          |
-|--------|-----------------|---------------------|------|----------------------|
-| POST   | /wallet/withdraw | { amount, password } | ✅   | Wallet se paise kaadho |
+  → Last 6 months monthly breakdown:
+     - Placement.aggregate → placements count per month
+     - Transaction.aggregate (category=platform_fee) → revenue per month
+  → Response: { monthly: [{ month, year, placements, revenue }] }
 ```
 
 ---
 
 ## 🖥️ Frontend — Shu banavaanu chhe
 
-### 1. `walletApi.js` ma navo endpoint add karo
+### 1. `adminApi.js` ma navo endpoint add karo
 
 ```js
-withdrawWallet: builder.mutation({
-  query: (body) => ({ url: '/wallet/withdraw', method: 'POST', body }),
-  invalidatesTags: [{ type: 'Wallet', id: 'BALANCE' }, { type: 'Wallet', id: 'TXN' }],
+getAdminReports: builder.query({
+  query: () => '/admin/reports',
+  providesTags: ['Admin'],
 })
-// export: useWithdrawWalletMutation
+// export: useGetAdminReportsQuery
 ```
 
-### 2. Navo Component — `WithdrawModal/WithdrawModal.jsx`
+### 2. `Reports.jsx` update — real data
 
 ```
-┌────────────────────────────────────────┐
-│  💸 Withdraw from Wallet               │
-│  Current Balance: ₹1,250               │
-│                                        │
-│  Quick: [₹100] [₹250] [₹500] [All]     │
-│                                        │
-│  Amount (₹): [_________]               │
-│  (max: ₹1,250)                         │
-│                                        │
-│  🔒 Password: [_________]              │
-│                                        │
-│  Preview:                              │
-│    Withdrawing:   -₹500                │
-│    Balance left:  ₹750                 │
-│                                        │
-│  [💸 Withdraw ₹500]                    │
-└────────────────────────────────────────┘
-```
-- Max amount button → current balance fill kare
-- Insufficient amount → button disable + red warning
-- On success → green exit animation + toast
-
-### 3. `WalletCard.jsx` update — Withdraw button add karo
-
-```
-┌────────────────────────────────────┐
-│  💰 My KaamSetu Wallet             │
-│  Balance: ₹1,250                   │
-│  [+ Add Money]  [💸 Withdraw]      │
-└────────────────────────────────────┘
+- useGetAdminStatsQuery → summary stat cards (Active Jobs, Total Users, Revenue, Placements)
+- useGetAdminReportsQuery → monthly charts + growth table
+- recharts BarChart → Monthly Placements (last 6 months)
+- recharts BarChart → Monthly Revenue (last 6 months)
+- Growth Table → month-wise placements + revenue
 ```
 
 ---
 
-## 📁 Files — Complete List
+## 📁 Files
 
 ### Backend (new files)
 ```
-backend/src/
-  controllers/
-    walletController/
-      withdraw.js              ← NEW
+backend/src/controllers/adminController/getReports.js   ← NEW
 ```
 
 ### Backend (modified files)
 ```
-backend/src/
-  models/
-    transactionModel.js        ← ADD 'withdrawal' to category enum
-  controllers/
-    walletController/
-      index.js                 ← ADD withdraw export
-  routes/
-    walletRoutes.js            ← ADD POST /withdraw route
-```
-
-### Frontend (new files)
-```
-frontend/src/
-  components/
-    WithdrawModal/
-      WithdrawModal.jsx         ← NEW
+backend/src/controllers/adminController/index.js        ← ADD getReports export
+backend/src/routes/adminRoutes.js                       ← ADD GET /reports route
 ```
 
 ### Frontend (modified files)
 ```
-frontend/src/
-  services/
-    walletApi.js               ← ADD withdrawWallet mutation
-  components/
-    WalletCard/
-      WalletCard.jsx           ← ADD Withdraw button + WithdrawModal
-```
-
----
-
-## ✅ Implementation Order
-
-```
-Step 1: transactionModel.js → 'withdrawal' enum add karo
-Step 2: walletController/withdraw.js → navo file banavo
-Step 3: walletController/index.js → withdraw export karo
-Step 4: walletRoutes.js → POST /withdraw route add karo
-Step 5: walletApi.js → withdrawWallet mutation add karo
-Step 6: WithdrawModal.jsx → navo component banavo
-Step 7: WalletCard.jsx → Withdraw button + modal wire karo
+frontend/src/services/adminApi.js                       ← ADD getAdminReports query
+frontend/src/pages/Dashboard/admin/Reports.jsx          ← Connect real data + charts
 ```
 
 ---

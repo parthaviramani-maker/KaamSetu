@@ -1,0 +1,685 @@
+@use '../../../styles/variables' as *;
+
+// =============================================================================
+// PROFILE PAGE
+// =============================================================================
+
+.profile-page {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+}
+
+// =============================================================================
+// HERO CARD
+// =============================================================================
+
+.profile-hero {
+  background: var(--bg-card);
+  border-radius: $radius-xl;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: $shadow-sm;
+  transition: box-shadow $transition-normal;
+
+  &:hover { box-shadow: $shadow-md; }
+
+  // gradient banner
+  &__banner {
+    width: 100%;
+    height: 148px;
+    flex-shrink: 0;
+    background: linear-gradient(
+      135deg,
+      $color-teal      0%,
+      $color-teal-dark 55%,
+      darken($color-teal-dark, 10%) 100%
+    );
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: -48px; right: -48px;
+      width: 210px; height: 210px;
+      background: rgba(255,255,255,0.07);
+      border-radius: $radius-full;
+    }
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -70px; right: 90px;
+      width: 160px; height: 160px;
+      background: rgba(255,255,255,0.04);
+      border-radius: $radius-full;
+    }
+  }
+
+  // main content row: avatar col + identity col
+  &__body {
+    display: flex;
+    align-items: flex-end;
+    gap: $space-xl;
+    padding: 0 $space-xl $space-lg;
+
+    @media (max-width: $bp-sm) {
+      flex-direction: column;
+      align-items: center;
+      padding: 0 $space-lg $space-lg;
+    }
+  }
+
+  // left col: avatar + remove link
+  &__left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $space-xs;
+    flex-shrink: 0;
+  }
+
+  // avatar overlaps banner
+  &__avatar-wrap {
+    position: relative;
+    margin-top: -56px;
+    z-index: 2;
+    flex-shrink: 0;
+  }
+
+  // clickable trigger — shows hover overlay to cue photo change
+  &__avatar-trigger {
+    display: block;
+    position: relative;
+    width: 120px;
+    height: 120px;
+    border-radius: $radius-full;
+    border: 4px solid var(--bg-card);
+    box-shadow:
+      0 0 0 3px $color-teal,
+      0 8px 28px rgba(0,171,179,0.28);
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    background: var(--bg-hover);
+    transition: box-shadow $transition-fast;
+
+    &:hover:not(:disabled),
+    &:focus-visible {
+      box-shadow:
+        0 0 0 3px $color-teal-dark,
+        0 10px 32px rgba(0,171,179,0.40);
+      .profile-hero__avatar-overlay { opacity: 1; }
+    }
+    &:disabled { cursor: not-allowed; }
+  }
+
+  &__avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: $radius-full;
+    background: var(--bg-hover);
+    border: none;
+    box-shadow: none;
+  }
+
+  // semi-transparent overlay revealed on hover
+  &__avatar-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.54);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: $color-white;
+    opacity: 0;
+    transition: opacity $transition-fast;
+    border-radius: $radius-full;
+    pointer-events: none;
+
+    span {
+      font-size: 10px;
+      font-weight: $font-weight-semibold;
+      letter-spacing: 0.4px;
+    }
+  }
+
+  // subtle text link — only shown when a custom avatar exists
+  &__remove-link {
+    font-size: $font-size-xs;
+    color: var(--color-danger, #E53E3E);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-family: $font-primary;
+    font-weight: $font-weight-medium;
+    opacity: 0.65;
+    transition: opacity $transition-fast;
+    white-space: nowrap;
+    line-height: 1;
+
+    &:hover:not(:disabled) { opacity: 1; text-decoration: underline; }
+    &:disabled { opacity: 0.3; cursor: not-allowed; }
+  }
+
+  &__spinner {
+    width: 14px; height: 14px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: $color-white;
+    border-radius: $radius-full;
+    animation: profile-spin 0.7s linear infinite;
+    display: block;
+  }
+
+  // identity block — left-aligned
+  &__identity {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding-bottom: $space-sm;
+    text-align: left;
+    min-width: 0;
+
+    @media (max-width: $bp-sm) {
+      align-items: center;
+      text-align: center;
+      padding-bottom: 0;
+    }
+  }
+
+  &__name {
+    font-size: $font-size-xl;
+    font-weight: $font-weight-extrabold;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.2;
+  }
+
+  &__role-pill {
+    display: inline-block;
+    padding: 3px 14px;
+    border-radius: $radius-full;
+    background: rgba(0,171,179,0.12);
+    color: $color-teal;
+    border: 1px solid rgba(0,171,179,0.25);
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    letter-spacing: 0.3px;
+  }
+
+  &__email {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--text-secondary);
+    font-size: $font-size-xs;
+    margin: 0;
+  }
+
+
+  // completion bar — full-width, left-aligned
+  &__completion {
+    padding: $space-sm $space-xl $space-xl;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+
+    @media (max-width: $bp-sm) { padding: $space-sm $space-lg $space-lg; }
+  }
+
+  &__completion-bar-row {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+  }
+
+  &__completion-track {
+    flex: 1;
+    height: 6px;
+    background: var(--border-color);
+    border-radius: $radius-full;
+    overflow: hidden;
+  }
+
+  &__completion-fill {
+    height: 100%;
+    background: linear-gradient(90deg, $color-teal 0%, $color-teal-light 100%);
+    border-radius: $radius-full;
+    transition: width 0.7s ease;
+  }
+
+  &__completion-label {
+    font-size: $font-size-xs;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  &__completion-pct {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-bold;
+    color: $color-teal;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+}
+
+@keyframes profile-spin {
+  to { transform: rotate(360deg); }
+}
+
+// =============================================================================
+// PROFILE INFO CARD  (About Me section)
+// =============================================================================
+
+.pinfo-card {
+  // custom header (not using .section-card-header to avoid padding conflicts)
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: $space-lg $space-xl;
+    border-bottom: 1px solid var(--border-color);
+
+    @media (max-width: $bp-md) { padding: $space-md; }
+  }
+
+  &__title-group {
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+
+    h3 { font-size: $font-size-base; font-weight: $font-weight-semibold; color: var(--text-primary); margin: 0; }
+    p  { font-size: $font-size-xs;   color: var(--text-secondary); margin: 2px 0 0; }
+  }
+
+  &__edit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-xs;
+    padding: 7px $space-md;
+    border-radius: $radius-md;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    font-family: $font-primary;
+    cursor: pointer;
+    transition: all $transition-fast;
+    background: linear-gradient(135deg, $color-teal, $color-teal-dark);
+    color: $color-white;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,171,179,0.3);
+    white-space: nowrap;
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,171,179,0.45);
+    }
+
+    &--cancel {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+      border: 1.5px solid var(--border-color);
+      box-shadow: none;
+      &:hover { background: var(--bg-active); border-color: var(--border-strong); transform: none; }
+    }
+  }
+}
+
+// ── View mode (read-only) ──────────────────────────────────────────────────
+.pinfo-view {
+  display: flex;
+  flex-direction: column;
+  gap: $space-lg;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $space-md;
+
+    @media (max-width: $bp-md) { grid-template-columns: 1fr; }
+  }
+
+  &__item {
+    display: flex;
+    align-items: flex-start;
+    gap: $space-sm;
+    padding: $space-md;
+    background: var(--bg-primary);
+    border-radius: $radius-lg;
+    border: 1px solid var(--border-color);
+    transition: border-color $transition-fast, box-shadow $transition-fast;
+
+    &:hover {
+      border-color: var(--border-strong);
+      box-shadow: $shadow-sm;
+    }
+  }
+
+  &__item-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: $radius-md;
+    background: rgba(0,171,179,0.1);
+    color: $color-teal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  &__item-body {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+  }
+
+  &__item-label {
+    font-size: 10px;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+  }
+
+  &__item-value {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+    word-break: break-word;
+
+    &--empty {
+      font-style: italic;
+      font-weight: $font-weight-normal;
+      color: var(--text-muted);
+    }
+  }
+
+  &__bio {
+    padding: $space-md;
+    background: var(--bg-primary);
+    border-radius: $radius-lg;
+    border: 1px solid var(--border-color);
+  }
+
+  &__bio-label {
+    font-size: 10px;
+    font-weight: $font-weight-semibold;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    color: var(--text-secondary);
+    display: block;
+    margin-bottom: $space-xs;
+  }
+
+  &__bio-text {
+    font-size: $font-size-sm;
+    color: var(--text-primary);
+    line-height: 1.65;
+    margin: 0;
+  }
+}
+
+// =============================================================================
+// PROFILE FORM CARD
+// =============================================================================
+
+.profile-form-card {
+  .section-card-body {
+    padding-top: $space-xl;
+    padding-bottom: $space-xl;
+  }
+}
+
+// Two-column grid for profile fields
+.profile-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $space-lg;
+  margin-bottom: $space-lg;
+
+  @media (max-width: $bp-md) { grid-template-columns: 1fr; }
+}
+
+// Hidden file input
+.avatar-file-input { display: none; }
+
+// Disabled / error inputs inside profile form
+.profile-form {
+  .form-group {
+    input:disabled,
+    textarea:disabled {
+      background: var(--bg-hover);
+      cursor: default;
+      color: var(--text-secondary);
+    }
+    input.input--error,
+    textarea.input--error { border-color: var(--color-danger); }
+  }
+}
+
+.profile-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: $space-sm;
+}
+
+// Edit/Cancel button (used in section-card-header)
+.profile-edit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $space-xs;
+  padding: $space-xs $space-lg;
+  border-radius: $radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  font-family: $font-primary;
+  cursor: pointer;
+  transition: all $transition-fast;
+  margin-top: $space-md;
+
+  &--active {
+    background: var(--color-accent);
+    color: $color-white;
+    border: none;
+    &:hover { background: var(--color-accent-dark); }
+  }
+  &--inactive {
+    background: var(--bg-hover);
+    color: var(--text-primary);
+    border: 1.5px solid var(--border-color);
+    &:hover { background: var(--bg-active); border-color: var(--border-strong); }
+  }
+  &--no-margin { margin-top: 0; }
+}
+
+// =============================================================================
+// BANK DETAILS — read view
+// =============================================================================
+
+.bank-section-header {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.bank-read-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: $space-md;
+}
+
+.bank-read-item {
+  display: flex;
+  flex-direction: column;
+  gap: $space-xs;
+  padding: $space-md;
+  background: var(--bg-primary);
+  border-radius: $radius-lg;
+  border: 1px solid var(--border-color);
+  transition: border-color $transition-fast;
+
+  &:hover { border-color: var(--border-strong); }
+
+  &__label {
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  &__value {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-semibold;
+    color: var(--text-primary);
+
+    &--empty {
+      color: var(--text-muted);
+      font-weight: $font-weight-normal;
+      font-style: italic;
+    }
+  }
+}
+
+// =============================================================================
+// BANK FORM — edit view
+// =============================================================================
+
+.bank-form-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: $space-md;
+}
+
+.bank-form {
+  .form-group {
+    input.input--error { border-color: var(--color-danger); }
+
+    input.input--ifsc {
+      text-transform: uppercase;
+      letter-spacing: 1px;
+
+      &.input--error { border-color: var(--color-danger); }
+    }
+
+    label .optional {
+      font-size: $font-size-xs;
+      color: var(--text-muted);
+      font-weight: $font-weight-normal;
+      margin-left: $space-xs;
+    }
+  }
+}
+
+.bank-info-note {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+  background: rgba($color-teal, 0.07);
+  border: 1px solid rgba($color-teal, 0.2);
+  border-radius: $radius-md;
+  padding: $space-sm $space-md;
+  font-size: $font-size-xs;
+  color: var(--text-secondary);
+}
+
+.bank-form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+// =============================================================================
+// DANGER ZONE
+// =============================================================================
+
+.section-card--danger {
+  border: 1.5px solid var(--color-danger-border);
+  margin-top: $space-lg;
+
+  .section-card-header {
+    border-bottom-color: var(--color-danger-border);
+  }
+}
+
+.danger-header-left {
+  display: flex;
+  align-items: center;
+  gap: $space-sm;
+}
+
+.danger-header-title {
+  margin: 0;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--color-danger);
+}
+
+.danger-header-sub {
+  margin: 2px 0 0;
+  font-size: $font-size-xs;
+  color: var(--text-secondary);
+}
+
+.danger-zone-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-md;
+}
+
+.danger-zone-info {
+  .danger-title {
+    font-weight: $font-weight-semibold;
+    margin: 0 0 2px;
+    font-size: $font-size-sm;
+    color: var(--text-primary);
+  }
+
+  .danger-desc {
+    margin: 0;
+    font-size: $font-size-xs;
+    color: var(--text-secondary);
+  }
+}
+
+.danger-confirm-row {
+  display: flex;
+  align-items: center;
+  gap: $space-md;
+  flex-wrap: wrap;
+}
+
+.danger-confirm-text {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--color-danger);
+}
+
+// Solid danger button (irreversible confirm)
+.btn--danger-solid {
+  background: var(--color-danger);
+  color: $color-white;
+  border: none;
+
+  &:hover { opacity: 0.9; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+// Outline danger button (first-step trigger)
+.btn--danger-outline {
+  background: transparent;
+  color: var(--color-danger);
+  border: 1.5px solid var(--color-danger-border);
+
+  &:hover { background: var(--color-danger-bg); }
+}

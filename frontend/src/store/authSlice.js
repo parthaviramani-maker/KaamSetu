@@ -23,10 +23,15 @@ const authSlice = createSlice({
       state.role = null;
       state.isLogin = false;
     },
+    updateAvatar: (state, action) => {
+      if (state.user) {
+        state.user.avatar = action.payload.avatar ?? null;
+      }
+    },
   },
 });
 
-export const { loginSuccess, logout } = authSlice.actions;
+export const { loginSuccess, logout, updateAvatar } = authSlice.actions;
 
 export const selectIsLogin = (state) => state.auth.isLogin;
 export const selectUser    = (state) => state.auth.user;

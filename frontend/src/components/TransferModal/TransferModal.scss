@@ -1,0 +1,181 @@
+@use '../../styles/variables' as *;
+
+// User-search dropdown
+.transfer-dropdown {
+  position: relative;
+
+  &__trigger {
+    width: 100%;
+    min-height: 52px;
+    border: 1.5px solid var(--border-color);
+    border-radius: $radius-lg;
+    padding: 0 $space-md;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    background: var(--bg-card);
+    transition: all $transition-normal;
+    box-sizing: border-box;
+
+    &:hover { border-color: var(--color-primary); background: var(--bg-primary); }
+    &--open { 
+      border-color: var(--color-primary); 
+      box-shadow: 0 0 0 4px rgba(0, 171, 179, 0.1); 
+    }
+  }
+
+  &__placeholder {
+    color: var(--text-secondary);
+    font-size: $font-size-sm;
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    opacity: 0.7;
+  }
+
+  .selected-user-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  &__selected-name {
+    font-weight: $font-weight-semibold;
+    font-size: $font-size-sm;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__selected-email {
+    font-size: 11px;
+    color: var(--text-secondary);
+    opacity: 0.8;
+  }
+
+  &__clear-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-muted);
+    margin-left: auto;
+    padding: 0;
+    line-height: 1;
+    font-size: $font-size-sm;
+    display: flex;
+    align-items: center;
+    &:hover { color: var(--text-primary); }
+  }
+
+  &__panel {
+    background: rgba(18, 18, 18, 0.98); // Themed dark color
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0, 171, 179, 0.3); // Subtle teal border
+    border-radius: $radius-lg;
+    box-shadow: 
+      0 12px 40px rgba(0, 0, 0, 0.6),
+      0 0 0 1px rgba(0, 171, 179, 0.1); // Inner teal glow
+    max-height: 280px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    margin-top: 8px;
+    animation: dropdownFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &__search-wrap {
+    padding: $space-sm $space-md;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    gap: $space-sm;
+    background: rgba(var(--color-primary-rgb), 0.03);
+
+    svg { color: var(--color-primary); opacity: 0.7; }
+
+    input {
+      flex: 1;
+      font-size: $font-size-sm;
+      padding: 6px 0;
+      border: none;
+      background: transparent;
+      color: var(--text-primary);
+      font-family: $font-primary;
+      outline: none;
+
+      &::placeholder { color: var(--text-secondary); opacity: 0.5; }
+    }
+  }
+
+  &__list {
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  &__empty {
+    padding: $space-md;
+    color: var(--text-muted);
+    font-size: $font-size-xs;
+    text-align: center;
+  }
+
+  &__loading {
+    padding: $space-md;
+    color: var(--text-muted);
+    font-size: $font-size-xs;
+    text-align: center;
+  }
+
+  &__item {
+    padding: $space-md;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: $space-md;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    transition: all $transition-fast;
+
+    &:hover { 
+      background: rgba(0, 171, 179, 0.08); 
+      .transfer-dropdown__item-name { color: var(--color-primary); }
+    }
+    &--selected { 
+      background: rgba(0, 171, 179, 0.12);
+      .transfer-dropdown__item-name { color: var(--color-primary); }
+    }
+    &:last-child { border-bottom: none; }
+
+    &-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    &-name {
+      font-weight: $font-weight-bold;
+      font-size: $font-size-sm;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: var(--text-primary);
+      transition: color $transition-fast;
+    }
+
+    &-email {
+      font-size: 11px;
+      color: var(--text-secondary);
+      opacity: 0.6;
+    }
+  }
+}
+
+@keyframes dropdownFadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}

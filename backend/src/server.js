@@ -5,6 +5,7 @@ import connectDB from './config/db.js';
 import routes from './routes/index.js';
 import responseHandler from './utils/responseHandler.js';
 import seedAdmin from './utils/seedAdmin.js';
+import errorMiddleware from './middlewares/errorMiddleware.js';
 
 const app = express();
 
@@ -45,6 +46,9 @@ app.use('/api/v1', routes); //v1 new version of api, v2 will be for mobile app i
 app.use('*', (req, res) => {
     return responseHandler.notFound(res, `Route ${req.originalUrl} not found`);
 });
+
+// Global error handler — must be LAST middleware (4 params = error handler)
+app.use(errorMiddleware);
 
 // Start server
 const startServer = async () => {

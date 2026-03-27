@@ -1,16 +1,23 @@
+@use '../../styles/variables' as *;
+
+// ── Wallet balance card ──────────────────────────────────────────────────────
+$wallet-bg-dark:  #1a6b3c;
+$wallet-bg-light: #2ecc71;
+
 .wallet-card {
-  background: linear-gradient(135deg, #1a6b3c 0%, #27ae60 60%, #2ecc71 100%);
-  border-radius: 1.2rem;
-  padding: 1.6rem 2rem;
-  color: #fff;
+  position: relative;
+  background: linear-gradient(135deg, $color-teal, $color-teal-dark);
+  border-radius: $radius-2xl;
+  padding: $space-2xl;
+  margin-bottom: $space-lg;
+  color: $color-white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1rem;
+  gap: $space-md;
   box-shadow: 0 8px 32px rgba(39, 174, 96, 0.35);
   position: relative;
   overflow: hidden;
-  margin-bottom: 1.5rem;
 
   &::before {
     content: '';
@@ -19,7 +26,7 @@
     right: -40px;
     width: 160px;
     height: 160px;
-    border-radius: 50%;
+    border-radius: $radius-full;
     background: rgba(255, 255, 255, 0.08);
   }
   &::after {
@@ -29,91 +36,264 @@
     left: 30%;
     width: 200px;
     height: 200px;
-    border-radius: 50%;
+    border-radius: $radius-full;
     background: rgba(255, 255, 255, 0.05);
   }
 
-  &__left {
-    z-index: 1;
-  }
+  &__left { z-index: 1; }
 
   &__label {
-    font-size: 0.78rem;
-    font-weight: 600;
+    font-size: $font-size-xs;
+    font-weight: $font-weight-semibold;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     opacity: 0.8;
-    margin-bottom: 0.35rem;
+    margin-bottom: $space-xs;
     display: flex;
     align-items: center;
-    gap: 0.4rem;
+    gap: $space-xs;
+    svg { vertical-align: middle; }
   }
 
   &__balance {
-    font-size: 2.4rem;
-    font-weight: 800;
+    font-size: 2.2rem; // Reduced from 2.6rem
+    font-weight: $font-weight-extrabold;
     letter-spacing: -0.02em;
     line-height: 1;
-    margin-bottom: 0.5rem;
-
+    margin-bottom: $space-sm;
     .rupee {
       font-size: 1.6rem;
-      font-weight: 700;
+      font-weight: $font-weight-bold;
       opacity: 0.9;
     }
   }
 
   &__sub {
-    font-size: 0.75rem;
+    font-size: $font-size-xs;
     opacity: 0.7;
+    svg { vertical-align: middle; }
   }
 
-  &__right {
-    z-index: 1;
+  // Small pill showing linked bank name
+  &__bank-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: $space-sm;
+    font-size: 0.7rem;
+    font-weight: $font-weight-semibold;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: $radius-full;
+    padding: 3px 10px 3px 6px;
+  }
+
+  // Decorative watermark icon
+  &__icon {
+    opacity: 0.14;
+    position: absolute;
+    right: $space-xl;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $color-white;
+    pointer-events: none;
+    z-index: 0;
+  }
+    // Absolute floating badge for bank (Top Right)
+  &__bank-badge {
+    position: absolute;
+    top: $space-lg;
+    right: $space-lg;
     display: flex;
     flex-direction: column;
     align-items: flex-end;
-    gap: 0.6rem;
-  }
-
-  &__icon {
-    font-size: 3rem;
-    opacity: 0.25;
-    position: absolute;
-    right: 1.5rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-style: normal;
-  }
-
-  &__btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: 1.5px solid rgba(255, 255, 255, 0.5);
-    color: #fff;
-    border-radius: 0.6rem;
-    padding: 0.5rem 1.1rem;
-    font-size: 0.82rem;
-    font-weight: 700;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    transition: background 0.2s, transform 0.15s;
-    backdrop-filter: blur(6px);
+    gap: 4px;
     z-index: 2;
 
-    &:hover {
-      background: rgba(255, 255, 255, 0.32);
-      transform: translateY(-1px);
-    }
-    &:active {
-      transform: translateY(0);
+    .bank-pill-mini {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(8px);
+      padding: 5px 10px;
+      border-radius: $radius-full;
+      font-size: 10px;
+      font-weight: $font-weight-bold;
+      color: $color-white;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      
+      .bank-edit-btn {
+        background: rgba(255, 255, 255, 0.12);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: $color-white;
+        cursor: pointer;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: $radius-full;
+        transition: all $transition-fast;
+        outline: none;
+        padding: 0;
+        margin-left: 2px;
+
+        &:hover {
+          background: rgba(255, 255, 255, 0.25);
+          transform: scale(1.1);
+        }
+      }
     }
   }
 }
 
-// Dark mode ke light mode dono ma same dikhse (green card always)
+@media (max-width: $bp-sm) {
+  .wallet-card {
+    padding: $space-xl;
+    &__balance { font-size: 1.8rem; }
+    &__bank-badge { top: $space-md; right: $space-md; }
+    &__icon { display: none; }
+  }
+}
+
 .dark-mode .wallet-card,
-.light-mode .wallet-card {
-  color: #fff;
+.light-mode .wallet-card { color: $color-white; }
+
+// ── 4 action boxes ──────────────────────────────────────────────────────────
+.wallet-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: $space-md;
+  margin-bottom: $space-lg;
+
+  &--3 {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  @media (max-width: $bp-lg) {
+    grid-template-columns: repeat(2, 1fr);
+    &--3 { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: $bp-sm) {
+    grid-template-columns: 1fr;
+    &--3 { grid-template-columns: 1fr; }
+  }
+}
+
+.wallet-action {
+  display: flex;
+  align-items: center; // Changed to row flow
+  justify-content: flex-start;
+  gap: 12px;
+  padding: $space-sm $space-md; // Compact
+  min-height: 72px; // Reduced from 120px
+  border-radius: $radius-lg;
+  border: 1.5px solid var(--border-color);
+  background: var(--bg-card);
+  cursor: pointer;
+  font-family: $font-primary;
+  text-align: center;
+  box-shadow: $shadow-sm;
+  transition: transform $transition-fast, box-shadow $transition-fast, border-color $transition-fast, background $transition-fast;
+
+  &:hover:not(:disabled) {
+    transform: translateY(-2px); // Less dramatic jump
+    box-shadow: $shadow-md;
+  }
+  &:active:not(:disabled) { transform: translateY(0); }
+  &:disabled {
+    opacity: 0.38;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  // Icon circle
+  &__icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 52px; // Increased from 42px
+    height: 52px;
+    border-radius: $radius-lg;
+    flex-shrink: 0;
+    transition: background $transition-fast;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    flex: 1;
+    min-width: 0;
+    text-align: left;
+  }
+
+  &__label {
+    font-size: $font-size-sm;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  &__sub {
+    font-size: 0.7rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    font-size: 0.65rem;
+    font-weight: $font-weight-bold;
+    padding: 2px 7px;
+    border-radius: $radius-full;
+    margin-top: 2px;
+  }
+
+  // ── Color variants ──────────────────────────────────────────────────────
+  &--teal {
+    .wallet-action__icon-wrap { background: rgba($color-teal, 0.1); color: $color-teal; }
+    &:hover:not(:disabled) {
+      border-color: rgba($color-teal, 0.4);
+      background: rgba($color-teal, 0.04);
+    }
+  }
+
+  &--warning {
+    .wallet-action__icon-wrap { background: rgba($color-warning, 0.12); color: $color-warning; }
+    &:hover:not(:disabled) {
+      border-color: rgba($color-warning, 0.4);
+      background: rgba($color-warning, 0.04);
+    }
+  }
+
+  &--info {
+    .wallet-action__icon-wrap { background: rgba($color-info, 0.1); color: $color-info; }
+    &:hover:not(:disabled) {
+      border-color: rgba($color-info, 0.4);
+      background: rgba($color-info, 0.04);
+    }
+  }
+
+  &--success {
+    .wallet-action__icon-wrap { background: rgba($color-success, 0.1); color: $color-success; }
+    .wallet-action__badge {
+      background: rgba($color-success, 0.12);
+      color: $color-success;
+    }
+    &:hover:not(:disabled) {
+      border-color: rgba($color-success, 0.4);
+      background: rgba($color-success, 0.04);
+    }
+  }
 }
