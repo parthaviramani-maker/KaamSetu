@@ -3284,8 +3284,8 @@ $modal-header-green-start: #1a6b3a;
 .pay-input-group {
   display: flex;
   gap: $space-sm;
-  input  { flex: 1; }
-  select { width: 110px; }
+  input  { flex: 1; min-width: 0; }
+  select { flex: 0 0 120px; width: 120px; max-width: 120px; }
 }
 
 .balance-warning {
