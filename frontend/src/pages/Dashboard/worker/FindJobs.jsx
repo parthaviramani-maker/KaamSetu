@@ -151,7 +151,7 @@ const FindJobs = () => {
                       {daysLeft !== null && (
                         <span className={`job-pill${daysLeft <= 3 ? ' job-pill--urgent' : ''}`}>
                           <MdCalendarToday size={14} />
-                          {daysLeft > 0 ? `${daysLeft}d left` : 'Last day!'}
+                          {daysLeft > 0 ? `${daysLeft}d left` : daysLeft === 0 ? 'Last day!' : 'Expired'}
                         </span>
                       )}
                     </div>
