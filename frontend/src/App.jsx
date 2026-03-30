@@ -64,5 +64,3 @@ function App() {
 }
 
 export default App;
-
-// hello
