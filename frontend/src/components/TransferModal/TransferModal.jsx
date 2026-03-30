@@ -42,6 +42,7 @@ const TransferModal = ({ currentBalance, onClose, onSuccess }) => {
   const { data: usersData, isLoading: usersLoading }  = useGetUsersListQuery();
 
   const [dropdownPos, setDropdownPos] = useState({ top: 0, left: 0, width: 0 });
+  const portalRef = useRef(null);
 
   const allUsers      = usersData?.data ?? [];
   const filtered      = useMemo(() => allUsers.filter(u =>
@@ -67,17 +68,6 @@ const TransferModal = ({ currentBalance, onClose, onSuccess }) => {
     setDropdownOpen(!dropdownOpen);
   };
 
-  useEffect(() => {
-    if (dropdownOpen) {
-      window.addEventListener('scroll', updateDropdownPosition, true);
-      window.addEventListener('resize', updateDropdownPosition);
-    }
-    return () => {
-      window.removeEventListener('scroll', updateDropdownPosition, true);
-      window.removeEventListener('resize', updateDropdownPosition);
-    };
-  }, [dropdownOpen]);
-
   const amt           = Number(amount);
   const isOverBalance = amt > currentBalance;
   const isValid       = amt >= 1 && !isOverBalance && !!selectedUser;
@@ -93,7 +83,21 @@ const TransferModal = ({ currentBalance, onClose, onSuccess }) => {
   };
 
   useEffect(() => {
-    const handler = (e) => { if (dropdownRef.current && !dropdownRef.current.contains(e.target)) setDropdownOpen(false); };
+    if (dropdownOpen) {
+      window.addEventListener('scroll', updateDropdownPosition, true);
+      window.addEventListener('resize', updateDropdownPosition);
+    }
+    return () => {
+      window.removeEventListener('scroll', updateDropdownPosition, true);
+      window.removeEventListener('resize', updateDropdownPosition);
+    };
+  }, [dropdownOpen]);
+
+  useEffect(() => {
+    const handler = (e) => { 
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target) && portalRef.current && !portalRef.current.contains(e.target)) 
+        setDropdownOpen(false); 
+    };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
   }, []);
@@ -209,6 +213,7 @@ const TransferModal = ({ currentBalance, onClose, onSuccess }) => {
                 
                 {dropdownOpen && createPortal(
                   <div 
+                    ref={portalRef}
                     className="transfer-dropdown-portal"
                     style={{ 
                       top: dropdownPos.top, 
