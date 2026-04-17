@@ -38,9 +38,12 @@
   --color-info:        #{$color-info};
   --color-info-bg:     rgba(49, 130, 206, 0.10);
   --color-info-border: rgba(49, 130, 206, 0.30);
-  --sidebar-bg: #{$color-charcoal};
-  --sidebar-text: rgba(255, 255, 255, 0.75);
-  --sidebar-text-active: #fff;
+  --sidebar-bg: #{$color-white};
+  --sidebar-text: #{$color-charcoal};
+  --sidebar-text-active: #{$color-charcoal};
+  --sidebar-text-muted: rgba(37, 40, 48, 0.45);
+  --sidebar-border: rgba(178, 178, 178, 0.3);
+  --sidebar-scrollbar-thumb: rgba(37, 40, 48, 0.15);
 }
 
 :root.dark-mode,
@@ -75,6 +78,9 @@ html.dark-mode {
   --sidebar-bg: #1e2027;
   --sidebar-text: rgba(255, 255, 255, 0.65);
   --sidebar-text-active: #fff;
+  --sidebar-text-muted: rgba(255, 255, 255, 0.45);
+  --sidebar-border: rgba(255, 255, 255, 0.08);
+  --sidebar-scrollbar-thumb: rgba(255, 255, 255, 0.15);
 }
 
 // =============================================================================
@@ -119,7 +125,7 @@ html.dark-mode {
 .sidebar {
   width: var(--sidebar-width);
   background: var(--sidebar-bg);
-  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  border-right: 1px solid var(--sidebar-border);
   padding: 0 $space-md;
   display: flex;
   flex-direction: column;
@@ -147,7 +153,7 @@ html.dark-mode {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    border-bottom: 1px solid var(--sidebar-border);
     margin-bottom: $space-lg;
     flex-shrink: 0;
     gap: $space-sm;
@@ -194,14 +200,14 @@ html.dark-mode {
         h2 {
           font-size: $font-size-md;
           font-weight: $font-weight-bold;
-          color: #fff;
+          color: var(--sidebar-text-active);
           margin: 0;
           letter-spacing: 0.5px;
           line-height: 1.1;
         }
         p {
           font-size: 10px;
-          color: rgba(255, 255, 255, 0.45);
+          color: var(--sidebar-text-muted);
           margin: 0;
           letter-spacing: 0.3px;
         }
@@ -222,19 +228,19 @@ html.dark-mode {
     &::-webkit-scrollbar { width: 4px; }
     &::-webkit-scrollbar-track { background: transparent; }
     &::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.15);
+      background: var(--sidebar-scrollbar-thumb);
       border-radius: $radius-full;
       &:hover { background: $color-teal; }
     }
     scrollbar-width: thin;
-    scrollbar-color: rgba(255,255,255,0.15) transparent;
+    scrollbar-color: var(--sidebar-scrollbar-thumb) transparent;
   }
 
   // --- Section label ---
   &-section-label {
     font-size: 10px;
     font-weight: $font-weight-semibold;
-    color: rgba(255, 255, 255, 0.35);
+    color: var(--sidebar-text-muted);
     text-transform: uppercase;
     letter-spacing: 1px;
     padding: $space-md $space-sm $space-xs;
@@ -246,7 +252,7 @@ html.dark-mode {
   &-footer {
     margin-top: auto;
     padding: $space-md 0;
-    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid var(--sidebar-border);
     flex-shrink: 0;
 
     .footer-user {
@@ -273,7 +279,7 @@ html.dark-mode {
         .user-name {
           font-size: $font-size-sm;
           font-weight: $font-weight-semibold;
-          color: #fff;
+          color: var(--sidebar-text-active);
           margin: 0;
           white-space: nowrap;
           overflow: hidden;
@@ -300,7 +306,7 @@ html.dark-mode {
     display: none;
     background: transparent;
     border: none;
-    color: rgba(255,255,255,0.6);
+    color: var(--sidebar-text);
     font-size: 22px;
     cursor: pointer;
     padding: $space-xs;
@@ -311,7 +317,7 @@ html.dark-mode {
     flex-shrink: 0;
 
     @media (max-width: $bp-lg) { display: flex; }
-    &:hover { background: var(--bg-hover); color: $color-white; }
+    &:hover { background: var(--bg-hover); color: var(--sidebar-text-active); }
   }
 }
 

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import Cropper from 'react-easy-crop';
+import Cropper from 'react-easy-crop';//for cropping UI
 import { motion } from 'framer-motion';
 import { MdClose, MdCameraAlt, MdZoomIn, MdZoomOut } from 'react-icons/md';
 import './AvatarCropModal.scss';
